@@ -1,3 +1,13 @@
+import colorsys
+
+
+HUE_MAX = 65535
+
+
+def hbs_to_rgb(hue, brightness, saturation):
+    return colorsys.hls_to_rgb(hue / HUE_MAX, brightness / 255, saturation / 255)
+
+
 class Light:
     MASTER_DIMMING = 1
     RED_DIMMING = 2
@@ -15,6 +25,10 @@ class Light:
         self.set_r(r)
         self.set_g(g)
         self.set_b(b)
+
+    def set_hbs(self, h, b, s):
+        self.set_brightness(255)
+        self.set_rgb(*hbs_to_rgb(h, b, s))
 
     def set_r(self, r):
         self.dmx_connection.setChannel(Light.RED_DIMMING, r)
