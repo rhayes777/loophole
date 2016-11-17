@@ -1,4 +1,19 @@
 import pysimpledmx
+import devices
+
+dmx = pysimpledmx.DMXConnection(3)
+
+light = devices.Light(dmx, 1)
+
+light.set_r(255)
+light.set_g(0)
+light.set_b(255)
+
+light.set_brightness(255)
+light.set_strobe_speed(0)
+light.set_master(255)
+
+dmx.render()
 
 # Example from https://github.com/c0z3n/pySimpleDMX
 # dmx = pysimpledmx.DMXConnection(3)
