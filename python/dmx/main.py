@@ -1,9 +1,9 @@
 import pysimpledmx
-import devices
+import lights
 
 dmx = pysimpledmx.DMXConnection(3)
 
-light = devices.Light(dmx, 1)
+light = lights.Light(dmx, 1)
 
 light.set_r(255)
 light.set_g(0)
