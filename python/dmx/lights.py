@@ -11,12 +11,12 @@ def hbs_to_rgb(hue, brightness, saturation):
 
 # A class to represent lights in the system
 class Light:
-    MASTER_DIMMING = 1
-    RED_DIMMING = 2
-    GREEN_DIMMING = 3
-    BLUE_DIMMING = 4
-    STROBE_CONTROL = 5
-    MASTER_FUNCTION = 6
+    MASTER_DIMMING = 0
+    RED_DIMMING = 1
+    GREEN_DIMMING = 2
+    BLUE_DIMMING = 3
+    STROBE_CONTROL = 4
+    MASTER_FUNCTION = 5
 
     # Create an instance of this class representing a light with a given address
     def __init__(self, dmx_connection, address):
@@ -37,24 +37,24 @@ class Light:
 
     # Set the red component (0 -> 255)
     def set_r(self, r):
-        self.dmx_connection.setChannel(Light.RED_DIMMING, r)
+        self.dmx_connection.setChannel(self.address + Light.RED_DIMMING, r)
 
     # Set the green component (0 -> 255)
     def set_g(self, g):
-        self.dmx_connection.setChannel(Light.GREEN_DIMMING, g)
+        self.dmx_connection.setChannel(self.address + Light.GREEN_DIMMING, g)
 
     # Set the blue component (0 -> 255)
     def set_b(self, b):
-        self.dmx_connection.setChannel(Light.BLUE_DIMMING, b)
+        self.dmx_connection.setChannel(self.address + Light.BLUE_DIMMING, b)
 
     # Set the brightness (0 -> 255)
     def set_brightness(self, brightness):
-        self.dmx_connection.setChannel(Light.MASTER_DIMMING, brightness)
+        self.dmx_connection.setChannel(self.address + Light.MASTER_DIMMING, brightness)
 
     # Set the speed of the strobe (0 -> 255)
     def set_strobe_speed(self, speed):
-        self.dmx_connection.setChannel(Light.STROBE_CONTROL, speed)
+        self.dmx_connection.setChannel(self.address + Light.STROBE_CONTROL, speed)
 
     # Probably on and off? Maybe presets? (0 -> 255)
     def set_master(self, master):
-        self.dmx_connection.setChannel(Light.MASTER_FUNCTION, master)
+        self.dmx_connection.setChannel(self.address + Light.MASTER_FUNCTION, master)
