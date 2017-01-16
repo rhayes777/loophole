@@ -4,3 +4,5 @@ http://www.qlcplus.org/forum/viewtopic.php?f=5&t=8434&p=40820&hilit=el+capitan#p
 Set channel d001
 
 New scene zero has control panel (under functions)
+
+Midi input requires midi channel 1-16
