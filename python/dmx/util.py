@@ -23,6 +23,7 @@ def serial_ports():
 
     result = []
     for port in ports:
+        print port
         try:
             s = serial.Serial(port)
             s.close()
