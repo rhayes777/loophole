@@ -45,8 +45,8 @@
   </Function>
   <Function ID="1" Type="Scene" Name="Blue">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="0">0,255,1,0,2,0,3,138,4,0,5,0</FixtureVal>
-   <FixtureVal ID="1">0,213,1,0,2,0,3,142,4,0,5,0</FixtureVal>
+   <FixtureVal ID="0">0,255,1,0,2,0,3,138</FixtureVal>
+   <FixtureVal ID="1">0,213,1,0,2,0,3,142</FixtureVal>
   </Function>
   <Function ID="2" Type="Chaser" Name="Police">
    <Speed FadeIn="0" FadeOut="0" Duration="500"/>
@@ -68,8 +68,8 @@
   </Function>
   <Function ID="5" Type="Scene" Name="Orange">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="0">0,255,1,248,2,69,3,0,4,0,5,0</FixtureVal>
-   <FixtureVal ID="1">0,0,1,0,2,0,3,0,4,0,5,0</FixtureVal>
+   <FixtureVal ID="0">0,255,1,248,2,69,3,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,248,2,69,3,0</FixtureVal>
   </Function>
   <Function ID="6" Type="Scene" Name="Purple">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
@@ -114,8 +114,8 @@
   </Function>
   <Function ID="10" Type="Scene" Name="Turquoise">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="0">0,255,1,50,2,234,3,105,4,0,5,0</FixtureVal>
-   <FixtureVal ID="1">0,255,1,50,2,234,3,105,4,0,5,0</FixtureVal>
+   <FixtureVal ID="0">0,255,1,50,2,234,3,105</FixtureVal>
+   <FixtureVal ID="1">0,255,1,50,2,234,3,105</FixtureVal>
   </Function>
   <Function ID="11" Type="Chaser" Name="Party">
    <Speed FadeIn="0" FadeOut="0" Duration="129"/>
@@ -125,6 +125,238 @@
    <Step Number="0" FadeIn="0" Hold="0" FadeOut="0">4</Step>
    <Step Number="1" FadeIn="0" Hold="0" FadeOut="0">5</Step>
    <Step Number="2" FadeIn="0" Hold="0" FadeOut="0">7</Step>
+  </Function>
+  <Function ID="12" Type="Scene" Name="BR">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,0,1,0,2,0,3,0</FixtureVal>
+   <FixtureVal ID="1">0,0,1,0,2,0,3,0</FixtureVal>
+  </Function>
+  <Function ID="13" Type="Scene" Name="GB">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,0,2,255,3,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,0,2,0,3,255</FixtureVal>
+  </Function>
+  <Function ID="14" Type="Scene" Name="RG">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,0,3,0</FixtureVal>
+   <FixtureVal ID="1">0,255,2,255</FixtureVal>
+  </Function>
+  <Function ID="15" Type="Chaser" Name="ColourWheel">
+   <Speed FadeIn="0" FadeOut="0" Duration="200"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
+   <Step Number="0" FadeIn="0" Hold="0" FadeOut="0">14</Step>
+   <Step Number="1" FadeIn="0" Hold="200" FadeOut="0">13</Step>
+   <Step Number="2" FadeIn="0" Hold="200" FadeOut="0">12</Step>
+  </Function>
+  <Function ID="16" Type="Chaser" Name="Fade">
+   <Speed FadeIn="0" FadeOut="0" Duration="1000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="PerStep" FadeOut="PerStep" Duration="Common"/>
+   <Step Number="0" FadeIn="500" Hold="0" FadeOut="500">5</Step>
+   <Step Number="1" FadeIn="500" Hold="758" FadeOut="500">3</Step>
+  </Function>
+  <Function ID="17" Type="Scene" Name="Nothing">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,0,1,0,2,0,3,0,4,0,5,0</FixtureVal>
+   <FixtureVal ID="1">0,0,1,0,2,0,3,0,4,0,5,0</FixtureVal>
+  </Function>
+  <Function ID="18" Type="Scene" Name="RedPurple">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,0,1,0,2,0,3,0</FixtureVal>
+   <FixtureVal ID="1">0,0,1,0,2,0,3,0</FixtureVal>
+  </Function>
+  <Function ID="19" Type="Chaser" Name="RedPurpFade">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="PerStep" FadeOut="PerStep" Duration="PerStep"/>
+   <Step Number="0" FadeIn="0" Hold="500" FadeOut="1200">18</Step>
+   <Step Number="1" FadeIn="1200" Hold="0" FadeOut="0">17</Step>
+  </Function>
+  <Function ID="20" Type="Chaser" Name="TurqYellowGreenFade">
+   <Speed FadeIn="1000" FadeOut="1000" Duration="1000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>PingPong</RunOrder>
+   <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
+   <Step Number="0" FadeIn="700" Hold="0" FadeOut="0">4</Step>
+   <Step Number="1" FadeIn="700" Hold="0" FadeOut="0">10</Step>
+   <Step Number="2" FadeIn="700" Hold="0" FadeOut="0">3</Step>
+  </Function>
+  <Function ID="21" Type="Scene" Name="OrangeYellow">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,115,3,21,4,0,5,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,209,2,220,3,0,4,0,5,0</FixtureVal>
+  </Function>
+  <Function ID="22" Type="Scene" Name="YellowOrange">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,255,2,247,3,0,4,0,5,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,255,2,134,3,12,4,0,5,0</FixtureVal>
+  </Function>
+  <Function ID="23" Type="Chaser" Name="OrangeYellowFade">
+   <Speed FadeIn="500" FadeOut="500" Duration="500"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
+   <Step Number="0" FadeIn="0" Hold="0" FadeOut="0">21</Step>
+   <Step Number="1" FadeIn="0" Hold="0" FadeOut="0">22</Step>
+  </Function>
+  <Function ID="24" Type="Scene" Name="TurquoiseBlue">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,23,2,255,3,170</FixtureVal>
+   <FixtureVal ID="1">0,255,1,0,2,85,3,255</FixtureVal>
+  </Function>
+  <Function ID="25" Type="Scene" Name="BlueGreen">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,250,1,0,2,0,3,255</FixtureVal>
+   <FixtureVal ID="1">0,255,1,0,2,255,3,0</FixtureVal>
+  </Function>
+  <Function ID="26" Type="Scene" Name="GreenTurquoise">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,0,2,255,3,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,52,2,255,3,116</FixtureVal>
+  </Function>
+  <Function ID="27" Type="Chaser" Name="Ocean">
+   <Speed FadeIn="700" FadeOut="700" Duration="700"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Random</RunOrder>
+   <SpeedModes FadeIn="Common" FadeOut="Common" Duration="Common"/>
+   <Step Number="0" FadeIn="0" Hold="0" FadeOut="0">10</Step>
+   <Step Number="1" FadeIn="0" Hold="0" FadeOut="0">24</Step>
+   <Step Number="2" FadeIn="0" Hold="0" FadeOut="0">4</Step>
+   <Step Number="3" FadeIn="0" Hold="0" FadeOut="0">26</Step>
+   <Step Number="4" FadeIn="0" Hold="0" FadeOut="0">25</Step>
+   <Step Number="5" FadeIn="0" Hold="0" FadeOut="0">1</Step>
+  </Function>
+  <Function ID="28" Type="Chaser" Name="One">
+   <Speed FadeIn="0" FadeOut="0" Duration="500"/>
+   <Direction>Forward</Direction>
+   <RunOrder>SingleShot</RunOrder>
+   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
+   <Sequence BoundScene="12"/>
+   <Step Number="0" FadeIn="0" Hold="0" FadeOut="0" Values="12">0,0,255,0,3,255,1,0,255,1,1,255</Step>
+   <Step Number="1" FadeIn="0" Hold="0" FadeOut="0" Values="12">0,0,255,0,3,255,1,0,255,1,2,255</Step>
+  </Function>
+  <Function ID="29" Type="EFX" Name="New EFX 29">
+   <PropagationMode>Parallel</PropagationMode>
+   <Speed FadeIn="0" FadeOut="0" Duration="20000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm>Circle</Algorithm>
+   <Width>127</Width>
+   <Height>127</Height>
+   <Rotation>0</Rotation>
+   <StartOffset>0</StartOffset>
+   <IsRelative>0</IsRelative>
+   <Axis Name="X">
+    <Offset>127</Offset>
+    <Frequency>2</Frequency>
+    <Phase>90</Phase>
+   </Axis>
+   <Axis Name="Y">
+    <Offset>127</Offset>
+    <Frequency>3</Frequency>
+    <Phase>0</Phase>
+   </Axis>
+  </Function>
+  <Function ID="30" Type="Collection" Name="Early">
+   <Step Number="0">15</Step>
+   <Step Number="1">16</Step>
+   <Step Number="2">27</Step>
+   <Step Number="3">23</Step>
+   <Step Number="4">11</Step>
+   <Step Number="5">2</Step>
+   <Step Number="6">19</Step>
+   <Step Number="7">9</Step>
+   <Step Number="8">20</Step>
+  </Function>
+  <Function ID="31" Type="RGBMatrix" Name="New RGB Matrix 31">
+   <Speed FadeIn="0" FadeOut="0" Duration="500"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <Algorithm Type="Script">Stripes</Algorithm>
+   <DimmerControl>1</DimmerControl>
+   <MonoColor>4294901760</MonoColor>
+   <FixtureGroup>4294967295</FixtureGroup>
+   <Property Name="orientation" Value=""/>
+  </Function>
+  <Function ID="32" Type="Audio" Name="Beefsh - Jazz Scientific.mp3">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <Source>Beefsh - Jazz Scientific.mp3</Source>
+  </Function>
+  <Function ID="33" Type="Chaser" Name="FadeInOrange">
+   <Speed FadeIn="0" FadeOut="0" Duration="1500"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="PerStep" FadeOut="PerStep" Duration="Common"/>
+   <Step Number="0" FadeIn="0" Hold="0" FadeOut="1500">17</Step>
+   <Step Number="1" FadeIn="1500" Hold="0" FadeOut="300">5</Step>
+  </Function>
+  <Function ID="35" Type="Scene" Name="StrobeBlueGreen">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,68,2,0,3,255,4,227,5,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,18,2,238,3,45,4,206,5,0</FixtureVal>
+  </Function>
+  <Function ID="36" Type="Scene" Name="StrobeRedGreen">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,255,1,227,2,17,3,26,4,154,5,0</FixtureVal>
+   <FixtureVal ID="1">0,255,1,0,2,235,3,20,4,200,5,0</FixtureVal>
+  </Function>
+  <Function ID="37" Type="Scene" Name="StrobePurpOrange">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">0,194,1,233,2,0,3,219,4,225,5,0</FixtureVal>
+   <FixtureVal ID="1">0,232,1,223,2,141,3,9,4,153,5,0</FixtureVal>
+  </Function>
+  <Function ID="38" Type="Scene" Name="StrobeMaster">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">4,120</FixtureVal>
+   <FixtureVal ID="1">4,191</FixtureVal>
+  </Function>
+  <Function ID="39" Type="Collection" Name="OceanRave">
+   <Step Number="0">27</Step>
+   <Step Number="1">38</Step>
+  </Function>
+  <Function ID="40" Type="Collection" Name="ColourWheelStrobe">
+   <Step Number="0">15</Step>
+   <Step Number="1">38</Step>
+  </Function>
+  <Function ID="41" Type="Scene" Name="New Scene 41">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="4294967295"/>
+  </Function>
+  <Function ID="42" Type="Scene" Name="StrobeFast">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <FixtureVal ID="0">4,244</FixtureVal>
+   <FixtureVal ID="1">4,244</FixtureVal>
+  </Function>
+  <Function ID="43" Type="Chaser" Name="FadeRedPurple">
+   <Speed FadeIn="0" FadeOut="0" Duration="0"/>
+   <Direction>Forward</Direction>
+   <RunOrder>SingleShot</RunOrder>
+   <SpeedModes FadeIn="Default" FadeOut="PerStep" Duration="Common"/>
+   <Step Number="0" FadeIn="0" Hold="0" FadeOut="750">18</Step>
+  </Function>
+  <Function ID="44" Type="Collection" Name="SnareRedPurple">
+   <Step Number="0">19</Step>
+   <Step Number="1">42</Step>
+  </Function>
+  <Function ID="45" Type="Chaser" Name="Strobe">
+   <Speed FadeIn="0" FadeOut="0" Duration="80"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
+   <Sequence BoundScene="18"/>
+   <Step Number="0" FadeIn="0" Hold="0" FadeOut="0" Values="8">0,0,255,0,1,220,1,0,255,1,1,132,1,3,138</Step>
+   <Step Number="1" FadeIn="0" Hold="0" FadeOut="0" Values="8">0,1,220,1,1,132,1,3,138</Step>
+  </Function>
+  <Function ID="46" Type="Chaser" Name="Snare">
+   <Speed FadeIn="0" FadeOut="500" Duration="500"/>
+   <Direction>Forward</Direction>
+   <RunOrder>Loop</RunOrder>
+   <SpeedModes FadeIn="Default" FadeOut="Common" Duration="Common"/>
+   <Step Number="0" FadeIn="0" Hold="0" FadeOut="500">45</Step>
   </Function>
  </Engine>
  <VirtualConsole>
