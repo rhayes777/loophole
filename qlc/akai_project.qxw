@@ -337,8 +337,8 @@
   </Function>
   <Function ID="42" Type="Scene" Name="StrobeFast">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="0">4,244</FixtureVal>
-   <FixtureVal ID="1">4,244</FixtureVal>
+   <FixtureVal ID="0">4,0</FixtureVal>
+   <FixtureVal ID="1">4,0</FixtureVal>
   </Function>
   <Function ID="43" Type="Chaser" Name="FadeRedPurple">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
@@ -376,16 +376,41 @@
   </Function>
   <Function ID="48" Type="Scene" Name="Flash">
    <Speed FadeIn="0" FadeOut="0" Duration="0"/>
-   <FixtureVal ID="0">0,0</FixtureVal>
+   <FixtureVal ID="0">0,0,1,0,2,0,3,0</FixtureVal>
    <FixtureVal ID="1">0,0</FixtureVal>
   </Function>
-  <Function ID="49" Type="Chaser" Name="Flash long">
+  <Function ID="49" Type="Chaser" Name="Long">
    <Speed FadeIn="0" FadeOut="0" Duration="1200"/>
    <Direction>Forward</Direction>
    <RunOrder>SingleShot</RunOrder>
    <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
    <Sequence BoundScene="48"/>
    <Step Number="0" FadeIn="0" Hold="0" FadeOut="0" Values="2">0,0,255,1,0,255</Step>
+  </Function>
+  <Function ID="50" Type="Chaser" Name="One Second Strobe">
+   <Speed FadeIn="0" FadeOut="0" Duration="1000"/>
+   <Direction>Forward</Direction>
+   <RunOrder>SingleShot</RunOrder>
+   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="PerStep"/>
+   <Sequence BoundScene="42"/>
+   <Step Number="0" FadeIn="0" Hold="1000" FadeOut="0" Values="2">0,4,198,1,4,216</Step>
+   <Step Number="1" FadeIn="0" Hold="0" FadeOut="0" Values="2"/>
+  </Function>
+  <Function ID="51" Type="Chaser" Name="Off">
+   <Speed FadeIn="0" FadeOut="0" Duration="500"/>
+   <Direction>Forward</Direction>
+   <RunOrder>SingleShot</RunOrder>
+   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
+   <Sequence BoundScene="48"/>
+   <Step Number="0" FadeIn="0" Hold="0" FadeOut="0" Values="2"/>
+  </Function>
+  <Function ID="52" Type="Chaser" Name="Green Short Solo">
+   <Speed FadeIn="0" FadeOut="0" Duration="600"/>
+   <Direction>Forward</Direction>
+   <RunOrder>SingleShot</RunOrder>
+   <SpeedModes FadeIn="Default" FadeOut="Default" Duration="Common"/>
+   <Sequence BoundScene="48"/>
+   <Step Number="0" FadeIn="0" Hold="0" FadeOut="0" Values="2"/>
   </Function>
  </Engine>
  <VirtualConsole>
@@ -464,7 +489,7 @@
       <BackgroundImage>None</BackgroundImage>
       <Font>Default</Font>
      </Appearance>
-     <Function ID="11"/>
+     <Function ID="2"/>
      <Action>Toggle</Action>
      <Intensity Adjust="False">100</Intensity>
      <Input Universe="0" Channel="37033"/>
@@ -563,7 +588,7 @@
      <BackgroundImage>None</BackgroundImage>
      <Font>Default</Font>
     </Appearance>
-    <Function ID="7"/>
+    <Function ID="51"/>
     <Action>Toggle</Action>
     <Intensity Adjust="False">100</Intensity>
     <Input Universe="0" Channel="37030"/>
@@ -577,7 +602,7 @@
      <BackgroundImage>None</BackgroundImage>
      <Font>Default</Font>
     </Appearance>
-    <Function ID="6"/>
+    <Function ID="52"/>
     <Action>Toggle</Action>
     <Intensity Adjust="False">100</Intensity>
     <Input Universe="0" Channel="37031"/>
@@ -591,7 +616,7 @@
      <BackgroundImage>None</BackgroundImage>
      <Font>Default</Font>
     </Appearance>
-    <Function ID="4"/>
+    <Function ID="50"/>
     <Action>Toggle</Action>
     <Intensity Adjust="False">100</Intensity>
     <Input Universe="0" Channel="37027"/>
