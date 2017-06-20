@@ -20,5 +20,5 @@ class DanceMat:
         self.dev.read(self.endpoint.bEndpointAddress, self.endpoint.wMaxPacketSize)
 
 
-mat = DanceMat()
-print mat.read()
+# mat = DanceMat()
+# print mat.read()
