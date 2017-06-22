@@ -86,6 +86,16 @@ def playChord(position, key, octave):
         i += 1
 
 
+def play_chord_array(position, array, octave=5):
+    for note in array:
+        chordMIDI = [0x90, position + 12 * octave + note, 112]
+        midiout.send_message(chordMIDI)
+
+
+def play_note(position, octave=5):
+    midiout.send_message([0x90, position + 12 * octave, 112])
+
+
 # stopChord function. Uses while loop to scan through all notes
 # and sets all of their velocities to zero
 
@@ -101,44 +111,49 @@ def stopChord():
 # Shockingly ugly main loop
 # Just cycles throgh all the chords in the sequence until the counter reaches 999
 
-counter = 0
-mainRoot = 0
+def run():
+    counter = 0
+    mainRoot = 0
 
-timeStep = 1
+    timeStep = 1
 
-while counter < 1000:
+    while counter < 1000:
 
-    print(counter)
+        print(counter)
 
-    rootStep = random.randint(-5, 5)
+        rootStep = random.randint(-5, 5)
 
-    mainRoot = mainRoot + rootStep
+        mainRoot = mainRoot + rootStep
 
-    chordSelect = random.randint(0, len(chordStruct) - 1)
+        chordSelect = random.randint(0, len(chordStruct) - 1)
 
-    if random.randint(0, 30) > 15:
+        if random.randint(0, 30) > 15:
 
-        playChord(mainRoot, chordSelect, 5)
+            playChord(mainRoot, chordSelect, 5)
 
-        if mainRoot > 25:
-            mainRoot = 0
+            if mainRoot > 25:
+                mainRoot = 0
 
-    else:
+        else:
 
-        if mainRoot < 1:
-            mainRoot = 20
+            if mainRoot < 1:
+                mainRoot = 20
 
-        playChord(mainRoot - 2, chordSelect, 5)
+            playChord(mainRoot - 2, chordSelect, 5)
 
-    print(chordStruct[chordSelect])
+        print(chordStruct[chordSelect])
 
-    time.sleep(timeStep)
+        time.sleep(timeStep)
 
-    counter += 1
+        counter += 1
 
-    stopChord()
+        stopChord()
 
-del midiout
+    del midiout
+
+
+if __name__ == "__main__":
+    run()
 
 ### original code that I pilfered...
 #

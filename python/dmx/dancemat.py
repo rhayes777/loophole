@@ -15,7 +15,7 @@ class Button:
     circle = 'circle'
 
 
-button_list = ['left', 'down', 'up', 'right', 'triangle', 'square', 'x', 'circle']
+button_list = ['left', 'down', 'up', 'right', 'triangle', 'square', 'x', 'circle', '9', '10']
 
 
 class DanceMat:
