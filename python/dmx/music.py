@@ -73,6 +73,8 @@ class Chord:
     seventh_octave = [0, 2, 4, 6, 7]
     sixth = [0, 2, 4, 5, 7]
 
+    all = [triad, triad_octave, suspended_second, suspended_fourth, seventh, seventh_octave, sixth]
+
     def __init__(self, notes):
         self.notes = notes
 
@@ -86,6 +88,8 @@ class Scale:
     minor = [0, 2, 3, 5, 7, 8, 10]
     minor_pentatonic = [0, 3, 5, 7, 10]
     minor_blues = [0, 3, 5, 6, 7, 10]
+
+    all = [major, minor, minor_pentatonic, minor_blues]
 
     # Make a new scale with a scale passed to it (e.g. scale = Scale(minor_blues))
     def __init__(self, scale, base_octave=3):
