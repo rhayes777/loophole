@@ -31,12 +31,54 @@ chord_dict = {
 
 }
 
-scale_dict = {
-    "major": [0, 2, 4, 5, 7, 9, 11, 12],
-    "minor": [0, 2, 3, 5, 7, 8, 10, 12],
-    "minor_pentatonic": [0, 3, 5, 7, 10, 12, 15, 17],
-    "minor_blues": [0, 3, 5, 6, 7, 10, 12, 15]
-}
+
+class Scale:
+    major = [0, 2, 4, 5, 7, 9, 11]
+    minor = [0, 2, 3, 5, 7, 8, 10]
+    minor_pentatonic = [0, 3, 5, 7, 10]
+    minor_blues = [0, 3, 5, 6, 7, 10]
+
+    def __init__(self, scale, base_octave=3):
+        self.scale = scale
+        self.length = len(scale)
+        self.note_dict = {}
+        self.base_octave = base_octave
+
+    def note(self, position):
+        if str(position) not in self.note_dict:
+            interval = self.scale[position % self.length]
+            octave = position / self.length + self.base_octave
+            self.note_dict[str(position)] = Note(interval, octave)
+        return self.note_dict[str(position)]
+
+    def change_octave(self, by):
+        print "chaning octave"
+        self.base_octave = self.base_octave + by
+        for note in self.note_dict.values():
+            note.stop()
+        self.note_dict = {}
+
+
+class Note:
+    def __init__(self, interval, octave=5, volume=112):
+        self.position = 12 * octave + interval
+        self.volume = volume
+
+    def play(self, volume=None):
+        if volume is None:
+            volume = self.volume
+        print [0x90, self.position, volume]
+        midiout.send_message([0x90, self.position, volume])
+
+    def stop(self):
+        midiout.send_message([0x90, self.position, 0])
+
+
+def play_chord_array(position, array, octave=5):
+    for note in array:
+        chordMIDI = [0x90, position + 12 * octave + note, 112]
+        midiout.send_message(chordMIDI)
+
 
 chordStruct = [
 
@@ -91,20 +133,6 @@ def playChord(position, key, octave):
         midiout.send_message(chordMIDI)
 
         i += 1
-
-
-def play_chord_array(position, array, octave=5):
-    for note in array:
-        chordMIDI = [0x90, position + 12 * octave + note, 112]
-        midiout.send_message(chordMIDI)
-
-
-def play_note(position, octave=5):
-    midiout.send_message([0x90, position + 12 * octave, 112])
-
-
-def stop_note(position, octave=5):
-    return midiout.send_message([0x90, position + 12 * octave, 0])
 
 
 # stopChord function. Uses while loop to scan through all notes

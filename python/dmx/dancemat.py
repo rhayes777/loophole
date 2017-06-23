@@ -16,9 +16,11 @@ class Button:
     square = 'square'
     x = 'x'
     circle = 'circle'
+    select = 'select'
+    start = 'start'
 
 
-button_list = ['left', 'down', 'up', 'right', 'triangle', 'square', 'x', 'circle', '9', '10']
+button_list = ['left', 'down', 'up', 'right', 'triangle', 'square', 'x', 'circle', 'select', 'start']
 
 
 class DanceMat:
