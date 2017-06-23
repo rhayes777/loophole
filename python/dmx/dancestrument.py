@@ -19,7 +19,8 @@ playing_notes = {}
 
 def listener(button, is_on):
     if button in position_dict:
-        note = playing_notes[button] if button in playing_notes else scale.chord(position_dict[button], intervals=music.Chord.seventh_octave)
+        note = playing_notes[button] if button in playing_notes else scale.chord(position_dict[button],
+                                                                                 intervals=music.Chord.seventh_octave)
         if is_on:
             print "{} pressed".format(button)
             instrument.play(note)
