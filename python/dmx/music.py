@@ -60,10 +60,10 @@ class Scale:
 
     def note(self, position):
         root = self.scale[position % self.length]
-        if str(root) not in self.note_dict:
-            octave = position / self.length + self.base_octave
-            self.note_dict[str(root)] = Note(root, octave)
-        return self.note_dict[str(root)]
+        octave = position / self.length + self.base_octave
+        if str(root + octave) not in self.note_dict:
+            self.note_dict[str(root + octave)] = Note(root, octave)
+        return self.note_dict[str(root + octave)]
 
     def chord(self, position, intervals=Chord.triad):
         root = self.scale[position % self.length]
