@@ -49,6 +49,7 @@ class MidiInstrument:
             self.playing_notes.remove(obj)
             self.stopping_notes.add(obj)
 
+    # Stop playing everything
     def stop_all(self):
         self.stopping_notes.update(self.playing_notes)
         self.playing_notes = set()
@@ -61,9 +62,13 @@ class Note:
         self.volume = volume
 
 
-# Represents a chord.
+# Represents a chord
 class Chord:
+    # These lists are positions within a scale. [0, 2, 4] is first, third and fifth which is a regular triad
     triad = [0, 2, 4]
+    triad_octave = [0, 2, 4, 8]
+    suspended_second = [0, 2, 3]
+    suspended_fourth = [0, 2, 5]
 
     def __init__(self, notes):
         self.notes = notes
@@ -79,6 +84,7 @@ class Scale:
     minor_pentatonic = [0, 3, 5, 7, 10]
     minor_blues = [0, 3, 5, 6, 7, 10]
 
+    # Make a new scale with a scale passed to it (e.g. scale = Scale(minor_blues))
     def __init__(self, scale, base_octave=3):
         self.scale = scale
         self.length = len(scale)
@@ -87,13 +93,17 @@ class Scale:
     def interval_to_position(self, interval):
         return self.scale[interval % self.length] + 12 * (interval / self.length + self.base_octave)
 
+    # Get a note from this scale starting with a given interval from the root (0, 1, 2, 3 etc.)
     def note(self, interval):
         position = self.interval_to_position(interval)
         return Note(position)
 
+    # Get a chord from this scale starting with a given interval from the root (0, 1, 2, 3 etc.) Set the chord type
+    # using intervals (e.g. chord = scale.chord(0, intervals=Chord.triad) gives the root triad. Chords always in key!)
     def chord(self, interval, intervals=Chord.triad):
         positions = map(lambda i: self.interval_to_position(interval + i), intervals)
         return Chord(map(Note, positions))
 
+    # Go up by number of octaves
     def change_octave(self, by):
         self.base_octave = self.base_octave + by
