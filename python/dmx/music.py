@@ -36,7 +36,7 @@ chord_dict = {
 class MidiInstrument:
     def __init__(self, no_of_positions=120):
         self.no_of_positions = no_of_positions
-        self.playing_notes = []
+        self.playing_notes = set()
         self.stopping_notes = []
 
     # Call this to dispatch midi messages
@@ -62,7 +62,7 @@ class MidiInstrument:
             for note in obj.notes:
                 self.play(note)
         else:
-            self.playing_notes.append(obj)
+            self.playing_notes.add(obj)
         print self.playing_notes
 
     # Stop playing a note or chord. Will take effect once update called.
