@@ -14,21 +14,27 @@ position_dict = {dancemat.Button.triangle: 0,
                  dancemat.Button.up: 6,
                  dancemat.Button.circle: 7}
 
+playing_notes = {}
+
 
 def listener(button, is_on):
     print "{} is_on = {}".format(button, is_on)
     if button in position_dict:
-        note = scale.chord(position_dict[button])
+        note = playing_notes[button] if button in playing_notes else scale.chord(position_dict[button])
         if is_on:
             instrument.play(note)
+            playing_notes[button] = note
         else:
             instrument.stop(note)
+            if button in playing_notes:
+                del playing_notes[button]
     elif is_on:
+        instrument.stop_all()
         scale.change_octave(-1 if button == dancemat.Button.select else 1)
+    instrument.update()
 
 
 mat.set_button_listener(listener)
 
 while 1:
     mat.read()
-    instrument.update()

@@ -32,12 +32,14 @@ chord_dict = {
 }
 
 
+# Class that represents a midi instrument.
 class MidiInstrument:
     def __init__(self, no_of_positions=120):
         self.no_of_positions = no_of_positions
         self.playing_notes = []
         self.stopping_notes = []
 
+    # Call this to dispatch midi messages
     def update(self):
         messages_dict = {}
         for note in self.stopping_notes:
@@ -53,29 +55,51 @@ class MidiInstrument:
             midiout.send_message(message)
         self.stopping_notes = []
 
+    # Adds a chord or note to start playing. Will play once update called and until stop called.
     def play(self, obj):
+        print "play {}".format(obj)
         if isinstance(obj, Chord):
             for note in obj.notes:
                 self.play(note)
         else:
             self.playing_notes.append(obj)
+        print self.playing_notes
 
+    # Stop playing a note or chord. Will take effect once update called.
     def stop(self, obj):
+        print "stop {}".format(obj)
         if isinstance(obj, Chord):
             for note in obj.notes:
                 self.stop(note)
         elif obj in self.playing_notes:
             self.playing_notes.remove(obj)
             self.stopping_notes.append(obj)
+        print self.playing_notes
+
+    def stop_all(self):
+        self.stopping_notes.extend(self.playing_notes)
+        self.playing_notes = []
 
 
+# Represents a note
+class Note:
+    def __init__(self, position, volume=112):
+        self.position = position
+        self.volume = volume
+
+
+# Represents a chord.
 class Chord:
     triad = [0, 2, 4]
 
     def __init__(self, notes):
         self.notes = notes
 
+    def add_stress(self, note):
+        self.notes.append(note)
 
+
+# Represents a scale
 class Scale:
     major = [0, 2, 4, 5, 7, 9, 11]
     minor = [0, 2, 3, 5, 7, 8, 10]
@@ -85,8 +109,6 @@ class Scale:
     def __init__(self, scale, base_octave=3):
         self.scale = scale
         self.length = len(scale)
-        self.note_dict = {}
-        self.chord_dict = {}
         self.base_octave = base_octave
 
     def interval_to_position(self, interval):
@@ -94,24 +116,14 @@ class Scale:
 
     def note(self, interval):
         position = self.interval_to_position(interval)
-        if str(position) not in self.note_dict:
-            self.note_dict[str(position)] = Note(position)
-        return self.note_dict[str(position)]
+        return Note(position)
 
     def chord(self, interval, intervals=Chord.triad):
         positions = map(lambda i: self.interval_to_position(interval + i), intervals)
-        if str(positions) not in self.chord_dict:
-            self.chord_dict[str(positions)] = Chord(map(Note, positions))
-        return self.chord_dict[str(positions)]
+        return Chord(map(Note, positions))
 
     def change_octave(self, by):
         self.base_octave = self.base_octave + by
-
-
-class Note:
-    def __init__(self, position, volume=112):
-        self.position = position
-        self.volume = volume
 
 
 chordStruct = [
