@@ -1,14 +1,4 @@
-# Generates chords randomly from an array (List of Lists)
-# 
-# Plays it in realtime.
-#
-# change timeStep to vary spacing between chords (in seconds)
-#
-#
-
-import time
 import rtmidi
-import random
 
 midiout = rtmidi.MidiOut()
 available_ports = midiout.get_ports()
@@ -18,26 +8,13 @@ if available_ports:
 else:
     midiout.open_virtual_port("My virtual output")
 
-# Defining chordStruct, a list of chords.
-#
-# Each chord is itself a list, with each integer showing its distance
-# from the root note in semitones.
-#
-
-
-chord_dict = {
-    "major": [0, 4, 7],
-    "minor": [0, 3, 7]
-
-}
-
 
 # Class that represents a midi instrument.
 class MidiInstrument:
     def __init__(self, no_of_positions=120):
         self.no_of_positions = no_of_positions
         self.playing_notes = set()
-        self.stopping_notes = []
+        self.stopping_notes = set()
 
     # Call this to dispatch midi messages
     def update(self):
@@ -53,7 +30,7 @@ class MidiInstrument:
                 messages_dict[str(note.position)][2] = 112
         for message in messages_dict.values():
             midiout.send_message(message)
-        self.stopping_notes = []
+        self.stopping_notes = set()
 
     # Adds a chord or note to start playing. Will play once update called and until stop called.
     def play(self, obj):
@@ -62,7 +39,6 @@ class MidiInstrument:
                 self.play(note)
         else:
             self.playing_notes.add(obj)
-        print self.playing_notes
 
     # Stop playing a note or chord. Will take effect once update called.
     def stop(self, obj):
@@ -71,12 +47,11 @@ class MidiInstrument:
                 self.stop(note)
         elif obj in self.playing_notes:
             self.playing_notes.remove(obj)
-            self.stopping_notes.append(obj)
-        print self.playing_notes
+            self.stopping_notes.add(obj)
 
     def stop_all(self):
-        self.stopping_notes.extend(self.playing_notes)
-        self.playing_notes = []
+        self.stopping_notes.update(self.playing_notes)
+        self.playing_notes = set()
 
 
 # Represents a note
@@ -122,4 +97,3 @@ class Scale:
 
     def change_octave(self, by):
         self.base_octave = self.base_octave + by
-
