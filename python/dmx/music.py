@@ -66,9 +66,12 @@ class Note:
 class Chord:
     # These lists are positions within a scale. [0, 2, 4] is first, third and fifth which is a regular triad
     triad = [0, 2, 4]
-    triad_octave = [0, 2, 4, 8]
+    triad_octave = [0, 2, 4, 7]
     suspended_second = [0, 2, 3]
     suspended_fourth = [0, 2, 5]
+    seventh = [0, 2, 4, 7]
+    seventh_octave = [0, 2, 4, 6, 7]
+    sixth = [0, 2, 4, 5, 7]
 
     def __init__(self, notes):
         self.notes = notes
