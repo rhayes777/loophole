@@ -1,9 +1,9 @@
 import dancemat
-import chord
+import music
 
 mat = dancemat.DanceMat()
 
-scale = chord.Scale(chord.Scale.major)
+scale = music.Scale(music.Scale.major)
 
 position_dict = {dancemat.Button.triangle: 0,
                  dancemat.Button.down: 1,
@@ -18,11 +18,8 @@ position_dict = {dancemat.Button.triangle: 0,
 def listener(button, is_on):
     print "{} is_on = {}".format(button, is_on)
     if button in position_dict:
-        note = scale.note(position_dict[button])
-        if is_on:
-            note.play()
-        else:
-            note.stop()
+        chord = scale.chord(position_dict[button])
+        chord.set_should_play(is_on)
     elif is_on:
         scale.change_octave(-1 if button == dancemat.Button.select else 1)
 
@@ -31,3 +28,4 @@ mat.set_button_listener(listener)
 
 while 1:
     mat.read()
+    scale.update()

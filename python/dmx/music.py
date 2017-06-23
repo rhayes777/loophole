@@ -32,6 +32,19 @@ chord_dict = {
 }
 
 
+class Chord:
+
+    triad = [0, 2, 4]
+
+    def __init__(self, root, intervals, scale):
+        positions = map(lambda interval: root + interval, intervals)
+        self.notes = map(scale.note, positions)
+
+    def set_should_play(self, should_play):
+        for note in self.notes:
+            note.add_should_play(should_play)
+
+
 class Scale:
     major = [0, 2, 4, 5, 7, 9, 11]
     minor = [0, 2, 3, 5, 7, 8, 10]
@@ -42,27 +55,47 @@ class Scale:
         self.scale = scale
         self.length = len(scale)
         self.note_dict = {}
+        self.chord_dict = {}
         self.base_octave = base_octave
 
     def note(self, position):
-        if str(position) not in self.note_dict:
-            interval = self.scale[position % self.length]
+        root = self.scale[position % self.length]
+        if str(root) not in self.note_dict:
             octave = position / self.length + self.base_octave
-            self.note_dict[str(position)] = Note(interval, octave)
-        return self.note_dict[str(position)]
+            self.note_dict[str(root)] = Note(root, octave)
+        return self.note_dict[str(root)]
+
+    def chord(self, position, intervals=Chord.triad):
+        root = self.scale[position % self.length]
+        if str(root) not in self.chord_dict:
+            self.chord_dict[str(root)] = Chord(root, intervals, self)
+        return self.chord_dict[str(root)]
 
     def change_octave(self, by):
-        print "chaning octave"
         self.base_octave = self.base_octave + by
         for note in self.note_dict.values():
             note.stop()
-        self.note_dict = {}
+
+    def update(self):
+        for note in self.note_dict.values():
+            note.update()
 
 
 class Note:
     def __init__(self, interval, octave=5, volume=112):
         self.position = 12 * octave + interval
         self.volume = volume
+        self.should_play = []
+
+    def add_should_play(self, should_play):
+        self.should_play.append(should_play)
+
+    def update(self):
+        if True in self.should_play:
+            self.play()
+        elif False in self.should_play:
+            self.stop()
+        self.should_play = []
 
     def play(self, volume=None):
         if volume is None:
