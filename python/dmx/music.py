@@ -32,17 +32,48 @@ chord_dict = {
 }
 
 
-class Chord:
+class MidiInstrument:
+    def __init__(self, no_of_positions=120):
+        self.no_of_positions = no_of_positions
+        self.playing_notes = []
+        self.stopping_notes = []
 
+    def update(self):
+        messages_dict = {}
+        for note in self.stopping_notes:
+            messages_dict[str(note.position)] = [0x90, note.position, 0]
+        for note in self.playing_notes:
+            if str(note.position) in messages_dict:
+                messages_dict[str(note.position)][2] += note.volume
+            else:
+                messages_dict[str(note.position)] = [0x90, note.position, note.volume]
+            if messages_dict[str(note.position)][2] > 112:
+                messages_dict[str(note.position)][2] = 112
+        for message in messages_dict.values():
+            midiout.send_message(message)
+        self.stopping_notes = []
+
+    def play(self, obj):
+        if isinstance(obj, Chord):
+            for note in obj.notes:
+                self.play(note)
+        else:
+            self.playing_notes.append(obj)
+
+    def stop(self, obj):
+        if isinstance(obj, Chord):
+            for note in obj.notes:
+                self.stop(note)
+        elif obj in self.playing_notes:
+            self.playing_notes.remove(obj)
+            self.stopping_notes.append(obj)
+
+
+class Chord:
     triad = [0, 2, 4]
 
-    def __init__(self, root, intervals, scale):
-        positions = map(lambda interval: root + interval, intervals)
-        self.notes = map(scale.note, positions)
-
-    def set_should_play(self, should_play):
-        for note in self.notes:
-            note.add_should_play(should_play)
+    def __init__(self, notes):
+        self.notes = notes
 
 
 class Scale:
@@ -58,59 +89,29 @@ class Scale:
         self.chord_dict = {}
         self.base_octave = base_octave
 
-    def note(self, position):
-        root = self.scale[position % self.length]
-        octave = position / self.length + self.base_octave
-        if str(root + octave) not in self.note_dict:
-            self.note_dict[str(root + octave)] = Note(root, octave)
-        return self.note_dict[str(root + octave)]
+    def interval_to_position(self, interval):
+        return self.scale[interval % self.length] + 12 * (interval / self.length + self.base_octave)
 
-    def chord(self, position, intervals=Chord.triad):
-        root = self.scale[position % self.length]
-        if str(root) not in self.chord_dict:
-            self.chord_dict[str(root)] = Chord(root, intervals, self)
-        return self.chord_dict[str(root)]
+    def note(self, interval):
+        position = self.interval_to_position(interval)
+        if str(position) not in self.note_dict:
+            self.note_dict[str(position)] = Note(position)
+        return self.note_dict[str(position)]
+
+    def chord(self, interval, intervals=Chord.triad):
+        positions = map(lambda i: self.interval_to_position(interval + i), intervals)
+        if str(positions) not in self.chord_dict:
+            self.chord_dict[str(positions)] = Chord(map(Note, positions))
+        return self.chord_dict[str(positions)]
 
     def change_octave(self, by):
         self.base_octave = self.base_octave + by
-        for note in self.note_dict.values():
-            note.stop()
-
-    def update(self):
-        for note in self.note_dict.values():
-            note.update()
 
 
 class Note:
-    def __init__(self, interval, octave=5, volume=112):
-        self.position = 12 * octave + interval
+    def __init__(self, position, volume=112):
+        self.position = position
         self.volume = volume
-        self.should_play = []
-
-    def add_should_play(self, should_play):
-        self.should_play.append(should_play)
-
-    def update(self):
-        if True in self.should_play:
-            self.play()
-        elif False in self.should_play:
-            self.stop()
-        self.should_play = []
-
-    def play(self, volume=None):
-        if volume is None:
-            volume = self.volume
-        print [0x90, self.position, volume]
-        midiout.send_message([0x90, self.position, volume])
-
-    def stop(self):
-        midiout.send_message([0x90, self.position, 0])
-
-
-def play_chord_array(position, array, octave=5):
-    for note in array:
-        chordMIDI = [0x90, position + 12 * octave + note, 112]
-        midiout.send_message(chordMIDI)
 
 
 chordStruct = [
