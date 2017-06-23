@@ -3,7 +3,6 @@ import chord
 
 mat = dancemat.DanceMat()
 
-
 note_dict = {dancemat.Button.triangle: 0,
              dancemat.Button.down: 2,
              dancemat.Button.square: 4,
@@ -21,7 +20,5 @@ def listener(button):
 
 mat.set_button_listener(listener)
 
-
 while 1:
-     mat.read()
-
+    mat.read()

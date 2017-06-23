@@ -1,6 +1,9 @@
 import pygame
 
 pygame.init()
+pygame.display.init()
+
+clock = pygame.time.Clock()
 
 
 # noinspection PyClassHasNoInit
