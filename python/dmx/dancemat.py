@@ -31,12 +31,12 @@ class DanceMat:
     def read(self):
         for event in pygame.event.get():
             for n in range(0, self.joystick.get_numbuttons()):
-                if self.joystick.get_button(n):
-                    button = button_list[n]
-                    if button in self.listener_dict:
-                        self.listener_dict[n]()
-                    if self.button_listener is not None:
-                        self.button_listener(button)
+                is_on = self.joystick.get_button(n) == 1
+                button = button_list[n]
+                if button in self.listener_dict:
+                    self.listener_dict[n](is_on)
+                if self.button_listener is not None:
+                    self.button_listener(button, is_on)
 
     def add_listener_to_button(self, button, listener):
         self.listener_dict[button] = listener

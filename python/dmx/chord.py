@@ -31,6 +31,13 @@ chord_dict = {
 
 }
 
+scale_dict = {
+    "major": [0, 2, 4, 5, 7, 9, 11, 12],
+    "minor": [0, 2, 3, 5, 7, 8, 10, 12],
+    "minor_pentatonic": [0, 3, 5, 7, 10, 12, 15, 17],
+    "minor_blues": [0, 3, 5, 6, 7, 10, 12, 15]
+}
+
 chordStruct = [
 
     [0, 4, 7],
@@ -94,6 +101,10 @@ def play_chord_array(position, array, octave=5):
 
 def play_note(position, octave=5):
     midiout.send_message([0x90, position + 12 * octave, 112])
+
+
+def stop_note(position, octave=5):
+    return midiout.send_message([0x90, position + 12 * octave, 0])
 
 
 # stopChord function. Uses while loop to scan through all notes
