@@ -6,7 +6,7 @@ mat = dancemat.DanceMat()
 # Create a midi instrument
 instrument = music.MidiInstrument()
 # Create a scale
-scale = music.Scale(music.Scale.minor)
+scale = music.Scale(music.Scale.major, key=music.Key.A)
 
 # Relate button names to positions in the scale
 position_dict = {dancemat.Button.triangle: 0,
@@ -34,7 +34,8 @@ def listener(button, is_pressed):
             # Otherwise, grab the position in the scale associated with the button...
             position = position_dict[button]
             # ...and create a new jazzy seventh chord for that position (this is gonna be in the scale)
-            note = scale.chord(position, intervals=music.Chord.seventh_octave)
+            # note = scale.chord(position, intervals=music.Chord.seventh_octave)
+            note = scale.chord(position)
         # Check if the button is pressed down
         if is_pressed:
             print "{} pressed".format(button)

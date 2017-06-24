@@ -55,6 +55,22 @@ class MidiInstrument:
         self.playing_notes = set()
 
 
+# noinspection PyClassHasNoInit
+class Key:
+    C = 0
+    C_Sharp = 1
+    D = 2
+    D_Sharp = 3
+    E = 4
+    F = 5
+    F_Sharp = 6
+    G = 7
+    G_Sharp = 8
+    A = 9
+    A_Sharp = 10
+    B = 11
+
+
 # Represents a note
 class Note:
     def __init__(self, position, volume=112):
@@ -92,13 +108,14 @@ class Scale:
     all = [major, minor, minor_pentatonic, minor_blues]
 
     # Make a new scale with a scale passed to it (e.g. scale = Scale(minor_blues))
-    def __init__(self, scale, base_octave=3):
+    def __init__(self, scale, key=Key.C, base_octave=3):
         self.scale = scale
         self.length = len(scale)
         self.base_octave = base_octave
+        self.key = key
 
     def interval_to_position(self, interval):
-        return self.scale[interval % self.length] + 12 * (interval / self.length + self.base_octave)
+        return self.key + self.scale[interval % self.length] + 12 * (interval / self.length + self.base_octave)
 
     # Get a note from this scale starting with a given interval from the root (0, 1, 2, 3 etc.)
     def note(self, interval):
