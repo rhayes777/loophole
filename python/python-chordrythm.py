@@ -1,5 +1,5 @@
 import music
-import rythm
+import rhythm
 
 import time, random
 
@@ -19,7 +19,7 @@ note_A = music.Note(40, 112)
 
 #create a clock
 
-chord_clock = rythm.SongClock(60,0,0)
+chord_clock = rhythm.SongClock(60, 0, 0)
 
 timer = 0
 

@@ -1,38 +1,28 @@
-import pysimpledmx
-import lights
-import util
+import music, rhythm
 
-ports = util.serial_ports()
+# Create a midi instrument
+instrument = music.MidiInstrument()
+# Create a scale
+scale = music.Scale(music.Scale.minor, key=music.Key.A)
 
-print ports
+clock = rhythm.SongClock(60)
 
-# Make an object to talk to DMX by giving it the number of the USB port the adapter is connected to
-dmx = pysimpledmx.DMXConnection(ports[0])
+note_position = 0
+current_note = None
 
-# Create an instance of my light class, giving it the DMX object and a number from 1-512 indicating the address of a light
-light = lights.Light(dmx, 1)
 
-# Set colour values using the instance of the light class
-light.set_r(255)
-light.set_g(0)
-light.set_b(255)
+def next_note():
+    print "next_note"
+    global note_position
+    global current_note
+    note = scale.note(note_position)
+    note_position += 1
+    if current_note is not None:
+        instrument.stop(current_note)
+    instrument.play(note)
+    current_note = note
+    instrument.update()
 
-# Set some other stuff (I'm not sure what master does yet)
-light.set_brightness(255)
-# light.set_strobe_speed(0)
-# light.set_master(1)
 
-# Update all lights with values that have just been set
-dmx.render()
-
-# Example from https://github.com/c0z3n/pySimpleDMX
-# dmx = pysimpledmx.DMXConnection(ports[1])
-
-# for channel in range(0, 512):
-#     dmx.setChannel(channel, 128)
-# dmx.setChannel(1, 128)  # set DMX channel 1 to full
-# dmx.setChannel(2, 128)  # set DMX channel 2 to 128
-# dmx.setChannel(3, 0)  # set DMX channel 3 to 0
-# dmx.render()  # render all of the above changes onto the DMX network
-
-# dmx.setChannel(4, 255, autorender=True)  # set channel 4 to full and render to the network#
+clock.add_function(next_note)
+clock.run()
