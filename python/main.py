@@ -12,7 +12,6 @@ current_note = None
 
 
 def next_note():
-    print "next_note"
     global note_position
     global current_note
     note = scale.note(note_position)
