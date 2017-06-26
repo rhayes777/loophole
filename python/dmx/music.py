@@ -131,3 +131,4 @@ class Scale:
     # Go up by number of octaves
     def change_octave(self, by):
         self.base_octave = self.base_octave + by
+
