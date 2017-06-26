@@ -28,7 +28,7 @@ class MidiInstrument:
             messages_dict[str(note.position)] = [note.position, 0, 0]
         for note in self.playing_notes:
             if str(note.position) in messages_dict:
-                messages_dict[str(note.position)][2] += note.volume
+                messages_dict[str(note.position)][1] += note.volume
             else:
                 messages_dict[str(note.position)] = [note.position, note.volume, 0]
             if messages_dict[str(note.position)][2] > 112:
