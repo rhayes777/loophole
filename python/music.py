@@ -8,9 +8,9 @@ pygame.init()
 pygame.midi.init()
 
 print pygame.midi.get_default_output_id()
-print pygame.midi.get_device_info(0)
+print pygame.midi.get_device_info(1)
 
-midi_Output = pygame.midi.Output(0)
+midi_Output = pygame.midi.Output(1)
 midi_Output.set_instrument(0)
 
 
