@@ -1,12 +1,17 @@
-import rtmidi
+import time
+import random
+import pygame
+import pygame.midi
 
-midiout = rtmidi.MidiOut()
-available_ports = midiout.get_ports()
+pygame.init()
 
-if available_ports:
-    midiout.open_port(0)
-else:
-    midiout.open_virtual_port("My virtual output")
+pygame.midi.init()
+
+print pygame.midi.get_default_output_id()
+print pygame.midi.get_device_info(0)
+
+midi_Output = pygame.midi.Output(0)
+midi_Output.set_instrument(0)
 
 
 # Class that represents a midi instrument.
@@ -20,16 +25,16 @@ class MidiInstrument:
     def update(self):
         messages_dict = {}
         for note in self.stopping_notes:
-            messages_dict[str(note.position)] = [0x90, note.position, 0]
+            messages_dict[str(note.position)] = [note.position, 0, 0]
         for note in self.playing_notes:
             if str(note.position) in messages_dict:
                 messages_dict[str(note.position)][2] += note.volume
             else:
-                messages_dict[str(note.position)] = [0x90, note.position, note.volume]
+                messages_dict[str(note.position)] = [note.position, note.volume, 0]
             if messages_dict[str(note.position)][2] > 112:
                 messages_dict[str(note.position)][2] = 112
         for message in messages_dict.values():
-            midiout.send_message(message)
+            midi_Output.note_on(message[0], velocity=message[1], channel=message[2])
         self.stopping_notes = set()
 
     # Adds a chord or note to start playing. Will play once update called and until stop called.
@@ -131,4 +136,3 @@ class Scale:
     # Go up by number of octaves
     def change_octave(self, by):
         self.base_octave = self.base_octave + by
-
