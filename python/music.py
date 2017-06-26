@@ -34,7 +34,12 @@ class MidiInstrument:
             if messages_dict[str(note.position)][2] > 112:
                 messages_dict[str(note.position)][2] = 112
         for message in messages_dict.values():
-            midi_Output.note_on(message[0], velocity=message[1], channel=message[2])
+            if message[1] > 0:
+                print "note on {}".format(message)
+                midi_Output.note_on(message[0], velocity=message[1], channel=message[2])
+            else:
+                print "note off {}".format(message)
+                midi_Output.note_off(message[0], velocity=0, channel=message[2])
         self.stopping_notes = set()
 
     # Adds a chord or note to start playing. Will play once update called and until stop called.
