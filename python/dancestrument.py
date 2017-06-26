@@ -6,7 +6,7 @@ mat = dancemat.DanceMat()
 # Create a midi instrument
 instrument = music.MidiInstrument()
 # Create a scale
-scale = music.Scale(music.Scale.major, key=music.Key.A)
+scale = music.Scale(music.Scale.minor, key=music.Key.A)
 
 # Relate button names to positions in the scale
 position_dict = {dancemat.Button.triangle: 0,
