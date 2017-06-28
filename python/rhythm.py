@@ -1,7 +1,7 @@
-import time, math
+import time
 from threading import Thread
 
-## Class called SongClock which issues a pulse for each beat
+# Class called SongClock which issues a pulse for each beat
 
 import threading
 

@@ -1,4 +1,5 @@
-import music, rhythm
+import music
+import rhythm
 
 # Create a midi instrument
 instrument = music.MidiInstrument()
