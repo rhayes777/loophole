@@ -1,6 +1,3 @@
-import time
-import random
-import pygame
 import pygame.midi
 
 pygame.init()
