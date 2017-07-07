@@ -4,10 +4,21 @@ pygame.init()
 
 pygame.midi.init()
 
-print pygame.midi.get_default_output_id()
-print pygame.midi.get_device_info(1)
 
-midi_Output = pygame.midi.Output(1)
+# >>> print pygame.midi.get_device_info(0)
+# ('ALSA', 'Midi Through Port-0', 0, 1, 0)
+# >>> print pygame.midi.get_device_info(1)
+# ('ALSA', 'Midi Through Port-0', 1, 0, 0)
+# >>> print pygame.midi.get_device_info(2)
+# ('ALSA', 'reface DX MIDI 1', 0, 1, 0)
+# >>> print pygame.midi.get_device_info(3)
+# ('ALSA', 'reface DX MIDI 1', 1, 0, 0)
+# >>> print pygame.midi.get_device_info(4)
+
+print pygame.midi.get_default_output_id()
+print pygame.midi.get_device_info(2)
+
+midi_Output = pygame.midi.Output(2)
 midi_Output.set_instrument(0)
 
 
