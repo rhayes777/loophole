@@ -8,26 +8,25 @@ scale = music.Scale(music.Scale.minor, key=music.Key.A)
 
 clock = rhythm.SongClock(60)
 
-note_position = 0
-current_note = None
+
+def add_note(note, length=1.0):
+    def play():
+        instrument.play(note)
+        instrument.update()
+
+    def stop():
+        instrument.stop(note)
+        instrument.update()
+    clock.add_action(play, stop, length=length)
 
 
-def next_note():
-    global note_position
-    global current_note
-    note = scale.note(note_position)
-    note_position += 1
-    if current_note is not None:
-        instrument.stop(current_note)
-    instrument.play(note)
-    current_note = note
-    instrument.update()
+add_note(scale.note(0))
+add_note(scale.note(3))
+add_note(scale.note(2))
+add_note(scale.note(5))
+add_note(scale.note(0), length=0.5)
+add_note(scale.note(3), length=0.5)
+add_note(scale.note(2), length=0.5)
+add_note(scale.note(5), length=0.5)
 
-
-clock.add_action(next_note)
-clock.add_action(next_note)
-clock.add_action(next_note)
-clock.add_action(next_note)
-clock.add_action(next_note)
-clock.add_action(next_note)
 clock.start()

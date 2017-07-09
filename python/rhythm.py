@@ -30,10 +30,9 @@ class SongClock:
         self.count = 0.0
         self.run()
 
-    def add_action(self, on_function, off_function=None, length=None):
-        if length is None:
-            length = self.step
-        self.action_dict[str(self.count)] = Action(on_function, off_function=off_function, length=length)
+    def add_action(self, on_function, off_function=None, length=1):
+        step = length * self.step
+        self.action_dict[str(self.count)] = Action(on_function, off_function=off_function, length=step)
         self.count += length
 
 
