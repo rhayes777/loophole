@@ -4,7 +4,6 @@ pygame.init()
 
 pygame.midi.init()
 
-
 # >>> print pygame.midi.get_device_info(0)
 # ('ALSA', 'Midi Through Port-0', 0, 1, 0)
 # >>> print pygame.midi.get_device_info(1)
@@ -15,19 +14,32 @@ pygame.midi.init()
 # ('ALSA', 'reface DX MIDI 1', 1, 0, 0)
 # >>> print pygame.midi.get_device_info(4)
 
-print pygame.midi.get_default_output_id()
-print pygame.midi.get_device_info(2)
+device_number = 0
 
-midi_Output = pygame.midi.Output(2)
-midi_Output.set_instrument(0)
+
+def is_output_device(device_info):
+    return device_info[3] == 1
+
+
+output_devices = []
+
+while True:
+    info = pygame.midi.get_device_info(device_number)
+    if info is None:
+        break
+    if is_output_device(info):
+        output_devices.append(device_number)
+    device_number += 1
 
 
 # Class that represents a midi instrument.
 class MidiInstrument:
-    def __init__(self, no_of_positions=120):
+    def __init__(self, output_device=output_devices[0], instrument_id=0, no_of_positions=120):
         self.no_of_positions = no_of_positions
         self.playing_notes = set()
         self.stopping_notes = set()
+        self.midi_output = pygame.midi.Output(output_device)
+        self.midi_output.set_instrument(instrument_id)
 
     # Call this to dispatch midi messages
     def update(self):
@@ -43,12 +55,13 @@ class MidiInstrument:
                 messages_dict[str(note.position)][2] = 112
         for message in messages_dict.values():
             if message[1] > 0:
-                print "note on {}".format(message)
-                midi_Output.note_on(message[0], velocity=message[1], channel=message[2])
+                self.midi_output.note_on(message[0], velocity=message[1], channel=message[2])
             else:
-                print "note off {}".format(message)
-                midi_Output.note_off(message[0], velocity=0, channel=message[2])
+                self.midi_output.note_off(message[0], velocity=0, channel=message[2])
         self.stopping_notes = set()
+
+    def set_instrument_id(self, instrument_id):
+        self.midi_output.set_instrument(instrument_id)
 
     # Adds a chord or note to start playing. Will play once update called and until stop called.
     def play(self, obj):
