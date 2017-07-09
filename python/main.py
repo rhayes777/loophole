@@ -24,5 +24,10 @@ def next_note():
     instrument.update()
 
 
-clock.add_function(next_note)
-clock.run()
+clock.add_action(next_note)
+clock.add_action(next_note)
+clock.add_action(next_note)
+clock.add_action(next_note)
+clock.add_action(next_note)
+clock.add_action(next_note)
+clock.start()
