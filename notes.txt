@@ -6,3 +6,7 @@ Set channel d001 (d007)
 New scene zero has control panel (under functions)
 
 Midi input requires midi channel 1-16
+
+https://ca.yamaha.com/files/download/other_assets/7/794817/reface_en_dl_b0.pdf
+https://www.midi.org/specifications/item/table-3-control-change-messages-data-bytes-2
+https://stackoverflow.com/questions/18408775/invalid-midi-message-data-when-im-trying-to-send-control-change-messages
