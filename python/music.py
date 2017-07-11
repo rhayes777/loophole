@@ -39,7 +39,6 @@ class MidiInstrument:
         self.playing_notes = set()
         self.stopping_notes = set()
         self.midi_output = pygame.midi.Output(output_device)
-        self.midi_output.set_instrument(instrument_id)
 
     # Call this to dispatch midi messages
     def update(self):
