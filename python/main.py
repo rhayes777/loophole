@@ -1,54 +1,29 @@
-import music
-import rhythm
+import midi_player
+import dancemat
 
-# Create a midi instrument
-instrument = music.MidiInstrument()
-# Create a scale
-scale = music.Scale(music.Scale.minor, key=music.Key.A)
+mat = dancemat.DanceMat()
+midi_player.play_midi_file_on_new_thread(name='bicycle-ride.mid')
 
-clock = rhythm.SongClock(60)
-
-
-def add_note(note, length=1.0):
-    def play():
-        instrument.play(note)
-        instrument.update()
-
-    def stop():
-        instrument.stop(note)
-        instrument.update()
-    clock.add_action(play, stop, length=length)
+# Relate button names to positions in the scale
+position_dict = {dancemat.Button.triangle: 0,
+                 dancemat.Button.down: 1,
+                 dancemat.Button.square: 2,
+                 dancemat.Button.left: 3,
+                 dancemat.Button.right: 4,
+                 dancemat.Button.x: 5,
+                 dancemat.Button.up: 6,
+                 dancemat.Button.circle: 7}
 
 
-instrument.play(scale.note(0))
+# Function to listen for changes to button state
+def listener(status_dict):
+    pressed_positions = [position_dict[button] for button in status_dict.keys() if status_dict[button]]
+    midi_player.set_included_channels(pressed_positions)
 
 
-def add_bend(value):
-    def bend():
-        instrument.midi_output.write_short(0xb0, 77, value)
+# Attach that listener function to the dancemat
+mat.set_button_listener(listener)
 
-    clock.add_action(bend)
-
-add_bend(0)
-add_bend(1)
-add_bend(2)
-add_bend(4)
-add_bend(16)
-add_bend(50)
-add_bend(100)
-add_bend(200)
-add_bend(300)
-add_bend(400)
-add_bend(1000)
-add_bend(2000)
-
-# add_note(scale.note(0))
-# add_note(scale.note(3))
-# add_note(scale.note(2))
-# add_note(scale.note(5))
-# add_note(scale.note(0), length=0.5)
-# add_note(scale.note(3), length=0.5)
-# add_note(scale.note(2), length=0.5)
-# add_note(scale.note(5), length=0.5)
-
-clock.start()
+# Keep reading forever
+while 1:
+    mat.read()
