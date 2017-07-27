@@ -18,5 +18,6 @@ def play_midi_file(name='big-blue.mid'):
         port.send(msg)
 
 
-def play_midi_file_on_new_thread():
-    Thread(target=play_midi_file).start()
+def play_midi_file_on_new_thread(name='big-blue.mid'):
+    t = Thread(target=play_midi_file, args=(name,))
+    t.start()
