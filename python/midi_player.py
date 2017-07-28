@@ -24,7 +24,7 @@ def play_midi_file(name='big-blue.mid'):
 
     included_channels = []
 
-    mid = mido.MidiFile(name)
+    mid = mido.MidiFile("media/{}".format(name))
     for msg in mid.play():
         if not queue.empty():
             command = queue.get()
