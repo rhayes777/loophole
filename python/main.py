@@ -2,6 +2,8 @@ import midi_player
 import dancemat
 from time import sleep
 
+# https://mido.readthedocs.io/en/latest/ports.html   <- For using two midi instruments
+
 mat = dancemat.DanceMat()
 midi_player.play_midi_file_on_new_thread(name='bicycle-ride.mid')
 
