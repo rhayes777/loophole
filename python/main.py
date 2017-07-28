@@ -1,5 +1,6 @@
 import midi_player
 import dancemat
+from time import sleep
 
 mat = dancemat.DanceMat()
 midi_player.play_midi_file_on_new_thread(name='bicycle-ride.mid')
@@ -27,3 +28,4 @@ mat.set_button_listener(listener)
 # Keep reading forever
 while 1:
     mat.read()
+    sleep(0.05)
