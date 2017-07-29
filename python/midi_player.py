@@ -106,3 +106,10 @@ class Track:
 
     def send_command(self, name, value):
         self.queue.put(Command(name, value))
+
+    def set_included_channels(self, pressed_positions):
+        for channel in self.channels:
+            if channel.number in pressed_positions:
+                channel.set_volume(1.0)
+            else:
+                channel.fade_out()
