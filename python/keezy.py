@@ -31,7 +31,7 @@ def listener(status_dict):
 
 # Attach that listener function to the dancemat
 mat.set_button_listener(listener)
-sample.play_track("white", 4)
+# sample.play_track("white", 4)
 
 # Keep reading forever
 while 1:
