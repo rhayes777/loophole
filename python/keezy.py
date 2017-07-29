@@ -1,6 +1,6 @@
 import dancemat
 import sample
-
+from time import sleep
 
 # Create a dancemat
 mat = dancemat.DanceMat()
@@ -11,10 +11,10 @@ position_dict = {dancemat.Button.triangle: 0,
                  dancemat.Button.square: 2,
                  dancemat.Button.left: 3,
                  }
-                 # dancemat.Button.right: 4,
-                 # dancemat.Button.x: 5,
-                 # dancemat.Button.up: 6,
-                 # dancemat.Button.circle: 7}
+# dancemat.Button.right: 4,
+# dancemat.Button.x: 5,
+# dancemat.Button.up: 6,
+# dancemat.Button.circle: 7}
 
 tracks = [sample.WHITE_atmos, sample.WHITE_guitar, sample.WHITE_percnsub, sample.WHITE_sitar]
 
@@ -28,6 +28,7 @@ def listener(status_dict):
             number = position_dict[button]
             sample.loop_wav_on_new_thread(tracks[number], no_of_times_to_loop=1)
 
+
 # Attach that listener function to the dancemat
 mat.set_button_listener(listener)
 sample.play_track("white", 4)
@@ -35,3 +36,4 @@ sample.play_track("white", 4)
 # Keep reading forever
 while 1:
     mat.read()
+    sleep(0.05)

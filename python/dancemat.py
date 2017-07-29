@@ -32,8 +32,7 @@ class DanceMat:
 
     # Read data and alert listeners
     def read(self):
-        for event in pygame.event.get():
-            print "EVENT"
+        for _ in pygame.event.get():
             if self.button_listener is not None:
                 button_dict = {Button.all[n]: self.joystick.get_button(n) == 1 for n in
                                range(0, self.joystick.get_numbuttons())}

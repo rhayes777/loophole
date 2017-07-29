@@ -34,7 +34,6 @@ def play_midi_file(name='big-blue.mid'):
                 elif command.name == Command.set_included_channels:
                     included_channels = command.value
         try:
-            print included_channels
             if msg.channel in included_channels:
                 port.send(msg)
         except AttributeError as e:
