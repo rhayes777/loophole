@@ -5,7 +5,10 @@ from threading import Thread
 import logging
 import signal
 
-instrument = music.MidiInstrument()
+try:
+    instrument = music.MidiInstrument()
+except Exception as e:
+    logging.exception(e)
 
 
 # noinspection PyClassHasNoInit
