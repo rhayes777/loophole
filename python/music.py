@@ -34,7 +34,7 @@ while True:
 
 # Class that represents a midi instrument.
 class MidiInstrument:
-    def __init__(self, output_device=output_devices[0], instrument_id=0, no_of_positions=120):
+    def __init__(self, output_device=output_devices[0], no_of_positions=120):
         self.no_of_positions = no_of_positions
         self.playing_notes = set()
         self.stopping_notes = set()

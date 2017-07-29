@@ -5,7 +5,7 @@ from time import sleep
 # https://mido.readthedocs.io/en/latest/ports.html   <- For using two midi instruments
 
 mat = dancemat.DanceMat()
-midi_player.play_midi_file_on_new_thread(name='bicycle-ride.mid')
+track = midi_player.Track()
 
 # Relate button names to positions in the scale
 position_dict = {dancemat.Button.triangle: 0,
@@ -21,11 +21,13 @@ position_dict = {dancemat.Button.triangle: 0,
 # Function to listen for changes to button state
 def listener(status_dict):
     pressed_positions = [position_dict[button] for button in status_dict.keys() if status_dict[button]]
-    midi_player.set_included_channels(pressed_positions)
+    track.set_included_channels(pressed_positions)
 
 
 # Attach that listener function to the dancemat
 mat.set_button_listener(listener)
+
+track.start()
 
 # Keep reading forever
 while 1:
