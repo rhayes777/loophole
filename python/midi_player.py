@@ -81,20 +81,20 @@ class Channel:
 
 
 class Song:
-    def __init__(self, filename="bicycle-ride.mid", is_looping=False):
+    def __init__(self, filename="channels_test.mid", is_looping=False):
         self.filename = filename
         self.queue = Queue()
         self.is_stopping = False
         self.is_looping = is_looping
         self.mid = mido.MidiFile("media/{}".format(self.filename))
         signal.signal(signal.SIGINT, self.stop)
-        channel_numbers = set()
-        for track in self.mid.tracks:
-            for msg in track:
-                try:
-                    channel_numbers.add(msg.channel)
-                except AttributeError:
-                    pass
+        channel_numbers = range(0, 16)
+        # for track in self.mid.tracks:
+        #     for msg in track:
+        #         try:
+        #             channel_numbers.add(msg.channel)
+        #         except AttributeError:
+        #             pass
         self.channels = map(Channel, sorted(list(channel_numbers)))
 
     def play_midi_file(self):
@@ -133,3 +133,7 @@ class Song:
                 channel.set_volume(1.0)
             else:
                 channel.fade_out()
+
+    def include_all_channels(self):
+        for channel in self.channels:
+            channel.set_volume(1.0)
