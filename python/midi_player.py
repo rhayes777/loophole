@@ -5,6 +5,12 @@ from threading import Thread
 import logging
 import signal
 from datetime import datetime
+import os
+
+path = os.path.realpath(__file__)
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+print dir_path
 
 # noinspection PyUnresolvedReferences
 input_names = mido.get_output_names()
@@ -171,7 +177,7 @@ class Song:
         self.queue = Queue()
         self.is_stopping = False
         self.is_looping = is_looping
-        self.mid = mido.MidiFile("media/{}".format(self.filename))
+        self.mid = mido.MidiFile("{}/media/{}".format(dir_path, self.filename))
         signal.signal(signal.SIGINT, self.stop)
         channel_numbers = range(0, 16)
         self.channels = map(Channel, sorted(list(channel_numbers)))
