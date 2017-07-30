@@ -6,12 +6,20 @@ import logging
 import signal
 from datetime import datetime
 
+REFACE = ['reface DX']
+MPX = ['MPX16']
+
+CHANNEL_PARTITION = 8
+
+# noinspection PyBroadException
 try:
     instrument = music.MidiInstrument()
     # noinspection PyUnresolvedReferences
-    synth_port = mido.open_output()
-except Exception:
-    pass
+    keys_port = mido.open_output(REFACE)
+    # noinspection PyUnresolvedReferences
+    drum_port = mido.open_output(MPX)
+except Exception as e:
+    logging.exception(e)
 
 
 class Command:
@@ -25,9 +33,9 @@ class Command:
 
 
 class Channel:
-    def __init__(self, number, port=synth_port, volume=1.0, fade_rate=0.1):
+    def __init__(self, number, volume=1.0, fade_rate=0.1):
         self.number = number
-        self.port = port
+        self.port = keys_port if number < CHANNEL_PARTITION else drum_port
         self.volume = volume
         self.fade_rate = fade_rate
         self.queue = Queue()
