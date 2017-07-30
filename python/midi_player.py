@@ -6,12 +6,31 @@ import logging
 import signal
 from datetime import datetime
 
+REFACE = 'reface DX'
+MPX = 'MPX16'
+SIMPLE_SYNTH = 'SimpleSynth virtual input'
+
+CHANNEL_PARTITION = 8
+
+# noinspection PyBroadException
 try:
     instrument = music.MidiInstrument()
-    # noinspection PyUnresolvedReferences
-    synth_port = mido.open_output()
 except Exception:
-    pass
+    logging.warn("Midi instrument could not be opened")
+
+
+def make_port(name):
+    try:
+        # noinspection PyUnresolvedReferences
+        return mido.open_output(name)
+    except IOError:
+        logging.warn("{} not found.".format(name))
+        # noinspection PyUnresolvedReferences
+        return mido.open_output(SIMPLE_SYNTH)
+
+
+keys_port = make_port(REFACE)
+drum_port = make_port(MPX)
 
 
 class Command:
@@ -25,9 +44,9 @@ class Command:
 
 
 class Channel:
-    def __init__(self, number, port=synth_port, volume=1.0, fade_rate=0.2):
+    def __init__(self, number, volume=1.0, fade_rate=0.1):
         self.number = number
-        self.port = port
+        self.port = keys_port if number < CHANNEL_PARTITION else drum_port
         self.volume = volume
         self.fade_rate = fade_rate
         self.queue = Queue()
@@ -39,6 +58,7 @@ class Channel:
                 command = self.queue.get()
                 if command.name == Command.volume:
                     self.volume = command.value
+                    self.fade_start = None
                 elif command.name == Command.fade_out:
                     if self.fade_start is None:
                         self.fade_start = datetime.now()
@@ -60,13 +80,13 @@ class Channel:
         self.queue.put(Command(Command.fade_out))
 
 
-class Track:
-    def __init__(self, track_name="bicycle-ride.mid", is_looping=False):
-        self.track_name = track_name
+class Song:
+    def __init__(self, filename="bicycle-ride.mid", is_looping=False):
+        self.filename = filename
         self.queue = Queue()
         self.is_stopping = False
         self.is_looping = is_looping
-        self.mid = mido.MidiFile("media/{}".format(self.track_name))
+        self.mid = mido.MidiFile("media/{}".format(self.filename))
         signal.signal(signal.SIGINT, self.stop)
         channel_numbers = set()
         for track in self.mid.tracks:

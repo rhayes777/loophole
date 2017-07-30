@@ -5,7 +5,7 @@ from time import sleep
 # https://mido.readthedocs.io/en/latest/ports.html   <- For using two midi instruments
 
 mat = dancemat.DanceMat()
-track = midi_player.Track()
+track = midi_player.Song()
 
 # Relate button names to positions in the scale
 position_dict = {dancemat.Button.triangle: 0,
