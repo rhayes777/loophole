@@ -2,10 +2,16 @@ import midi_player
 import dancemat
 from time import sleep
 
-# https://mido.readthedocs.io/en/latest/ports.html   <- For using two midi instruments
-
 mat = dancemat.DanceMat()
-track = midi_player.Song()
+track = midi_player.Song(is_looping=True)
+
+channels = track.channels
+
+chord_channel = channels[0]
+drum_channel = channels[8]
+
+bass_channel = midi_player.BassChannel(2, chord_channel, drum_channel)
+channels[2] = bass_channel
 
 # Relate button names to positions in the scale
 position_dict = {dancemat.Button.triangle: 0,
@@ -21,7 +27,8 @@ position_dict = {dancemat.Button.triangle: 0,
 # Function to listen for changes to button state
 def listener(status_dict):
     pressed_positions = [position_dict[button] for button in status_dict.keys() if status_dict[button]]
-    track.set_included_channels(pressed_positions)
+    # track.set_included_channels(pressed_positions)
+    bass_channel.set_pressed_positions(pressed_positions)
 
 
 # Attach that listener function to the dancemat
