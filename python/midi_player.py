@@ -61,13 +61,13 @@ class Channel:
         self.queue.put(Command(Command.fade_out))
 
 
-class Track:
-    def __init__(self, track_name="bicycle-ride.mid", is_looping=False):
-        self.track_name = track_name
+class Song:
+    def __init__(self, filename="bicycle-ride.mid", is_looping=False):
+        self.filename = filename
         self.queue = Queue()
         self.is_stopping = False
         self.is_looping = is_looping
-        self.mid = mido.MidiFile("media/{}".format(self.track_name))
+        self.mid = mido.MidiFile("media/{}".format(self.filename))
         signal.signal(signal.SIGINT, self.stop)
         channel_numbers = set()
         for track in self.mid.tracks:
