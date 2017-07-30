@@ -24,20 +24,6 @@ class Button:
 
 
 # Object representing dancemat
-class KeyboardInput:
-    self.button_listener = None
-
-    def read(self):
-        for event in pygame.event.get():
-            key = pygame.key.get_pressed()
-            qwerty_input = {'x': key[pygame.K_q],
-                            'up': key[pygame.K_w],
-                            'circle': key[pygame.K_e],
-                            'right': key[pygame.K_d],
-                            'square': key[pygame.K_c],
-                            'down': key[pygame.K_x],
-                            'triangle': key[pygame.K_z],
-                            'left': key[pygame.K_a]}
 
 class DanceMat:
     def __init__(self, number=0):
