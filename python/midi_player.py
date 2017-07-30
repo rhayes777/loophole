@@ -6,6 +6,9 @@ import logging
 import signal
 from datetime import datetime
 
+# noinspection PyUnresolvedReferences
+input_names = mido.get_output_names()
+
 REFACE = 'reface DX'
 MPX = 'MPX16'
 SIMPLE_SYNTH = 'SimpleSynth virtual input'
@@ -23,6 +26,9 @@ except Exception:
 
 # Creates a port object corresponding to an instrument if it exists, else to a Simple inbuilt synth
 def make_port(name):
+    for input_name in input_names:
+        if name in input_name:
+            name = input_name
     global simple_port
     try:
         # noinspection PyUnresolvedReferences
