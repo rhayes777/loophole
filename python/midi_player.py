@@ -8,18 +8,29 @@ from datetime import datetime
 
 REFACE = 'reface DX'
 MPX = 'MPX16'
+SIMPLE_SYNTH = 'SimpleSynth virtual input'
 
 CHANNEL_PARTITION = 8
 
 # noinspection PyBroadException
 try:
     instrument = music.MidiInstrument()
-    # noinspection PyUnresolvedReferences
-    keys_port = mido.open_output(REFACE)
-    # noinspection PyUnresolvedReferences
-    drum_port = mido.open_output(MPX)
-except Exception as e:
-    logging.exception(e)
+except Exception:
+    logging.warn("Midi instrument could not be opened")
+
+
+def make_port(name):
+    try:
+        # noinspection PyUnresolvedReferences
+        return mido.open_output(name)
+    except IOError:
+        logging.warn("{} not found.".format(name))
+        # noinspection PyUnresolvedReferences
+        return mido.open_output(SIMPLE_SYNTH)
+
+
+keys_port = make_port(REFACE)
+drum_port = make_port(MPX)
 
 
 class Command:
