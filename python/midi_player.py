@@ -109,21 +109,28 @@ class Channel:
 
 
 class BassChannel(Channel, object):
-    def __init__(self, number, chord_channel, drum_channel, volume=1.0):
+    def __init__(self, number, chord_channel, drum_channel, volume=1.0, octave_shift=2):
         super(BassChannel, self).__init__(number, volume)
         self.chord_channel = chord_channel
         self.drum_channel = drum_channel
         self.drum_channel.note_on_listener = self.on_drum_played
         self.pressed_positions = []
+        self.octave_shift = octave_shift
+        self.pressed_positions_queue = Queue()
 
-    def on_drum_played(self):
+    def on_drum_played(self, msg):
         self.stop_playing_notes()
+        if not self.pressed_positions_queue.empty():
+            self.pressed_positions = self.pressed_positions_queue.get()
         for position in self.pressed_positions:
             try:
                 note = self.chord_channel.playing_note_with_position(position)
-                self.play_note(note)
+                self.play_note(note - 12 * self.octave_shift)
             except IndexError as e:
                 logging.exception(e)
+
+    def set_pressed_positions(self, pressed_positions):
+        self.pressed_positions_queue.put(pressed_positions)
 
 
 class Song:
