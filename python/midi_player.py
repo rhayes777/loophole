@@ -147,7 +147,7 @@ class BassChannel(Channel, object):
         self.pressed_positions_queue = Queue()
 
     # Called when a drum beat is played
-    def on_drum_played(self, _):
+    def on_drum_played(self, msg):
         # Stop all playing notes
         self.stop_playing_notes()
         # Updated pressed positions if waiting in queue
@@ -157,8 +157,11 @@ class BassChannel(Channel, object):
             try:
                 # Grab a note from the chord channel for each pressed position
                 note = self.chord_channel.playing_note_with_position(position)
-                # Play that note 12 * octave_shift semitones lower
-                self.play_note(note - 12 * self.octave_shift)
+
+                msg.channel = self.number
+                msg.note = note - 12 * self.octave_shift
+
+                self.send_message(msg)
             except IndexError as e:
                 logging.exception(e)
 
