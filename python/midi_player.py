@@ -114,18 +114,6 @@ class Channel:
         # noinspection PyTypeChecker
         self.send_message(mido.Message(type=Channel.note_off, velocity=0, note=note))
 
-    # Play a specific note
-    def play_note(self, note, velocity=100):
-        # noinspection PyTypeChecker
-        self.send_message(mido.Message(type=Channel.note_on, velocity=velocity, note=note))
-
-    # Returns a currently playing note for a position or the last playing note if the position too high. Throws index
-    # error if there are no playing notes
-    def playing_note_with_position(self, position):
-        if position > len(self.playing_notes):
-            position = len(self.playing_notes) - 1
-        return self.playing_notes[position]
-
     # Set the volume of this channel (float from 0 - 1)
     def set_volume(self, volume):
         self.queue.put(Command(Command.volume, volume))
@@ -155,14 +143,14 @@ class BassChannel(Channel, object):
             self.pressed_positions = self.pressed_positions_queue.get()
         for position in self.pressed_positions:
             try:
-                # Grab a note from the chord channel for each pressed position
-                note = self.chord_channel.playing_note_with_position(position)
+                note = self.chord_channel.playing_notes[position % len(self.chord_channel.playing_notes)]
+                shift = position / len(self.chord_channel.playing_notes)
 
                 msg.channel = self.number
-                msg.note = note - 12 * self.octave_shift
+                msg.note = note + 12 * (shift - self.octave_shift)
 
                 self.send_message(msg)
-            except IndexError as e:
+            except ZeroDivisionError as e:
                 logging.exception(e)
 
     # Set the positions of pressed notes
