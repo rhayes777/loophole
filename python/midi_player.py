@@ -70,6 +70,7 @@ class Channel:
     def __init__(self, number, volume=1.0, fade_rate=0.1, note_on_listener=None):
         self.note_on_listener = note_on_listener
         self.number = number
+        # Decides which port output should be used depending on the channel number
         self.port = keys_port if number < CHANNEL_PARTITION else drum_port
         self.volume = volume
         self.fade_rate = fade_rate
