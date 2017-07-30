@@ -6,8 +6,8 @@ import logging
 import signal
 from datetime import datetime
 
-REFACE = ['reface DX']
-MPX = ['MPX16']
+REFACE = 'reface DX'
+MPX = 'MPX16'
 
 CHANNEL_PARTITION = 8
 
