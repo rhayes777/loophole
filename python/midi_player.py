@@ -31,7 +31,7 @@ def make_port(name):
         logging.warn("{} not found.".format(name))
         if simple_port is None:
             # noinspection PyUnresolvedReferences
-            simple_port = mido.open_output(SIMPLE_SYNTH)
+            simple_port = mido.open_output()
         return simple_port
 
 
