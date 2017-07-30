@@ -44,13 +44,18 @@ class Command:
 
 
 class Channel:
-    def __init__(self, number, volume=1.0, fade_rate=0.1):
+    note_off = "note_off"
+    note_on = "note_on"
+
+    def __init__(self, number, volume=1.0, fade_rate=0.1, note_on_listener=None):
+        self.note_on_listener = note_on_listener
         self.number = number
         self.port = keys_port if number < CHANNEL_PARTITION else drum_port
         self.volume = volume
         self.fade_rate = fade_rate
         self.queue = Queue()
         self.fade_start = None
+        self.playing_notes = []
 
     def send_message(self, msg):
         try:
@@ -70,14 +75,55 @@ class Channel:
                     self.fade_start = None
             msg.velocity = int(self.volume * msg.velocity)
             self.port.send(msg)
+            if msg.type == Channel.note_on:
+                self.playing_notes.append(msg.note)
+                if self.note_on_listener is not None:
+                    self.note_on_listener(msg)
+            elif msg.type == Channel.note_off:
+                self.playing_notes.remove(msg.note)
         except AttributeError:
             pass
+
+    def stop_playing_notes(self):
+        for note in self.playing_notes:
+            self.stop_note(note)
+
+    def stop_note(self, note):
+        # noinspection PyTypeChecker
+        self.send_message(mido.Message(type=Channel.note_off, velocity=0, note=note))
+
+    def play_note(self, note, velocity=100):
+        # noinspection PyTypeChecker
+        self.send_message(mido.Message(type=Channel.note_on, velocity=velocity, note=note))
+
+    def playing_note_with_position(self, position):
+        if position > len(self.playing_notes):
+            position = len(self.playing_notes) - 1
+        return self.playing_notes[position]
 
     def set_volume(self, volume):
         self.queue.put(Command(Command.volume, volume))
 
     def fade_out(self):
         self.queue.put(Command(Command.fade_out))
+
+
+class BassChannel(Channel, object):
+    def __init__(self, number, chord_channel, drum_channel, volume=1.0):
+        super(BassChannel, self).__init__(number, volume)
+        self.chord_channel = chord_channel
+        self.drum_channel = drum_channel
+        self.drum_channel.note_on_listener = self.on_drum_played
+        self.pressed_positions = []
+
+    def on_drum_played(self):
+        self.stop_playing_notes()
+        for position in self.pressed_positions:
+            try:
+                note = self.chord_channel.playing_note_with_position(position)
+                self.play_note(note)
+            except IndexError as e:
+                logging.exception(e)
 
 
 class Song:
@@ -89,12 +135,6 @@ class Song:
         self.mid = mido.MidiFile("media/{}".format(self.filename))
         signal.signal(signal.SIGINT, self.stop)
         channel_numbers = range(0, 16)
-        # for track in self.mid.tracks:
-        #     for msg in track:
-        #         try:
-        #             channel_numbers.add(msg.channel)
-        #         except AttributeError:
-        #             pass
         self.channels = map(Channel, sorted(list(channel_numbers)))
 
     def play_midi_file(self):
