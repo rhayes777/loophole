@@ -24,6 +24,8 @@ class Button:
     all = ['left', 'down', 'up', 'right', 'triangle', 'square', 'x', 'circle', 'select', 'start']
 
 
+# Object representing dancemat
+
 class DanceMat:
     def __init__(self, number=0):
         try:
