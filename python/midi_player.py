@@ -25,7 +25,7 @@ class Command:
 
 
 class Channel:
-    def __init__(self, number, port=synth_port, volume=1.0, fade_rate=0.2):
+    def __init__(self, number, port=synth_port, volume=1.0, fade_rate=0.1):
         self.number = number
         self.port = port
         self.volume = volume
@@ -39,6 +39,7 @@ class Channel:
                 command = self.queue.get()
                 if command.name == Command.volume:
                     self.volume = command.value
+                    self.fade_start = None
                 elif command.name == Command.fade_out:
                     if self.fade_start is None:
                         self.fade_start = datetime.now()
