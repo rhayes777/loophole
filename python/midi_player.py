@@ -180,8 +180,7 @@ class Song:
         self.is_looping = is_looping
         self.mid = mido.MidiFile("{}/media/{}".format(dir_path, self.filename))
         signal.signal(signal.SIGINT, self.stop)
-        channel_numbers = range(0, 16)
-        self.channels = map(Channel, sorted(list(channel_numbers)))
+        self.channels = map(Channel, range(0, 16))
 
     # Play the midi file (should be called on new thread)
     def play_midi_file(self):
