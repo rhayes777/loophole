@@ -57,6 +57,8 @@ class Command:
         self.name = name
         self.value = value
 
+    add_effect = "add_effect"
+    remove_effect = "remove_effect"
     pitch_bend = "pitch_bend"
     volume = "volume"
     fade_out = "fade_out"
@@ -96,6 +98,11 @@ class Channel:
                     if self.fade_start is None:
                         # When did the fadeout start?
                         self.fade_start = datetime.now()
+                elif command.name == Command.add_effect:
+                    self.effects.append(command.value)
+                elif command.name == Command.remove_effect and command.value in self.effects:
+                    self.effects.remove(command.value)
+
             # True if a fade out is in progress
             if self.fade_start is not None:
                 # How long has the fade been occurring?
@@ -124,10 +131,10 @@ class Channel:
             pass
 
     def add_effect(self, effect):
-        self.effects.append(effect)
+        self.queue.put(Command(Command.add_effect, effect))
 
     def remove_effect(self, effect):
-        self.effects.remove(effect)
+        self.queue.put(Command(Command.remove_effect, effect))
 
     # Stop all currently playing notes
     def stop_playing_notes(self):
