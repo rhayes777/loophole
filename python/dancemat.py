@@ -4,9 +4,8 @@ import logging
 # Set up pygame
 pygame.init()
 pygame.display.init()
-pygame.display.set_mode((300,300))
+pygame.display.set_mode((300, 300))
 clock = pygame.time.Clock()
-
 
 
 # noinspection PyClassHasNoInit
@@ -41,9 +40,11 @@ class DanceMat:
     def read(self):
         for _ in pygame.event.get():
             if self.button_listener is not None:
-                button_dict = {Button.all[n]: self.joystick.get_button(n) == 1 for n in
-                               range(0, self.joystick.get_numbuttons())} if self.joystick is not None else {
-                    button: False for button in Button.all}
+                try:
+                    button_dict = {Button.all[n]: self.joystick.get_button(n) == 1 for n in
+                                   range(0, self.joystick.get_numbuttons())}
+                except AttributeError:
+                    button_dict = {button: False for button in Button.all}
                 key = pygame.key.get_pressed()
                 qwerty_input = {'x': key[pygame.K_q],
                                 'up': key[pygame.K_w],

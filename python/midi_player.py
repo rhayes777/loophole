@@ -70,6 +70,7 @@ class Channel:
     def __init__(self, number, volume=1.0, fade_rate=0.1, note_on_listener=None):
         self.note_on_listener = note_on_listener
         self.number = number
+        # Decides which port output should be used depending on the channel number
         self.port = keys_port if number < CHANNEL_PARTITION else drum_port
         self.volume = volume
         self.fade_rate = fade_rate
@@ -179,8 +180,7 @@ class Song:
         self.is_looping = is_looping
         self.mid = mido.MidiFile("{}/media/{}".format(dir_path, self.filename))
         signal.signal(signal.SIGINT, self.stop)
-        channel_numbers = range(0, 16)
-        self.channels = map(Channel, sorted(list(channel_numbers)))
+        self.channels = map(Channel, range(0, 16))
 
     # Play the midi file (should be called on new thread)
     def play_midi_file(self):
