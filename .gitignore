@@ -1,3 +1,6 @@
+Scripts/
+cmd*
+tcl
 samples
 bin
 include
