@@ -77,9 +77,11 @@ class Channel:
         self.queue = Queue()
         self.fade_start = None
         self.playing_notes = []
+        self.effects = []
 
     # Send a midi message to this channel
     def send_message(self, msg):
+
         try:
             # Are there any commands waiting?
             if not self.queue.empty():
@@ -103,8 +105,12 @@ class Channel:
                     self.volume = 0
                     self.fade_start = None
             msg.velocity = int(self.volume * msg.velocity)
-            # Actually send the midi message
-            self.port.send(msg)
+
+            msgs = self.apply_effects(msg.copy())
+
+            for msg in msgs:
+                # Actually send the midi message
+                self.port.send(msg)
             # Check if it was a note message
             if msg.type == Channel.note_on:
                 # Keep track of notes that are currently playing
@@ -116,6 +122,12 @@ class Channel:
                 self.playing_notes.remove(msg.note)
         except AttributeError:
             pass
+
+    def add_effect(self, effect):
+        self.effects.append(effect)
+
+    def remove_effect(self, effect):
+        self.effects.remove(effect)
 
     # Stop all currently playing notes
     def stop_playing_notes(self):
@@ -134,6 +146,12 @@ class Channel:
     # Start fading out this channel
     def fade_out(self):
         self.queue.put(Command(Command.fade_out))
+
+    def apply_effects(self, msg):
+        msg_array = [msg]
+        for effect in self.effects:
+            msg_array = effect.apply(msg_array)
+        return msg_array
 
 
 # A bass channel that plays a note from a chord shifted down two octaves on a drum beat
@@ -233,3 +251,11 @@ class Song:
     def include_all_channels(self):
         for channel in self.channels:
             channel.set_volume(1.0)
+
+
+def repeat(msg_array):
+    for msg in msg_array:
+        new_msg = msg.copy()
+        new_msg.time += 0.5
+        msg_array.append(new_msg)
+    return msg_array
