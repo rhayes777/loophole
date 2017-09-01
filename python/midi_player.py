@@ -64,6 +64,22 @@ class Command:
     fade_out = "fade_out"
 
 
+class Effect:
+    def __init__(self, func):
+        self.func = func
+
+    def apply(self, msg_array):
+        return self.func(msg_array)
+
+    @staticmethod
+    def repeat(msg_array):
+        for msg in msg_array:
+            new_msg = msg.copy()
+            new_msg.time += 0.5
+            msg_array.append(new_msg)
+        return msg_array
+
+
 # Class representing individual midi channel
 class Channel:
     note_off = "note_off"
@@ -127,8 +143,8 @@ class Channel:
                     self.note_on_listener(msg)
             elif msg.type == Channel.note_off:
                 self.playing_notes.remove(msg.note)
-        except AttributeError:
-            pass
+        except AttributeError as e:
+            logging.exception(e)
 
     def add_effect(self, effect):
         self.queue.put(Command(Command.add_effect, effect))
@@ -260,9 +276,4 @@ class Song:
             channel.set_volume(1.0)
 
 
-def repeat(msg_array):
-    for msg in msg_array:
-        new_msg = msg.copy()
-        new_msg.time += 0.5
-        msg_array.append(new_msg)
-    return msg_array
+repeat = Effect(Effect.repeat)
