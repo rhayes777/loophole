@@ -1,9 +1,21 @@
 import midi_player
 import dancemat
 from time import sleep
+import signal
 
 mat = dancemat.DanceMat()
-track = midi_player.Song(is_looping=True)
+track = midi_player.Song(filename="bicycle-ride.mid", is_looping=True)
+
+play = True
+
+
+def stop(*args):
+    global play
+    track.stop()
+    play = False
+
+
+signal.signal(signal.SIGINT, stop)
 
 channels = track.channels
 
@@ -27,8 +39,8 @@ position_dict = {dancemat.Button.triangle: 0,
 # Function to listen for changes to button state
 def listener(status_dict):
     pressed_positions = [position_dict[button] for button in status_dict.keys() if status_dict[button]]
-    # track.set_included_channels(pressed_positions)
-    bass_channel.set_pressed_positions(pressed_positions)
+    track.set_included_channels(pressed_positions)
+    # bass_channel.set_pressed_positions(pressed_positions)
 
 
 # Attach that listener function to the dancemat
@@ -37,6 +49,6 @@ mat.set_button_listener(listener)
 track.start()
 
 # Keep reading forever
-while 1:
+while play:
     mat.read()
     sleep(0.05)

@@ -3,7 +3,6 @@ from Queue import Queue
 import music
 from threading import Thread
 import logging
-import signal
 from datetime import datetime
 import os
 
@@ -62,6 +61,7 @@ class Command:
     pitch_bend = "pitch_bend"
     volume = "volume"
     fade_out = "fade_out"
+    stop = "stop"
 
 
 class Effect:
@@ -220,7 +220,6 @@ class Song:
         self.is_stopping = False
         self.is_looping = is_looping
         self.mid = mido.MidiFile("{}/media/{}".format(dir_path, self.filename))
-        signal.signal(signal.SIGINT, self.stop)
         self.channels = map(Channel, range(0, 16))
 
     # Play the midi file (should be called on new thread)
@@ -238,6 +237,8 @@ class Song:
                 if isinstance(command, Command):
                     if command.name == Command.pitch_bend:
                         instrument.pitch_bend(command.value)
+                    if command.name == Command.stop:
+                        self.is_stopping = True
             try:
                 # Send a message to its assigned channel
                 self.channels[msg.channel].send_message(msg)
@@ -255,11 +256,12 @@ class Song:
         t.start()
 
     # Stop this song
-    def stop(self):
-        self.is_stopping = True
+    def stop(self, *args):
+        print "STOP"
+        self.send_command(Command.stop)
 
     # Queue up a command
-    def send_command(self, name, value):
+    def send_command(self, name, value=None):
         self.queue.put(Command(name, value))
 
     # Set which channels should be playing
