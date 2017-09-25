@@ -38,9 +38,20 @@ position_dict = {dancemat.Button.triangle: 0,
 
 # Function to listen for changes to button state
 def listener(status_dict):
-    pressed_positions = [position_dict[button] for button in status_dict.keys() if status_dict[button]]
-    track.set_included_channels(pressed_positions)
-    # bass_channel.set_pressed_positions(pressed_positions)
+    playing_channels = [position_dict[button] for button in status_dict.keys() if
+                        status_dict[button] and position_dict[button] in [0, 1, 2]]
+    track.set_included_channels(playing_channels)
+
+    def check_fifth(button_name, channel):
+        if status_dict[button_name]:
+            channels[channel].add_effect(midi_player.fifth)
+        else:
+            channels[channel].remove_effect(midi_player.fifth)
+            # bass_channel.set_pressed_positions(pressed_positions)
+
+    check_fifth(dancemat.Button.x, 0)
+    check_fifth(dancemat.Button.up, 1)
+    check_fifth(dancemat.Button.circle, 2)
 
 
 # Attach that listener function to the dancemat

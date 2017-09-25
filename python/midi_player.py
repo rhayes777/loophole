@@ -79,6 +79,16 @@ class Effect:
             msg_array.append(new_msg)
         return msg_array
 
+    @staticmethod
+    def fifth(msg_array):
+        for msg in msg_array:
+            if msg.note + 7 > 127:
+                continue
+            new_msg = msg.copy()
+            new_msg.note += 7
+            msg_array.append(new_msg)
+        return msg_array
+
 
 # Class representing individual midi channel
 class Channel:
@@ -279,3 +289,4 @@ class Song:
 
 
 repeat = Effect(Effect.repeat)
+fifth = Effect(Effect.fifth)
