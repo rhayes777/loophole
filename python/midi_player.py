@@ -155,6 +155,8 @@ class Channel:
                 self.playing_notes.remove(msg.note)
         except AttributeError as e:
             logging.exception(e)
+        except ValueError as e:
+            logging.exception(e)
 
     def add_effect(self, effect):
         self.queue.put(Command(Command.add_effect, effect))
