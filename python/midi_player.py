@@ -141,9 +141,6 @@ class Channel:
 
             msgs = self.apply_effects(msg.copy())
 
-            print self.effects
-            # print msgs
-
             for msg in msgs:
                 # Actually send the midi message
                 self.port.send(msg)
