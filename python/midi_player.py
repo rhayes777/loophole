@@ -81,13 +81,16 @@ class Effect:
 
     @staticmethod
     def fifth(msg_array):
+        new_array = []
         for msg in msg_array:
             if msg.note + 7 > 127:
                 continue
             new_msg = msg.copy()
             new_msg.note += 7
-            msg_array.append(new_msg)
-        return msg_array
+            new_msg.time = 0
+            new_array.append(msg)
+            new_array.append(new_msg)
+        return new_array
 
 
 # Class representing individual midi channel
