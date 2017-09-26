@@ -35,6 +35,8 @@ position_dict = {dancemat.Button.triangle: 0,
                  dancemat.Button.up: 6,
                  dancemat.Button.circle: 7}
 
+channel_numbers_with_fifth = set()
+
 
 # Function to listen for changes to button state
 def listener(status_dict):
@@ -42,12 +44,13 @@ def listener(status_dict):
                         status_dict[button] and position_dict[button] in [0, 1, 2]]
     track.set_included_channels(playing_channels)
 
-    def check_fifth(button_name, channel):
-        if status_dict[button_name]:
-            channels[channel].add_effect(midi_player.fifth)
-        else:
-            channels[channel].remove_effect(midi_player.fifth)
-            # bass_channel.set_pressed_positions(pressed_positions)
+    def check_fifth(button_name, channel_number):
+        if status_dict[button_name] and channel_number not in channel_numbers_with_fifth:
+            channels[channel_number].add_effect(midi_player.fifth)
+            channel_numbers_with_fifth.add(channel_number)
+        elif channel_number in channel_numbers_with_fifth:
+            channels[channel_number].remove_effect(midi_player.fifth)
+            channel_numbers_with_fifth.remove(channel_number)
 
     check_fifth(dancemat.Button.x, 0)
     check_fifth(dancemat.Button.up, 1)
