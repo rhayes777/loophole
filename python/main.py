@@ -4,7 +4,7 @@ from time import sleep
 import signal
 
 mat = dancemat.DanceMat()
-track = midi_player.Song(filename="bicycle-ride.mid", is_looping=True)
+track = midi_player.Song(is_looping=True)
 
 play = True
 
@@ -40,8 +40,15 @@ channel_numbers_with_fifth = set()
 
 # Function to listen for changes to button state
 def listener(status_dict):
-    playing_channels = [position_dict[button] for button in status_dict.keys() if
-                        status_dict[button] and position_dict[button] in [0, 1, 2]]
+    playing_channels = []
+    if status_dict[dancemat.Button.triangle]:
+        playing_channels.append(0)
+    if status_dict[dancemat.Button.down]:
+        playing_channels.append(1)
+    if status_dict[dancemat.Button.square]:
+        playing_channels.append(8)
+    if status_dict[dancemat.Button.circle]:
+        playing_channels.append(9)
     track.set_included_channels(playing_channels)
 
     def check_fifth(button_name, channel_number):
@@ -54,7 +61,6 @@ def listener(status_dict):
 
     check_fifth(dancemat.Button.x, 0)
     check_fifth(dancemat.Button.up, 1)
-    check_fifth(dancemat.Button.circle, 2)
 
     if status_dict[dancemat.Button.left]:
         track.send_command(midi_player.Command.tempo_change, value=0.5)
