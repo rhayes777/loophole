@@ -57,6 +57,13 @@ def listener(status_dict):
     check_fifth(dancemat.Button.up, 1)
     check_fifth(dancemat.Button.circle, 2)
 
+    if status_dict[dancemat.Button.left]:
+        track.send_command(midi_player.Command.tempo_change, value=0.5)
+    elif status_dict[dancemat.Button.right]:
+        track.send_command(midi_player.Command.tempo_change, value=2)
+    else:
+        track.send_command(midi_player.Command.tempo_change, value=1)
+
 
 # Attach that listener function to the dancemat
 mat.set_button_listener(listener)

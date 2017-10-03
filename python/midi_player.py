@@ -62,6 +62,7 @@ class Command:
     volume = "volume"
     fade_out = "fade_out"
     stop = "stop"
+    tempo_change = "tempo_change"
 
 
 class Effect:
@@ -235,6 +236,7 @@ class Song:
         self.is_stopping = False
         self.is_looping = is_looping
         self.mid = mido.MidiFile("{}/media/{}".format(dir_path, self.filename))
+        self.original_tempo = self.mid.ticks_per_beat
         self.channels = map(Channel, range(0, 16))
 
     # Play the midi file (should be called on new thread)
@@ -254,6 +256,9 @@ class Song:
                         instrument.pitch_bend(command.value)
                     if command.name == Command.stop:
                         self.is_stopping = True
+                    if command.name == Command.tempo_change:
+                        self.mid.ticks_per_beat = command.value * self.original_tempo
+
             try:
                 # Send a message to its assigned channel
                 self.channels[msg.channel].send_message(msg)

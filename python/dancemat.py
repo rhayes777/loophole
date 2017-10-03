@@ -26,7 +26,6 @@ class Button:
 
 
 # Object representing dancemat
-
 class DanceMat:
     def __init__(self, number=0):
         try:
