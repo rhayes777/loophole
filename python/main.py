@@ -40,7 +40,6 @@ channel_numbers_with_fifth = set()
 
 # Function to listen for changes to button state
 def listener(status_dict):
-    print status_dict
     playing_channels = [position_dict[button] for button in status_dict.keys() if
                         status_dict[button] and position_dict[button] in [0, 1, 2]]
     track.set_included_channels(playing_channels)
