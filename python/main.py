@@ -4,7 +4,7 @@ from time import sleep
 import signal
 
 mat = dancemat.DanceMat()
-track = midi_player.Song(is_looping=True)
+track = midi_player.Song(filename='bicycle-ride.mid', is_looping=True)
 
 play = True
 
@@ -41,6 +41,7 @@ playing_channels = [0, 1, 2, 3]
 
 
 def toggle_channel(channel):
+    print "Toggle {}".format(channel)
     if channel in playing_channels:
         playing_channels.remove(channel)
     else:
@@ -69,8 +70,8 @@ def listener(status_dict):
 
     check_fifth(dancemat.Button.left, 0)
     check_fifth(dancemat.Button.right, 1)
-    check_fifth(dancemat.Button.up, 8)
-    check_fifth(dancemat.Button.down, 9)
+    check_fifth(dancemat.Button.up, 2)
+    check_fifth(dancemat.Button.down, 3)
 
     if status_dict[dancemat.Button.select]:
         track.send_command(midi_player.Command.tempo_change, value=0.5)

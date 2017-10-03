@@ -99,7 +99,7 @@ class Channel:
     note_off = "note_off"
     note_on = "note_on"
 
-    def __init__(self, number, volume=1.0, fade_rate=0.1, note_on_listener=None):
+    def __init__(self, number, volume=1.0, fade_rate=1, note_on_listener=None):
         self.note_on_listener = note_on_listener
         self.number = number
         # Decides which port output should be used depending on the channel number
