@@ -37,7 +37,7 @@ position_dict = {dancemat.Button.triangle: 0,
 
 channel_numbers_with_fifth = set()
 
-playing_channels = [0, 2]
+playing_channels = [0, 1, 2, 3]
 
 
 def toggle_channel(channel):
