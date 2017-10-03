@@ -37,18 +37,26 @@ position_dict = {dancemat.Button.triangle: 0,
 
 channel_numbers_with_fifth = set()
 
+playing_channels = [0, 2]
+
+
+def toggle_channel(channel):
+    if channel in playing_channels:
+        playing_channels.remove(channel)
+    else:
+        playing_channels.append(channel)
+
 
 # Function to listen for changes to button state
 def listener(status_dict):
-    playing_channels = []
     if status_dict[dancemat.Button.triangle]:
-        playing_channels.append(0)
+        toggle_channel(0)
     if status_dict[dancemat.Button.down]:
-        playing_channels.append(1)
+        toggle_channel(1)
     if status_dict[dancemat.Button.square]:
-        playing_channels.append(8)
+        toggle_channel(2)
     if status_dict[dancemat.Button.circle]:
-        playing_channels.append(9)
+        toggle_channel(3)
     track.set_included_channels(playing_channels)
 
     def check_fifth(button_name, channel_number):
@@ -59,12 +67,14 @@ def listener(status_dict):
             channels[channel_number].remove_effect(midi_player.fifth)
             channel_numbers_with_fifth.remove(channel_number)
 
-    check_fifth(dancemat.Button.x, 0)
-    check_fifth(dancemat.Button.up, 1)
+    check_fifth(dancemat.Button.left, 0)
+    check_fifth(dancemat.Button.right, 1)
+    check_fifth(dancemat.Button.up, 8)
+    check_fifth(dancemat.Button.down, 9)
 
-    if status_dict[dancemat.Button.left]:
+    if status_dict[dancemat.Button.select]:
         track.send_command(midi_player.Command.tempo_change, value=0.5)
-    elif status_dict[dancemat.Button.right]:
+    elif status_dict[dancemat.Button.start]:
         track.send_command(midi_player.Command.tempo_change, value=2)
     else:
         track.send_command(midi_player.Command.tempo_change, value=1)
