@@ -29,7 +29,6 @@ circle_y = 200
 
 all_dots = []
 
-
 """
 In Bash type:
 git log
@@ -52,9 +51,7 @@ class Dot:
         self.pos_x = pos_x
         self.pos_y = pos_y
 
-
     def show(self):
-
         pygame.draw.ellipse(screen, self.colour, [self.pos_x, self.pos_y, self.size, self.size], 3)
 
 
@@ -79,7 +76,7 @@ while not done:
     for message in mid.play():
         print(message)
 
-        all_dots.append(Dot(BLUE, 50, random.randint(0,400), random.randint(0,400)))
+        all_dots.append(Dot(BLUE, 50, random.randint(0, 400), random.randint(0, 400)))
 
         pygame.display.update()
 
@@ -89,6 +86,5 @@ while not done:
             Dot.show()  # TODO: enter changing coordinates here for where ever you want to put a dot
             # Dot.update()  # TODO: this method wasn't doing anything
             # print(all_Dots.__sizeof__())  TODO: I think you wanted print len(all_dots)
-
 
 pygame.quit()
