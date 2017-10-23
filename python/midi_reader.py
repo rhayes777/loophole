@@ -81,9 +81,16 @@ while not done:
         pygame.display.update()
 
         print len(all_dots)
+        """
+            The loop below was:
+            for Dot in all_dots:
+                Dot.show()
 
-        for Dot in all_dots:  # TODO: Dot should be dot (variables_are_lower_dashed_case)
-            Dot.show()  # TODO: enter changing coordinates here for where ever you want to put a dot
+            What happened was you overrode the Dot class you'd defined above with a variable called Dot, so rather than
+            Dot() calling the __init__ of the Dot class it was trying to call the __call__ of the Dot instance
+        """
+        for dot in all_dots:  # TODO: Dot should be dot (variables_are_lower_dashed_case)
+            dot.show()  # TODO: enter changing coordinates here for where ever you want to put a dot
             # Dot.update()  # TODO: this method wasn't doing anything
             # print(all_Dots.__sizeof__())  TODO: I think you wanted print len(all_dots)
 
