@@ -15,7 +15,7 @@ clock = pygame.time.Clock()
 print(pygame_Status)
 
 # create screen for pygame to draw to
-screen = pygame.display.set_mode((800, 600))
+screen = pygame.display.set_mode((1000, 700))
 
 # timer
 timer = 0
@@ -29,44 +29,50 @@ circle_y = 200
 
 all_dots = []
 
-"""
-In Bash type:
-git log
-
-Then copy the hash by this commit and then type:
-
-git show i3rio3hfwifh904oirgosnfwpfnweffwep
-
-(With a hash instead of the random text)
-...that will show you what was added (green) and what was removed (red) in this commit.
-"""
-
 
 # basic gfx class
 class Dot:
-    def __init__(self, colour, size, pos_x, pos_y):
+    def __init__(self, colour, size, pos_x, pos_y, life):
         self.colour = colour
-        self.time = 5000
+        self.time = 1
         self.size = size
         self.pos_x = pos_x
         self.pos_y = pos_y
+        self.life = life
 
     def show(self):
-        pygame.draw.ellipse(screen, self.colour, [self.pos_x, self.pos_y, self.size, self.size], 3)
+
+        if self.size > 7:
+            pygame.draw.ellipse(screen, self.colour, [self.pos_x-(self.size/2), self.pos_y-(self.size/2), self.size, self.size], 2)
+
+    def update(self):
+
+        self.size = self.size * self.time
+
+        if self.size > 5:
+            self.time -= 0.001
+        else:
+            self.size = 5
+            self.die()
+
+    def die(self):
+
+        all_dots.remove(self)
 
 
 path = os.path.realpath(__file__)
 dir_path = os.path.dirname(os.path.realpath(__file__))
-mid = mido.MidiFile("{}/media/bicycle-ride.mid".format(dir_path))
+mid = mido.MidiFile("{}/media/big-blue.mid".format(dir_path))
 
-all_dots.append(Dot(BLUE, 50, 50, 50))
 
 while not done:
+
+
 
     # This limits the while loop to a max of 10 times per second.
     # Leave this out and we will use all CPU we can.
     clock.tick(10)
-    timer = timer + 1  # TODO could be timer += 1
+    timer +=1
     print(timer)
 
     for event in pygame.event.get():  # User did something
@@ -74,24 +80,26 @@ while not done:
             done = True  # Flag that we are done so we exit this loop
 
     for message in mid.play():
-        print(message)
 
-        all_dots.append(Dot(BLUE, 50, random.randint(0, 400), random.randint(0, 400)))
+        if message.type == 'note_on':
 
-        pygame.display.update()
+            print(message)
 
-        print len(all_dots)
-        """
-            The loop below was:
-            for Dot in all_dots:
-                Dot.show()
+            all_dots.append(Dot(BLUE,
+                                (random.randint(30,70)),
+                                (random.randint(0,screen.get_width())),
+                                (getattr(message, 'note')*10)-300,
+                                0.85))
 
-            What happened was you overrode the Dot class you'd defined above with a variable called Dot, so rather than
-            Dot() calling the __init__ of the Dot class it was trying to call the __call__ of the Dot instance
-        """
-        for dot in all_dots:  # TODO: Dot should be dot (variables_are_lower_dashed_case)
-            dot.show()  # TODO: enter changing coordinates here for where ever you want to put a dot
-            # Dot.update()  # TODO: this method wasn't doing anything
-            # print(all_Dots.__sizeof__())  TODO: I think you wanted print len(all_dots)
+            pygame.display.update()
+
+            print len(all_dots)
+
+            screen.fill(BLACK)
+
+            for dot in all_dots:
+                dot.show()
+                dot.update()
+                # print len(all_dots)
 
 pygame.quit()
