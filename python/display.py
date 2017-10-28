@@ -1,6 +1,7 @@
 import mido
 import os
 import random
+from Queue import Queue
 
 # pygame gfx constants
 BLACK = (0, 0, 0)
@@ -48,8 +49,9 @@ class Display:  # TODO: This class basically wraps the functionality you defined
     def __init__(self, pygame, screen):
         self.pygame = pygame
         self.screen = screen
+        self.queue = Queue()
 
-    def on_message_received(self, msg):  # TODO: the response to a new message should be implemented here
+    def process_message(self, msg):  # TODO: the response to a new message should be implemented here
         if msg.type == 'note_on':
 
             print(msg)
@@ -69,6 +71,13 @@ class Display:  # TODO: This class basically wraps the functionality you defined
             for dot in all_dots:
                 dot.show(self.pygame, self.screen)
                 dot.update()
+
+    def update(self):
+        while not self.queue.empty():
+            self.process_message(self.queue.get())
+
+    def on_message_received(self, msg):
+        self.queue.put(msg)
 
 
 def run_example():  # TODO: this runs the example you've already programmed
@@ -106,7 +115,7 @@ def run_example():  # TODO: this runs the example you've already programmed
         for message in mid.play():
             pygame.event.get()
 
-            display.on_message_received(message)
+            display.process_message(message)
 
     pygame.quit()
 
