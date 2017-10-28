@@ -3,19 +3,8 @@ import os
 import pygame
 import random
 
-# pygame setup
-pygame_Status = pygame.init()
-
 # for the 'game loop'
 done = False
-clock = pygame.time.Clock()
-
-# indicates pygame has set up:
-# (6,0) = all good
-print(pygame_Status)
-
-# create screen for pygame to draw to
-screen = pygame.display.set_mode((1000, 700))
 
 # timer
 timer = 0
@@ -61,11 +50,6 @@ class Dot:
         all_dots.remove(self)
 
 
-path = os.path.realpath(__file__)
-dir_path = os.path.dirname(os.path.realpath(__file__))
-mid = mido.MidiFile("{}/media/big-blue.mid".format(dir_path))
-
-
 def on_message_received(msg):
     if msg.type == 'note_on':
 
@@ -88,21 +72,35 @@ def on_message_received(msg):
             dot.update()
 
 
-while not done:
+if __name__ == '__main__':
+    path = os.path.realpath(__file__)
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    mid = mido.MidiFile("{}/media/big-blue.mid".format(dir_path))
 
-    # This limits the while loop to a max of 10 times per second.
-    # Leave this out and we will use all CPU we can.
-    clock.tick(10)
-    timer += 1
-    print(timer)
+    # pygame setup
+    pygame_Status = pygame.init()
+    clock = pygame.time.Clock()
+    # indicates pygame has set up:
+    # (6,0) = all good
+    print(pygame_Status)
+    # create screen for pygame to draw to
+    screen = pygame.display.set_mode((1000, 700))
 
-    for event in pygame.event.get():  # User did something
-        if event.type == pygame.QUIT:  # If user clicked close
-            done = True  # Flag that we are done so we exit this loop
+    while not done:
 
-    for message in mid.play():
-        pygame.event.get()
+        # This limits the while loop to a max of 10 times per second.
+        # Leave this out and we will use all CPU we can.
+        clock.tick(10)
+        timer += 1
+        print(timer)
 
-        on_message_received(message)
+        for event in pygame.event.get():  # User did something
+            if event.type == pygame.QUIT:  # If user clicked close
+                done = True  # Flag that we are done so we exit this loop
 
-pygame.quit()
+        for message in mid.play():
+            pygame.event.get()
+
+            on_message_received(message)
+
+    pygame.quit()
