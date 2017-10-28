@@ -1,9 +1,16 @@
 import midi_player
 import dancemat
 from time import sleep
+import pygame
 import signal
 
-mat = dancemat.DanceMat()
+# Set up pygame
+pygame.init()
+pygame.display.init()
+pygame.display.set_mode((300, 300))
+clock = pygame.time.Clock()
+
+mat = dancemat.DanceMat(pygame)
 track = midi_player.Song(filename='bicycle-ride.mid', is_looping=True)
 
 play = True
