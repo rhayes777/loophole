@@ -78,11 +78,10 @@ if __name__ == '__main__':
     mid = mido.MidiFile("{}/media/big-blue.mid".format(dir_path))
 
     # pygame setup
-    pygame_Status = pygame.init()
-    clock = pygame.time.Clock()
-    # indicates pygame has set up:
     # (6,0) = all good
-    print(pygame_Status)
+    print(pygame.init())
+    clock = pygame.time.Clock()
+
     # create screen for pygame to draw to
     screen = pygame.display.set_mode((1000, 700))
 
