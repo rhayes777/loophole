@@ -43,7 +43,8 @@ class Dot:
     def show(self):
 
         if self.size > 7:
-            pygame.draw.ellipse(screen, self.colour, [self.pos_x-(self.size/2), self.pos_y-(self.size/2), self.size, self.size], 2)
+            pygame.draw.ellipse(screen, self.colour,
+                                [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
 
     def update(self):
 
@@ -65,14 +66,34 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 mid = mido.MidiFile("{}/media/big-blue.mid".format(dir_path))
 
 
+def on_message_received(msg):
+    if msg.type == 'note_on':
+
+        print(msg)
+
+        all_dots.append(Dot(BLUE,
+                            (random.randint(30, 70)),
+                            (random.randint(0, screen.get_width())),
+                            (getattr(msg, 'note') * 10) - 300,
+                            0.85))
+
+        pygame.display.update()
+
+        print len(all_dots)
+
+        screen.fill(BLACK)
+
+        for dot in all_dots:
+            dot.show()
+            dot.update()
+
+
 while not done:
-
-
 
     # This limits the while loop to a max of 10 times per second.
     # Leave this out and we will use all CPU we can.
     clock.tick(10)
-    timer +=1
+    timer += 1
     print(timer)
 
     for event in pygame.event.get():  # User did something
@@ -80,28 +101,8 @@ while not done:
             done = True  # Flag that we are done so we exit this loop
 
     for message in mid.play():
-
         pygame.event.get()
 
-        if message.type == 'note_on':
-
-            print(message)
-
-            all_dots.append(Dot(BLUE,
-                                (random.randint(30,70)),
-                                (random.randint(0,screen.get_width())),
-                                (getattr(message, 'note')*10)-300,
-                                0.85))
-
-            pygame.display.update()
-
-            print len(all_dots)
-
-            screen.fill(BLACK)
-
-            for dot in all_dots:
-                dot.show()
-                dot.update()
-                # print len(all_dots)
+        on_message_received(message)
 
 pygame.quit()
