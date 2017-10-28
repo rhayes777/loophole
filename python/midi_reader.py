@@ -81,6 +81,8 @@ while not done:
 
     for message in mid.play():
 
+        pygame.event.get()
+
         if message.type == 'note_on':
 
             print(message)
