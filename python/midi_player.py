@@ -101,6 +101,7 @@ class Channel:
 
     def __init__(self, number, volume=1.0, fade_rate=1, note_on_listener=None):
         self.note_on_listener = note_on_listener
+        self.message_send_listener = None
         self.number = number
         # Decides which port output should be used depending on the channel number
         self.port = keys_port if number < CHANNEL_PARTITION else drum_port
@@ -146,6 +147,8 @@ class Channel:
             msgs = self.apply_effects(msg.copy())
 
             for msg in msgs:
+                if callable(self.message_send_listener):
+                    self.message_send_listener(msg)
                 # Actually send the midi message
                 self.port.send(msg)
             # Check if it was a note message

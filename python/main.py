@@ -3,17 +3,21 @@ import dancemat
 from time import sleep
 import pygame
 import signal
+import display
 
 # Set up pygame
 pygame.init()
 pygame.display.init()
-pygame.display.set_mode((300, 300))
+# create screen for pygame to draw to
+screen = pygame.display.set_mode((1000, 700))
 clock = pygame.time.Clock()
 
 mat = dancemat.DanceMat(pygame)
 track = midi_player.Song(filename='bicycle-ride.mid', is_looping=True)
 
 play = True
+
+disp = display.Display(pygame, screen)
 
 
 def stop(*args):
@@ -25,6 +29,9 @@ def stop(*args):
 signal.signal(signal.SIGINT, stop)
 
 channels = track.channels
+
+for channel in channels:
+    channel.message_send_listener = disp.on_message_received
 
 chord_channel = channels[0]
 drum_channel = channels[8]
