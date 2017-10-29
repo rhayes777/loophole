@@ -268,7 +268,7 @@ class Song:
         self.is_stopping = False
 
         # Take midi messages from a generator
-        for msg in self.mid.play():
+        for msg in self.mid.play(meta_messages=True):
             # Break if should stop
             if self.is_stopping:
                 break
