@@ -1,6 +1,5 @@
 import mido
 from Queue import Queue
-import music
 from threading import Thread
 import logging
 from datetime import datetime
@@ -21,12 +20,6 @@ SIMPLE_SYNTH = 'SimpleSynth virtual input'
 CHANNEL_PARTITION = 8
 
 simple_port = None
-
-# noinspection PyBroadException
-try:
-    instrument = music.MidiInstrument()
-except Exception:
-    logging.warn("Midi instrument could not be opened")
 
 
 class Message(mido.Message):
@@ -52,9 +45,9 @@ class Message(mido.Message):
         # 0x2000 is the center corresponding to the normal pitch of the note
         # (no pitch change)." so value=0 should send 0x2000
         value = value + 0x2000
-        LSB = value & 0x7f  # keep least 7 bits
-        MSB = value >> 7
-        return mido.Message.from_bytes([0xe0 + channel, LSB, MSB])
+        lsb = value & 0x7f  # keep least 7 bits
+        msb = value >> 7
+        return mido.Message.from_bytes([0xe0 + channel, lsb, msb])
 
 
 # Creates a port object corresponding to an instrument if it exists, else to a Simple inbuilt synth
@@ -284,7 +277,7 @@ class Song:
                 command = self.queue.get()
                 if isinstance(command, Command):
                     if command.name == Command.pitch_bend:
-                        instrument.pitch_bend(command.value)
+                        keys_port.send(Message.pitch_bend(command.value))
                     if command.name == Command.stop:
                         self.is_stopping = True
                     if command.name == Command.tempo_change:
