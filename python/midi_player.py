@@ -154,6 +154,8 @@ class Channel:
                     self.effects.append(command.value)
                 elif command.name == Command.remove_effect and command.value in self.effects:
                     self.effects.remove(command.value)
+                elif command.name == Command.pitch_bend:
+                    self.send_message(Message.pitch_bend(command.value, self.number))
 
             # True if a fade out is in progress
             if self.fade_start is not None:
@@ -276,8 +278,6 @@ class Song:
             if not self.queue.empty():
                 command = self.queue.get()
                 if isinstance(command, Command):
-                    if command.name == Command.pitch_bend:
-                        keys_port.send(Message.pitch_bend(command.value))
                     if command.name == Command.stop:
                         self.is_stopping = True
                     if command.name == Command.tempo_change:
