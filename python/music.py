@@ -13,6 +13,10 @@ class Key:
     A_Sharp = 10
     B = 11
 
+    @classmethod
+    def all(cls):
+        return range(12)
+
 
 # Represents a note
 class Note:
@@ -60,6 +64,20 @@ class Scale:
     def interval_to_position(self, interval):
         return self.key + self.scale[interval % self.length] + 12 * (interval / self.length + self.base_octave)
 
+    @classmethod
+    def all_positions(cls, scale, key):
+        s = Scale(scale, key, base_octave=0)
+        interval = -7
+        positions = []
+        while True:
+            pos = s.interval_to_position(interval)
+            if pos > 127:
+                break
+            if pos >= 0:
+                positions.append(pos)
+            interval += 1
+        return positions
+
     # Get a note from this scale starting with a given interval from the root (0, 1, 2, 3 etc.)
     def note(self, interval):
         position = self.interval_to_position(interval)
@@ -74,3 +92,9 @@ class Scale:
     # Go up by number of octaves
     def change_octave(self, by):
         self.base_octave = self.base_octave + by
+
+
+keys_array = [set() for _ in range(128)]
+for k in Key.all():
+    for position in Scale.all_positions(Scale.major, k):
+        keys_array[position].add(k)
