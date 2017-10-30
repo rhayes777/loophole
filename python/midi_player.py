@@ -8,8 +8,6 @@ import os
 path = os.path.realpath(__file__)
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-print dir_path
-
 # noinspection PyUnresolvedReferences
 input_names = mido.get_output_names()
 

@@ -20,6 +20,7 @@ play = True
 disp = display.Display(pygame, screen)
 
 
+# noinspection PyUnusedLocal
 def stop(*args):
     global play
     track.stop()
