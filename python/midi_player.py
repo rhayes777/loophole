@@ -44,7 +44,7 @@ class Message(mido.Message):
         # "The 14 bit value of the pitch bend is defined so that a value of
         # 0x2000 is the center corresponding to the normal pitch of the note
         # (no pitch change)." so value=0 should send 0x2000
-        value = value + 0x2000
+        value += 0x2000  # Was value = value + 0x2000
         lsb = value & 0x7f  # keep least 7 bits
         msb = value >> 7
         return mido.Message.from_bytes([0xe0 + channel, lsb, msb])
@@ -300,6 +300,7 @@ class Song:
         t.start()
 
     # Stop this song
+    # noinspection PyUnusedLocal
     def stop(self, *args):
         self.send_command(Command.stop)
 
