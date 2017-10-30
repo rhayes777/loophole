@@ -219,41 +219,6 @@ class Channel:
         return msg_array
 
 
-# A bass channel that plays a note from a chord shifted down two octaves on a drum beat
-class BassChannel(Channel, object):
-    def __init__(self, number, chord_channel, drum_channel, volume=1.0, octave_shift=2):
-        super(BassChannel, self).__init__(number, volume)
-        self.chord_channel = chord_channel
-        self.drum_channel = drum_channel
-        self.drum_channel.note_on_listener = self.on_drum_played
-        self.pressed_positions = []
-        self.octave_shift = octave_shift
-        self.pressed_positions_queue = Queue()
-
-    # Called when a drum beat is played
-    def on_drum_played(self, msg):
-        # Stop all playing notes
-        self.stop_playing_notes()
-        # Updated pressed positions if waiting in queue
-        if not self.pressed_positions_queue.empty():
-            self.pressed_positions = self.pressed_positions_queue.get()
-        for position in self.pressed_positions:
-            try:
-                note = self.chord_channel.playing_notes[position % len(self.chord_channel.playing_notes)]
-                shift = position / len(self.chord_channel.playing_notes)
-
-                msg.channel = self.number
-                msg.note = note + 12 * (shift - self.octave_shift)
-
-                self.send_message(msg)
-            except ZeroDivisionError as e:
-                logging.exception(e)
-
-    # Set the positions of pressed notes
-    def set_pressed_positions(self, pressed_positions):
-        self.pressed_positions_queue.put(pressed_positions)
-
-
 # Represents a midi song loaded from a file
 class Song:
     def __init__(self, filename="channels_test.mid", is_looping=False):

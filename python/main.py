@@ -30,14 +30,8 @@ signal.signal(signal.SIGINT, stop)
 
 channels = track.channels
 
-for channel in channels:
-    channel.message_send_listener = disp.on_message_received
-
-chord_channel = channels[0]
-drum_channel = channels[8]
-
-bass_channel = midi_player.BassChannel(2, chord_channel, drum_channel)
-channels[2] = bass_channel
+for c in channels:
+    c.message_send_listener = disp.on_message_received
 
 # Relate button names to positions in the scale
 position_dict = {dancemat.Button.triangle: 0,
