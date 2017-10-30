@@ -1,9 +1,16 @@
 import dancemat
 import sample
 from time import sleep
+import pygame
 
-# Create a dancemat
-mat = dancemat.DanceMat()
+# Set up pygame
+pygame.init()
+pygame.display.init()
+# create screen for pygame to draw to
+screen = pygame.display.set_mode((1000, 700))
+clock = pygame.time.Clock()
+
+mat = dancemat.DanceMat(pygame)
 
 # Relate button names to positions in the scale
 position_dict = {dancemat.Button.triangle: 0,
