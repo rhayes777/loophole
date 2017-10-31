@@ -1,4 +1,5 @@
 import unittest
+from Queue import Queue
 
 
 # noinspection PyClassHasNoInit
@@ -110,6 +111,18 @@ def possible_keys(positions):
     return key_set
 
 
+class KeyTracker:
+    def __init__(self):
+        self.queue = Queue()
+
+    def add_note(self, note):
+        self.queue.put(note)
+
+    @property
+    def keys(self):
+        return possible_keys(list(self.queue.queue))
+
+
 class KeySelectionTestCase(unittest.TestCase):
     def test_keys_array(self):
         self.assertTrue(Key.C in keys_array[0])
@@ -126,6 +139,15 @@ class KeySelectionTestCase(unittest.TestCase):
 
         self.assertTrue(Key.C not in possible_keys([1, 3, 5]))
         self.assertTrue(Key.C_Sharp in possible_keys([1, 3, 5]))
+
+    def test_key_tracker(self):
+        key_tracker = KeyTracker()
+        key_tracker.add_note(0)
+        key_tracker.add_note(2)
+        self.assertTrue(Key.C in key_tracker.keys)
+        self.assertTrue(Key.G in key_tracker.keys)
+        self.assertTrue(Key.C_Sharp not in key_tracker.keys)
+        self.assertTrue(Key.D not in key_tracker.keys)
 
 
 if __name__ == "__main__":
