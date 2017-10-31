@@ -112,11 +112,14 @@ def possible_keys(positions):
 
 
 class KeyTracker:
-    def __init__(self):
+    def __init__(self, capacity=8):
         self.queue = Queue()
+        self.capacity = capacity
 
     def add_note(self, note):
         self.queue.put(note)
+        if len(self.queue.queue) > self.capacity:
+            self.queue.get()
 
     @property
     def keys(self):
@@ -148,6 +151,15 @@ class KeySelectionTestCase(unittest.TestCase):
         self.assertTrue(Key.G in key_tracker.keys)
         self.assertTrue(Key.C_Sharp not in key_tracker.keys)
         self.assertTrue(Key.D not in key_tracker.keys)
+
+        key_tracker = KeyTracker(capacity=1)
+        key_tracker.add_note(0)
+        self.assertTrue(Key.C in key_tracker.keys)
+        self.assertTrue(Key.D not in key_tracker.keys)
+
+        key_tracker.add_note(2)
+        self.assertTrue(Key.C in key_tracker.keys)
+        self.assertTrue(Key.D in key_tracker.keys)
 
 
 if __name__ == "__main__":
