@@ -103,6 +103,13 @@ for k in Key.all():
         keys_array[pos].add(k)
 
 
+def possible_keys(positions):
+    key_set = set(range(12))
+    for position in positions:
+        key_set = key_set.intersection(keys_array[position])
+    return key_set
+
+
 class KeySelectionTestCase(unittest.TestCase):
     def test_keys_array(self):
         self.assertTrue(Key.C in keys_array[0])
@@ -112,6 +119,13 @@ class KeySelectionTestCase(unittest.TestCase):
         self.assertTrue(0 in Scale.all_positions(Scale.major, Key.C))
         self.assertTrue(1 not in Scale.all_positions(Scale.major, Key.C))
         self.assertTrue(1 in Scale.all_positions(Scale.major, Key.C_Sharp))
+
+    def test_possible_keys(self):
+        self.assertTrue(Key.C in possible_keys([0, 2, 4]))
+        self.assertTrue(Key.C_Sharp not in possible_keys([0, 2, 4]))
+
+        self.assertTrue(Key.C not in possible_keys([1, 3, 5]))
+        self.assertTrue(Key.C_Sharp in possible_keys([1, 3, 5]))
 
 
 if __name__ == "__main__":
