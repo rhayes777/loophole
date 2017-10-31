@@ -123,7 +123,14 @@ class KeyTracker:
 
     @property
     def keys(self):
-        return possible_keys(list(self.queue.queue))
+        if len(self.queue.queue) == 0:
+            return Key.C
+        keys = []
+        note_list = list(self.queue.queue)
+        while len(keys) == 0:
+            keys = possible_keys(note_list)
+            note_list = note_list[1:]
+        return keys
 
 
 class KeySelectionTestCase(unittest.TestCase):
@@ -159,6 +166,17 @@ class KeySelectionTestCase(unittest.TestCase):
 
         key_tracker.add_note(2)
         self.assertTrue(Key.C in key_tracker.keys)
+        self.assertTrue(Key.D in key_tracker.keys)
+
+    def test_key_change(self):
+        key_tracker = KeyTracker()
+        key_tracker.add_note(0)
+        self.assertTrue(Key.C in key_tracker.keys)
+        self.assertTrue(Key.D not in key_tracker.keys)
+
+        key_tracker.add_note(1)
+        key_tracker.add_note(2)
+        self.assertTrue(Key.C not in key_tracker.keys)
         self.assertTrue(Key.D in key_tracker.keys)
 
 
