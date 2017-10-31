@@ -98,5 +98,5 @@ track.start()
 # Keep reading forever
 while play:
     mat.read()
-    disp.update()
+    display.update()
     sleep(0.05)
