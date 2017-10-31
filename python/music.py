@@ -1,3 +1,6 @@
+import unittest
+
+
 # noinspection PyClassHasNoInit
 class Key:
     C = 0
@@ -96,5 +99,20 @@ class Scale:
 
 keys_array = [set() for _ in range(128)]
 for k in Key.all():
-    for position in Scale.all_positions(Scale.major, k):
-        keys_array[position].add(k)
+    for pos in Scale.all_positions(Scale.major, k):
+        keys_array[pos].add(k)
+
+
+class KeySelectionTestCase(unittest.TestCase):
+    def test_keys_array(self):
+        self.assertTrue(Key.C in keys_array[0])
+        self.assertTrue(Key.C not in keys_array[1])
+
+    def test_positions(self):
+        self.assertTrue(0 in Scale.all_positions(Scale.major, Key.C))
+        self.assertTrue(1 not in Scale.all_positions(Scale.major, Key.C))
+        self.assertTrue(1 in Scale.all_positions(Scale.major, Key.C_Sharp))
+
+
+if __name__ == "__main__":
+    unittest.main()
