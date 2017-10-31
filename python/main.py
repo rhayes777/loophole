@@ -3,7 +3,7 @@ import dancemat
 from time import sleep
 import pygame
 import signal
-import display
+import visual
 
 # Set up pygame
 pygame.init()
@@ -17,7 +17,7 @@ track = midi_player.Song(filename='bicycle-ride.mid', is_looping=True)
 
 play = True
 
-disp = display.Display(pygame, screen)
+disp = visual.Display(pygame, screen)
 
 
 # noinspection PyUnusedLocal
