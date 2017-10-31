@@ -17,7 +17,7 @@ track = midi_player.Song(filename='bicycle-ride.mid', is_looping=True)
 
 play = True
 
-disp = visual.Display(pygame, screen)
+display = visual.Display(pygame, screen)
 
 
 # noinspection PyUnusedLocal
@@ -32,7 +32,7 @@ signal.signal(signal.SIGINT, stop)
 channels = track.channels
 
 for c in channels:
-    c.message_send_listener = disp.on_message_received
+    c.message_send_listener = display.on_message_received
 
 # Relate button names to positions in the scale
 position_dict = {dancemat.Button.triangle: 0,

@@ -4,6 +4,7 @@ from threading import Thread
 import logging
 from datetime import datetime
 import os
+import music
 
 path = os.path.realpath(__file__)
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -18,6 +19,8 @@ SIMPLE_SYNTH = 'SimpleSynth virtual input'
 CHANNEL_PARTITION = 8
 
 simple_port = None
+
+key_tracker = music.KeyTracker()
 
 
 class Message(mido.Message):
@@ -172,6 +175,9 @@ class Channel:
                     self.message_send_listener(msg)
                 # Actually send the midi message
                 self.port.send(msg)
+                # Update the key tracker
+                key_tracker.add_note(msg.note)
+                print key_tracker.keys
             # Check if it was a note message
             if msg.type == Channel.note_on:
                 # Keep track of notes that are currently playing
