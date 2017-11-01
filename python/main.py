@@ -4,6 +4,9 @@ from time import sleep
 import pygame
 import signal
 import visual
+import sys
+
+filename = 'media/bicycle-ride.mid' if len(sys.argv) == 1 else sys.argv[1]
 
 # Set up pygame
 pygame.init()
@@ -13,7 +16,7 @@ screen = pygame.display.set_mode((1000, 700))
 clock = pygame.time.Clock()
 
 mat = dancemat.DanceMat(pygame)
-track = midi_player.Song(filename='bicycle-ride.mid', is_looping=True)
+track = midi_player.Song(filename=filename, is_looping=True)
 
 play = True
 

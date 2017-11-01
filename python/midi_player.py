@@ -225,12 +225,12 @@ class Channel:
 
 # Represents a midi song loaded from a file
 class Song:
-    def __init__(self, filename="channels_test.mid", is_looping=False):
+    def __init__(self, filename="media/channels_test.mid", is_looping=False):
         self.filename = filename
         self.queue = Queue()
         self.is_stopping = False
         self.is_looping = is_looping
-        self.mid = mido.MidiFile("{}/media/{}".format(dir_path, self.filename))
+        self.mid = mido.MidiFile("{}/{}".format(dir_path, self.filename))
         self.original_tempo = self.mid.ticks_per_beat
         self.channels = map(Channel, range(0, 16))
 
