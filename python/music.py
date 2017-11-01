@@ -112,14 +112,26 @@ def possible_keys(positions):
 
 
 class KeyTracker:
-    def __init__(self, capacity=8):
+    def __init__(self, capacity=16):
         self.queue = Queue()
+        self.key_queue = Queue()
         self.capacity = capacity
 
     def add_note(self, note):
         self.queue.put(note)
         if len(self.queue.queue) > self.capacity:
             self.queue.get()
+        self.key_queue.put(self.keys)
+        if len(self.key_queue.queue) > self.capacity:
+            self.key_queue.get()
+
+    @property
+    def key(self):
+        counts = {key: 0 for key in range(12)}
+        for key_set in list(self.key_queue.queue):
+            for key in key_set:
+                counts[key] += 1
+        return sorted(counts.iteritems(), key=lambda item: item[1])[-1][0]
 
     @property
     def keys(self):

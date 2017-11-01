@@ -177,7 +177,7 @@ class Channel:
                 self.port.send(msg)
                 # Update the key tracker
                 key_tracker.add_note(msg.note)
-                print key_tracker.keys
+                print key_tracker.key
             # Check if it was a note message
             if msg.type == Channel.note_on:
                 # Keep track of notes that are currently playing

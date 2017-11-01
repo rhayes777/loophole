@@ -54,7 +54,7 @@ class Display:  # TODO: This class basically wraps the functionality you defined
     def process_message(self, msg):  # TODO: the response to a new message should be implemented here
         if msg.type == 'note_on':
 
-            print(msg)
+            # print(msg)
 
             all_dots.append(Dot(BLUE,
                                 (random.randint(30, 70)),
@@ -64,7 +64,7 @@ class Display:  # TODO: This class basically wraps the functionality you defined
 
             self.pygame.display.update()
 
-            print len(all_dots)
+            # print len(all_dots)
 
             self.screen.fill(BLACK)
 
@@ -106,7 +106,7 @@ def run_example():  # TODO: this runs the example you've already programmed
         # Leave this out and we will use all CPU we can.
         clock.tick(10)
         timer += 1
-        print(timer)
+        # print(timer)
 
         for event in pygame.event.get():  # User did something
             if event.type == pygame.QUIT:  # If user clicked close
