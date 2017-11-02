@@ -5,8 +5,10 @@ from Queue import Queue
 
 # pygame gfx constants
 BLACK = (0, 0, 0)
-BLUE = (30, 48, 180)
 RED = (180, 60, 30)
+GREEN = (46,190,60)
+BLUE = (30, 48, 180)
+
 circle_x = 200
 circle_y = 200
 
@@ -28,7 +30,8 @@ class Dot:
 
         if self.size > 7:
             pygame.draw.ellipse(screen, self.colour,
-                                [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
+                                [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size] , 2)
+
 
     def update(self):
 
@@ -56,7 +59,20 @@ class Display:  # TODO: This class basically wraps the functionality you defined
 
             # print(msg)
 
-            all_dots.append(Dot(BLUE,
+
+            this_channel = getattr(msg, 'channel')
+
+            this_colour = BLUE
+
+            if this_channel == 0:
+                this_colour = BLUE
+            elif this_channel == 1:
+                this_colour = RED
+            elif this_channel == 2:
+                this_colour = GREEN
+
+
+            all_dots.append(Dot(this_colour,
                                 (random.randint(30, 70)),
                                 (random.randint(0, self.screen.get_width())),
                                 (getattr(msg, 'note') * 10) - 300,
@@ -88,7 +104,7 @@ def run_example():  # TODO: this runs the example you've already programmed
     done = False
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    mid = mido.MidiFile("{}/media/big-blue.mid".format(dir_path))
+    mid = mido.MidiFile("{}/media/mute-city.mid".format(dir_path))
 
     # pygame setup
     # (6,0) = all good
