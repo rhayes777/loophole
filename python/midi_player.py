@@ -166,9 +166,11 @@ class Channel:
                 if self.volume < 0:
                     self.volume = 0
                     self.fade_start = None
-            msg.velocity = int(self.volume * msg.velocity)
-
-            msgs = self.apply_effects(msg.copy())
+            try:
+                msg.velocity = int(self.volume * msg.velocity)
+                msgs = self.apply_effects(msg.copy())
+            except AttributeError:
+                msgs = [msg]
 
             for msg in msgs:
                 if callable(self.message_send_listener):
