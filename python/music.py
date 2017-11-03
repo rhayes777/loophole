@@ -61,12 +61,13 @@ class Scale:
             if position >= 0:
                 self.all_positions.append(position)
             interval += 1
+        self.position_index_dict = {self.all_positions[n]: n for n in range(len(self.all_positions))}
 
     def interval_to_position(self, interval):
         return self.key + self.scale[interval % self.length] + 12 * (interval / self.length + self.base_octave)
 
     def position_at_interval(self, position, interval):
-        root_index = self.all_positions.index(position)
+        root_index = self.position_index_dict[position]
         return self.all_positions[root_index + interval]
 
     # Get a position from this scale starting with a given interval from the root (0, 1, 2, 3 etc.)
