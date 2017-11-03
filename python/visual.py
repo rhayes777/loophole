@@ -60,7 +60,7 @@ class Pixel:
                             [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
 
     def update(self):
-        if self.is_on == False:
+        if self.is_on is False:  # TODO: This was == False whereas it should be is False
             self.colour = BLUE
         elif self.is_on:
             self.colour = RED
