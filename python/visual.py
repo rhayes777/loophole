@@ -72,9 +72,9 @@ class Display:  # TODO: This class basically wraps the functionality you defined
         self.screen = screen
         self.queue = Queue()
 
-        self.pixel_grid = [[]]  # numpi later maybe
+        self.pixel_grid = [[]]  # numpy later maybe
 
-        grid_size_y = self.screen.get_height() / 128
+        grid_size_y = self.screen.get_width() / 32
         grid_size_x = grid_size_y  # self.screen.get_width()
 
         for i in range(grid_size_x):
