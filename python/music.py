@@ -74,11 +74,11 @@ class Scale:
         interval = -7
         positions = []
         while True:
-            pos = s.interval_to_position(interval)
-            if pos > 127:
+            position = s.interval_to_position(interval)
+            if position > 127:
                 break
-            if pos >= 0:
-                positions.append(pos)
+            if position >= 0:
+                positions.append(position)
             interval += 1
         return positions
 
@@ -97,6 +97,8 @@ class Scale:
     def change_octave(self, by):
         self.base_octave = self.base_octave + by
 
+
+scale_array = map(lambda key: Scale(Scale.major, key, base_octave=0), range(12))
 
 keys_array = [set() for _ in range(128)]
 for k in Key.all():
@@ -124,6 +126,10 @@ class KeyTracker:
     @property
     def key(self):
         return list(self.keys)[0]
+
+    @property
+    def scale(self):
+        return scale_array[self.key]
 
     @property
     def keys(self):
