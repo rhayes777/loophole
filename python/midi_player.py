@@ -177,9 +177,9 @@ class Channel:
                     self.message_send_listener(msg)
                 # Actually send the midi message
                 self.port.send(msg)
-                # Update the key tracker
-                key_tracker.add_note(msg.note)
-                print key_tracker.key
+                if hasattr(msg, "note"):
+                    # Update the key tracker
+                    key_tracker.add_note(msg.note)
             # Check if it was a note message
             if msg.type == Channel.note_on:
                 # Keep track of notes that are currently playing
@@ -255,6 +255,8 @@ class Song:
                         self.mid.ticks_per_beat = command.value * self.original_tempo
 
             try:
+                if isinstance(msg, mido.MetaMessage):
+                    continue
                 # Send a message to its assigned channel
                 self.channels[msg.channel].send_message(msg)
             except AttributeError as e:
