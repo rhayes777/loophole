@@ -15,7 +15,7 @@ tune = [random.randrange(0,12) for _ in range (999)]
 def next_note():
     global note_position
     global current_note
-    note = scale.note(tune[note_position])
+    note = scale.position(tune[note_position])
     note_position += 1
     if current_note is not None:
         instrument.stop(current_note)

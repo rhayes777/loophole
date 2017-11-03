@@ -106,10 +106,10 @@ class Effect:
     def fifth(msg_array):
         new_array = []
         for msg in msg_array:
-            if msg.note + 7 > 127:
+            if msg.position + 7 > 127:
                 continue
             new_msg = msg.copy()
-            new_msg.note += 7
+            new_msg.position = key_tracker.scale.position_at_interval(msg.position, 5)
             new_msg.time = 0
             new_array.append(msg)
             new_array.append(new_msg)
@@ -179,7 +179,7 @@ class Channel:
                 self.port.send(msg)
                 if hasattr(msg, "note"):
                     # Update the key tracker
-                    key_tracker.add_note(msg.note)
+                    key_tracker.add_note(msg.position)
             # Check if it was a note message
             if msg.type == Channel.note_on:
                 # Keep track of notes that are currently playing

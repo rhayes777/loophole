@@ -22,14 +22,8 @@ class Key:
         return range(12)
 
 
-# Represents a note
-class Note:
-    def __init__(self, position, volume=112):
-        self.position = position
-        self.volume = volume
-
-
 # Represents a chord
+# noinspection PyClassHasNoInit
 class Chord:
     # These lists are positions within a scale. [0, 2, 4] is first, third and fifth which is a regular triad
     triad = [0, 2, 4]
@@ -41,12 +35,6 @@ class Chord:
     sixth = [0, 2, 4, 5, 7]
 
     all = [triad, triad_octave, suspended_second, suspended_fourth, seventh, seventh_octave, sixth]
-
-    def __init__(self, notes):
-        self.notes = notes
-
-    def add_stress(self, note):
-        self.notes.append(note)
 
 
 # Represents a scale
@@ -68,13 +56,12 @@ class Scale:
     def interval_to_position(self, interval):
         return self.key + self.scale[interval % self.length] + 12 * (interval / self.length + self.base_octave)
 
-    @classmethod
-    def all_positions(cls, scale, key):
-        s = Scale(scale, key, base_octave=0)
+    @property
+    def all_positions(self):
         interval = -7
         positions = []
         while True:
-            position = s.interval_to_position(interval)
+            position = self.interval_to_position(interval)
             if position > 127:
                 break
             if position >= 0:
@@ -82,16 +69,20 @@ class Scale:
             interval += 1
         return positions
 
-    # Get a note from this scale starting with a given interval from the root (0, 1, 2, 3 etc.)
-    def note(self, interval):
+    def position_at_interval(self, position, interval):
+        root_index = self.all_positions.index(position)
+        return self.all_positions[root_index + interval]
+
+    # Get a position from this scale starting with a given interval from the root (0, 1, 2, 3 etc.)
+    def position(self, interval):
         position = self.interval_to_position(interval)
-        return Note(position)
+        return position
 
     # Get a chord from this scale starting with a given interval from the root (0, 1, 2, 3 etc.) Set the chord type
     # using intervals (e.g. chord = scale.chord(0, intervals=Chord.triad) gives the root triad. Chords always in key!)
     def chord(self, interval, intervals=Chord.triad):
         positions = map(lambda i: self.interval_to_position(interval + i), intervals)
-        return Chord(map(Note, positions))
+        return positions
 
     # Go up by number of octaves
     def change_octave(self, by):
@@ -102,7 +93,7 @@ scale_array = map(lambda key: Scale(Scale.major, key, base_octave=0), range(12))
 
 keys_array = [set() for _ in range(128)]
 for k in Key.all():
-    for pos in Scale.all_positions(Scale.major, k):
+    for pos in scale_array[k].all_positions:
         keys_array[pos].add(k)
 
 
@@ -149,9 +140,9 @@ class KeySelectionTestCase(unittest.TestCase):
         self.assertTrue(Key.C not in keys_array[1])
 
     def test_positions(self):
-        self.assertTrue(0 in Scale.all_positions(Scale.major, Key.C))
-        self.assertTrue(1 not in Scale.all_positions(Scale.major, Key.C))
-        self.assertTrue(1 in Scale.all_positions(Scale.major, Key.C_Sharp))
+        self.assertTrue(0 in scale_array[Key.C].all_positions)
+        self.assertTrue(1 not in scale_array[Key.C].all_positions)
+        self.assertTrue(1 in scale_array[Key.C_Sharp].all_positions)
 
     def test_possible_keys(self):
         self.assertTrue(Key.C in possible_keys([0, 2, 4]))
