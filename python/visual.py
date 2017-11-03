@@ -15,7 +15,6 @@ circle_y = 200
 all_dots = []
 
 
-
 # basic gfx class
 class Dot:
     def __init__(self, colour, size, pos_x, pos_y, life):
@@ -33,7 +32,6 @@ class Dot:
             pygame.draw.ellipse(screen, self.colour,
                                 [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
 
-
     def update(self):
 
         self.size *= self.time  # TODO: this is a more concise way of saying self.size = self.size * self.time
@@ -48,6 +46,7 @@ class Dot:
 
         all_dots.remove(self)
 
+
 class Pixel:
     def __init__(self, pos_x, pos_y, is_on, size, colour=BLUE):
         self.pos_x = pos_x
@@ -57,15 +56,14 @@ class Pixel:
         self.colour = colour
 
     def show(self, pygame, screen):
-            pygame.draw.ellipse(screen, self.colour,
-                                [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
+        pygame.draw.ellipse(screen, self.colour,
+                            [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
 
     def update(self):
-        if self.is_on == False:
+        if self.is_on is False:  # TODO: This was == False whereas it should be is False
             self.colour = BLUE
         elif self.is_on:
             self.colour = RED
-
 
 
 class Display:  # TODO: This class basically wraps the functionality you defined. It allows us to pass in references the pygame module and a screen
@@ -74,10 +72,10 @@ class Display:  # TODO: This class basically wraps the functionality you defined
         self.screen = screen
         self.queue = Queue()
 
-        self.pixel_grid = [[]]  # numpi later maybe
+        self.pixel_grid = [[]]  # numpy later maybe
 
-        grid_size_y = self.screen.get_height() /128
-        grid_size_x = grid_size_y#self.screen.get_width()
+        grid_size_y = self.screen.get_width() / 32
+        grid_size_x = grid_size_y  # self.screen.get_width()
 
         for i in range(grid_size_x):
 
@@ -88,14 +86,13 @@ class Display:  # TODO: This class basically wraps the functionality you defined
 
             self.pixel_grid.append(row)
 
-
     def process_message(self, msg):  # TODO: the response to a new message should be implemented here
         if msg.type == 'note_on':
 
             # print(msg)
 
 
-            this_channel = msg.channel #getattr(msg, 'channel')
+            this_channel = msg.channel  # getattr(msg, 'channel')
 
             this_colour = BLUE
 
@@ -106,7 +103,7 @@ class Display:  # TODO: This class basically wraps the functionality you defined
             elif this_channel == 2:
                 this_colour = GREEN
 
-            this_size = (msg.velocity-70)/30
+            this_size = (msg.velocity - 70) / 30
 
             all_dots.append(Dot(this_colour,
                                 (random.randint(30, 70)),
@@ -128,8 +125,6 @@ class Display:  # TODO: This class basically wraps the functionality you defined
                 for pixel in row:
                     pixel.show(self.pygame, self.screen)
                     pixel.update()
-
-
 
     def update(self):
         while not self.queue.empty():
