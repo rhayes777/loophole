@@ -73,10 +73,13 @@ def listener(status_dict):
     track.set_included_channels(playing_channels)
 
     def check_fifth(button_name, channel_number):
+        print "channel {} fifth..."
         if status_dict[button_name] and channel_number not in channel_numbers_with_fifth:
+            print "on"
             channels[channel_number].add_effect(midi_player.fifth)
             channel_numbers_with_fifth.add(channel_number)
         elif channel_number in channel_numbers_with_fifth:
+            print "off"
             channels[channel_number].remove_effect(midi_player.fifth)
             channel_numbers_with_fifth.remove(channel_number)
 
