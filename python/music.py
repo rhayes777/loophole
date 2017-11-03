@@ -52,22 +52,18 @@ class Scale:
         self.length = len(scale)
         self.base_octave = base_octave
         self.key = key
-
-    def interval_to_position(self, interval):
-        return self.key + self.scale[interval % self.length] + 12 * (interval / self.length + self.base_octave)
-
-    @property
-    def all_positions(self):
         interval = -7
-        positions = []
+        self.all_positions = []
         while True:
             position = self.interval_to_position(interval)
             if position > 127:
                 break
             if position >= 0:
-                positions.append(position)
+                self.all_positions.append(position)
             interval += 1
-        return positions
+
+    def interval_to_position(self, interval):
+        return self.key + self.scale[interval % self.length] + 12 * (interval / self.length + self.base_octave)
 
     def position_at_interval(self, position, interval):
         root_index = self.all_positions.index(position)
