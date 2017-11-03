@@ -6,13 +6,14 @@ from Queue import Queue
 # pygame gfx constants
 BLACK = (0, 0, 0)
 RED = (180, 60, 30)
-GREEN = (46,190,60)
+GREEN = (46, 190, 60)
 BLUE = (30, 48, 180)
 
 circle_x = 200
 circle_y = 200
 
 all_dots = []
+
 
 
 # basic gfx class
@@ -30,7 +31,7 @@ class Dot:
 
         if self.size > 7:
             pygame.draw.ellipse(screen, self.colour,
-                                [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size] , 2)
+                                [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
 
 
     def update(self):
@@ -47,6 +48,25 @@ class Dot:
 
         all_dots.remove(self)
 
+class Pixel:
+    def __init__(self, pos_x, pos_y, is_on, size, colour=BLUE):
+        self.pos_x = pos_x
+        self.pos_y = pos_y
+        self.is_on = is_on
+        self.size = size
+        self.colour = colour
+
+    def show(self, pygame, screen):
+            pygame.draw.ellipse(screen, self.colour,
+                                [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
+
+    def update(self):
+        if self.is_on == False:
+            self.colour = BLUE
+        elif self.is_on:
+            self.colour = RED
+
+
 
 class Display:  # TODO: This class basically wraps the functionality you defined. It allows us to pass in references the pygame module and a screen
     def __init__(self, pygame, screen):
@@ -54,13 +74,28 @@ class Display:  # TODO: This class basically wraps the functionality you defined
         self.screen = screen
         self.queue = Queue()
 
+        self.pixel_grid = [[]]  # numpi later maybe
+
+        grid_size_y = self.screen.get_height() /128
+        grid_size_x = grid_size_y#self.screen.get_width()
+
+        for i in range(grid_size_x):
+
+            row = []
+
+            for j in range(grid_size_y):
+                row.append(Pixel(grid_size_x * i, grid_size_y * j, False, grid_size_x))
+
+            self.pixel_grid.append(row)
+
+
     def process_message(self, msg):  # TODO: the response to a new message should be implemented here
         if msg.type == 'note_on':
 
             # print(msg)
 
 
-            this_channel = getattr(msg, 'channel')
+            this_channel = msg.channel #getattr(msg, 'channel')
 
             this_colour = BLUE
 
@@ -71,12 +106,13 @@ class Display:  # TODO: This class basically wraps the functionality you defined
             elif this_channel == 2:
                 this_colour = GREEN
 
+            this_size = (msg.velocity-70)/30
 
             all_dots.append(Dot(this_colour,
                                 (random.randint(30, 70)),
                                 (random.randint(0, self.screen.get_width())),
-                                (getattr(msg, 'note') * 10) - 300,
-                                0.85))
+                                (msg.note * 10) - 300,
+                                this_size))
 
             self.pygame.display.update()
 
@@ -87,6 +123,13 @@ class Display:  # TODO: This class basically wraps the functionality you defined
             for dot in all_dots:
                 dot.show(self.pygame, self.screen)
                 dot.update()
+
+            for row in self.pixel_grid:
+                for pixel in row:
+                    pixel.show(self.pygame, self.screen)
+                    pixel.update()
+
+
 
     def update(self):
         while not self.queue.empty():

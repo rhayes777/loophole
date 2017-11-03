@@ -1,0 +1,22 @@
+MIDI VISUALISER
+
+grid of all possible notes - circles or whatevs
+
+each circle lights up when a midi message is recieved. 
+
+VISUAL FEEDBACK FOR CONTROLS
+
+Need some way of showing users' input, eg. arrows going up screen for dancemat.
+
+Some way of making this modular?
+
+Class control_Visuals
+
+control_Visuals.dancemat, control_Visuals.joystick, control_Visuals.gamepad etc...
+
+
+
+
+
+
+
