@@ -74,17 +74,21 @@ class Display:  # TODO: This class basically wraps the functionality you defined
 
         self.pixel_grid = [[]]  # numpy later maybe
 
-        grid_size_y = self.screen.get_width() / 32
-        grid_size_x = grid_size_y  # self.screen.get_width()
+        grid_size_x = 20
+        grid_size_y = grid_size_x  # self.screen.get_width()
 
-        for i in range(grid_size_x):
+        num_pixels_x = self.screen.get_width() / grid_size_x
+        num_pixels_y = self.screen.get_height() / grid_size_y
+
+        for j in range(num_pixels_y):
 
             row = []
 
-            for j in range(grid_size_y):
-                row.append(Pixel(grid_size_x * i, grid_size_y * j, False, grid_size_x))
+            for i in range(num_pixels_x):
 
-            self.pixel_grid.append(row)
+                row.append(Pixel((grid_size_x/2)+grid_size_x * i, (grid_size_y/2)+(grid_size_y * j), False, grid_size_x))
+
+                self.pixel_grid.append(row)
 
     def process_message(self, msg):  # TODO: the response to a new message should be implemented here
         if msg.type == 'note_on':
@@ -105,11 +109,11 @@ class Display:  # TODO: This class basically wraps the functionality you defined
 
             this_size = (msg.velocity - 70) / 30
 
-            all_dots.append(Dot(this_colour,
-                                (random.randint(30, 70)),
-                                (random.randint(0, self.screen.get_width())),
-                                (msg.note * 10) - 300,
-                                this_size))
+            # all_dots.append(Dot(this_colour,
+            #                     (random.randint(30, 70)),
+            #                     (random.randint(0, self.screen.get_width())),
+            #                     (msg.note * 10) - 300,
+            #                     this_size))
 
             self.pygame.display.update()
 
