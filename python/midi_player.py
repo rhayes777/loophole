@@ -109,7 +109,7 @@ class Effect:
             if msg.note + 7 > 127:
                 continue
             new_msg = msg.copy()
-            new_msg.note += 7
+            new_msg.note = key_tracker.scale.position_at_interval(msg.note, 5)
             new_msg.time = 0
             new_array.append(msg)
             new_array.append(new_msg)
