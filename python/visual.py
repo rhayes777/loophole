@@ -48,11 +48,12 @@ class Dot:
 
 
 class Pixel:
-    def __init__(self, pos_x, pos_y, is_on, size, colour=BLUE):
+    def __init__(self, pos_x, pos_y, is_on, size, ref, colour=BLUE):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.is_on = is_on
         self.size = size
+        self.ref = ref
         self.colour = colour
 
     def show(self, pygame, screen):
@@ -71,22 +72,21 @@ class Display:  # TODO: This class basically wraps the functionality you defined
         self.pygame = pygame
         self.screen = screen
         self.queue = Queue()
-
         self.pixel_grid = [[]]  # numpy later maybe
 
         grid_size_x = 20
         grid_size_y = grid_size_x  # self.screen.get_width()
 
-        num_pixels_x = self.screen.get_width() / grid_size_x
-        num_pixels_y = self.screen.get_height() / grid_size_y
+        self.num_pixels_x = self.screen.get_width() / grid_size_x
+        self.num_pixels_y = self.screen.get_height() / grid_size_y
 
-        for j in range(num_pixels_y):
+        for j in range(self.num_pixels_y):
 
             row = []
 
-            for i in range(num_pixels_x):
+            for i in range(self.num_pixels_x):
 
-                row.append(Pixel((grid_size_x/2)+grid_size_x * i, (grid_size_y/2)+(grid_size_y * j), False, grid_size_x))
+                row.append(Pixel((grid_size_x/2)+grid_size_x * i, (grid_size_y/2)+(grid_size_y * j), False, grid_size_x, i))
 
                 self.pixel_grid.append(row)
 
@@ -109,6 +109,13 @@ class Display:  # TODO: This class basically wraps the functionality you defined
 
             this_size = (msg.velocity - 70) / 30
 
+            recent_note = get_new_range_value(1, 128, msg.note, 1, 20)
+
+            print("Incoming note value: ",msg.note)
+            print("Scaled value: ",recent_note)
+
+
+
             # all_dots.append(Dot(this_colour,
             #                     (random.randint(30, 70)),
             #                     (random.randint(0, self.screen.get_width())),
@@ -122,11 +129,19 @@ class Display:  # TODO: This class basically wraps the functionality you defined
             self.screen.fill(BLACK)
 
             for dot in all_dots:
+
                 dot.show(self.pygame, self.screen)
                 dot.update()
 
             for row in self.pixel_grid:
+
                 for pixel in row:
+
+                    if get_new_range_value(1, 128, msg.note, 1, self.num_pixels_x) == pixel.ref:
+                        pixel.is_on = True
+                    else:
+                        pixel.is_on = False
+
                     pixel.show(self.pygame, self.screen)
                     pixel.update()
 
@@ -136,6 +151,14 @@ class Display:  # TODO: This class basically wraps the functionality you defined
 
     def on_message_received(self, msg):
         self.queue.put(msg)
+
+def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
+
+    old_range = old_range_max - old_range_min
+    new_range = new_range_max - new_range_min
+    new_value = (float(((old_value - old_range_min) * new_range) / old_range)) + new_range_min
+
+    return int(new_value)
 
 
 def run_example():  # TODO: this runs the example you've already programmed
