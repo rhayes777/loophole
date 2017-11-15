@@ -2,6 +2,8 @@ import mido
 import os
 import random
 from Queue import Queue
+from threading import Thread
+from time import sleep
 
 # pygame gfx constants
 BLACK = (0, 0, 0)
@@ -85,8 +87,8 @@ class Display:  # TODO: This class basically wraps the functionality you defined
             row = []
 
             for i in range(self.num_pixels_x):
-
-                row.append(Pixel((grid_size_x/2)+grid_size_x * i, (grid_size_y/2)+(grid_size_y * j), False, grid_size_x, i))
+                row.append(Pixel((grid_size_x / 2) + grid_size_x * i, (grid_size_y / 2) + (grid_size_y * j), False,
+                                 grid_size_x, i))
 
                 self.pixel_grid.append(row)
 
@@ -111,10 +113,8 @@ class Display:  # TODO: This class basically wraps the functionality you defined
 
             recent_note = get_new_range_value(1, 128, msg.note, 1, 20)
 
-            print("Incoming note value: ",msg.note)
-            print("Scaled value: ",recent_note)
-
-
+            print("Incoming note value: ", msg.note)
+            print("Scaled value: ", recent_note)
 
             # all_dots.append(Dot(this_colour,
             #                     (random.randint(30, 70)),
@@ -129,7 +129,6 @@ class Display:  # TODO: This class basically wraps the functionality you defined
             self.screen.fill(BLACK)
 
             for dot in all_dots:
-
                 dot.show(self.pygame, self.screen)
                 dot.update()
 
@@ -145,15 +144,28 @@ class Display:  # TODO: This class basically wraps the functionality you defined
                     pixel.show(self.pygame, self.screen)
                     pixel.update()
 
-    def update(self):
-        while not self.queue.empty():
-            self.process_message(self.queue.get())
-
     def on_message_received(self, msg):
         self.queue.put(msg)
 
-def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
+    def update(self):
+        print "delete me"
+        # update the display
 
+    def loop(self):
+        while True:
+            if not self.queue.empty():
+                self.process_message(self.queue.get())
+
+            self.update()
+
+            sleep(0.2)
+
+    def start(self):
+        t = Thread(target=self.loop)
+        t.start()
+
+
+def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
     old_range = old_range_max - old_range_min
     new_range = new_range_max - new_range_min
     new_value = (float(((old_value - old_range_min) * new_range) / old_range)) + new_range_min
@@ -180,6 +192,7 @@ def run_example():  # TODO: this runs the example you've already programmed
     screen = pygame.display.set_mode((1000, 700))
 
     display = Display(pygame, screen)
+    display.start()
 
     while not done:
 
@@ -196,7 +209,7 @@ def run_example():  # TODO: this runs the example you've already programmed
         for message in mid.play():
             pygame.event.get()
 
-            display.process_message(message)
+            display.on_message_received(message)
 
     pygame.quit()
 
