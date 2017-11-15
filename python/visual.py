@@ -74,7 +74,7 @@ class Display:  # TODO: This class basically wraps the functionality you defined
         self.pygame = pygame
         self.screen = screen
         self.queue = Queue()
-        self.pixel_grid = [[]]  # numpy later maybe
+        self.pixel_grid = []  # numpy later maybe
 
         grid_size_x = 20
         grid_size_y = grid_size_x  # self.screen.get_width()
@@ -95,8 +95,9 @@ class Display:  # TODO: This class basically wraps the functionality you defined
     def process_message(self, msg):  # TODO: the response to a new message should be implemented here
         if msg.type == 'note_on':
 
-            # print(msg)
+            recent_note = get_new_range_value(1, 128, msg.note, 1, len(self.pixel_grid[0]))
 
+            self.pixel_grid[0][recent_note].is_on = True
 
             this_channel = msg.channel  # getattr(msg, 'channel')
 
@@ -111,7 +112,7 @@ class Display:  # TODO: This class basically wraps the functionality you defined
 
             this_size = (msg.velocity - 70) / 30
 
-            recent_note = get_new_range_value(1, 128, msg.note, 1, 20)
+
 
             print("Incoming note value: ", msg.note)
             print("Scaled value: ", recent_note)
@@ -126,28 +127,23 @@ class Display:  # TODO: This class basically wraps the functionality you defined
 
             # print len(all_dots)
 
-            self.screen.fill(BLACK)
+            #self.screen.fill(BLACK)
 
-            for dot in all_dots:
-                dot.show(self.pygame, self.screen)
-                dot.update()
-
-            for row in self.pixel_grid:
-
-                for pixel in row:
-
-                    if get_new_range_value(1, 128, msg.note, 1, self.num_pixels_x) == pixel.ref:
-                        pixel.is_on = True
-                    else:
-                        pixel.is_on = False
-
-                    pixel.show(self.pygame, self.screen)
-                    pixel.update()
 
     def on_message_received(self, msg):
         self.queue.put(msg)
 
     def update(self):
+
+        self.pygame.draw.ellipse(self.screen, RED, [50, 50, 200, 200])
+
+        for row in self.pixel_grid:
+
+            for pixel in row:
+
+                pixel.show(self.pygame, self.screen)
+                pixel.update()
+
         while not self.queue.empty():
             msg = self.queue.get()
             self.process_message(msg)
@@ -203,6 +199,7 @@ def run_example():  # TODO: this runs the example you've already programmed
             pygame.event.get()
 
             display.on_message_received(message)
+
 
     pygame.quit()
 
