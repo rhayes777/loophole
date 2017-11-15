@@ -180,6 +180,7 @@ def run_example():  # TODO: this runs the example you've already programmed
     def loop():
         while not done:
             display.update()
+            sleep(0.1)
 
     Thread(target=loop).start()
 
