@@ -1,6 +1,6 @@
 import mido
 import os
-import random
+import signal
 from Queue import Queue
 from threading import Thread
 from time import sleep
@@ -147,14 +147,24 @@ class Display:  # TODO: This class basically wraps the functionality you defined
     def on_message_received(self, msg):
         self.queue.put(msg)
 
+    # Stop this display
+    # noinspection PyUnusedLocal
+    def stop(self, *args):
+        print "stop2"
+        self.queue.put("STOP")
+
     def update(self):
         print "delete me"
-        # update the display
+        # TODO update the display
 
     def loop(self):
         while True:
             if not self.queue.empty():
-                self.process_message(self.queue.get())
+                msg = self.queue.get()
+                if isinstance(msg, str) and "STOP" == msg:
+                    print "stop3"
+                    break
+                self.process_message(msg)
 
             self.update()
 
@@ -192,6 +202,16 @@ def run_example():  # TODO: this runs the example you've already programmed
     screen = pygame.display.set_mode((1000, 700))
 
     display = Display(pygame, screen)
+
+    # noinspection PyUnusedLocal
+    def stop(*args):
+        print "stop1"
+        global done
+        display.stop()
+        done = True
+
+    signal.signal(signal.SIGINT, stop)
+
     display.start()
 
     while not done:

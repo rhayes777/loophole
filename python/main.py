@@ -27,6 +27,7 @@ display = visual.Display(pygame, screen)
 def stop(*args):
     global play
     track.stop()
+    display.stop()
     play = False
 
 
