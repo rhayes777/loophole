@@ -147,34 +147,10 @@ class Display:  # TODO: This class basically wraps the functionality you defined
     def on_message_received(self, msg):
         self.queue.put(msg)
 
-    # Stop this display
-    # noinspection PyUnusedLocal
-    def stop(self, *args):
-        print "stop2"
-        self.queue.put("STOP")
-
     def update(self):
-        print "delete me"
-        # TODO update the display
-
-    def loop(self):
-        is_looping = True
-        while is_looping:
-            while not self.queue.empty():
-                msg = self.queue.get()
-                print msg
-                if isinstance(msg, str) and "STOP" == msg:
-                    print "stop3"
-                    is_looping = False
-                self.process_message(msg)
-
-            self.update()
-
-            sleep(0.2)
-
-    def start(self):
-        t = Thread(target=self.loop)
-        t.start()
+        while not self.queue.empty():
+            msg = self.queue.get()
+            self.process_message(msg)
 
 
 def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
@@ -205,16 +181,11 @@ def run_example():  # TODO: this runs the example you've already programmed
 
     display = Display(pygame, screen)
 
-    # noinspection PyUnusedLocal
-    def stop(*args):
-        print "stop1"
-        global done
-        display.stop()
-        done = True
+    def loop():
+        while not done:
+            display.update()
 
-    signal.signal(signal.SIGINT, stop)
-
-    display.start()
+    Thread(target=loop).start()
 
     while not done:
 
