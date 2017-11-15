@@ -102,25 +102,48 @@ def possible_keys(positions):
 
 
 class KeyTracker:
+    """
+    Decides possible keys given the last few midi note positions passed
+    """
     def __init__(self, capacity=16):
+        """
+
+        :param capacity: The amount of notes to keep in memory when deciding what the key is
+        """
         self.queue = Queue()
         self.capacity = capacity
 
     def add_note(self, note):
+        """
+
+        :param note: An integer giving the midi position (0 - 127)
+        """
         self.queue.put(note)
         if len(self.queue.queue) > self.capacity:
             self.queue.get()
 
     @property
     def key(self):
+        """
+
+        :return: The most likely key given the notes that have been passed in
+        """
         return list(self.keys)[0]
 
     @property
     def scale(self):
+        """
+
+        :return: A scale object corresponding to the most likely key
+        """
         return scale_array[self.key]
 
     @property
     def keys(self):
+        """
+
+        :return: A list of possible keys given notes recently passed in
+        """
         if len(self.queue.queue) == 0:
             return Key.C
         keys = []
