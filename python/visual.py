@@ -158,12 +158,14 @@ class Display:  # TODO: This class basically wraps the functionality you defined
         # TODO update the display
 
     def loop(self):
-        while True:
-            if not self.queue.empty():
+        is_looping = True
+        while is_looping:
+            while not self.queue.empty():
                 msg = self.queue.get()
+                print msg
                 if isinstance(msg, str) and "STOP" == msg:
                     print "stop3"
-                    break
+                    is_looping = False
                 self.process_message(msg)
 
             self.update()
