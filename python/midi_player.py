@@ -150,12 +150,11 @@ class Channel(object):
 
     @property
     def instrument_type(self):
-        print self.program
         return self.program / 8
 
     @instrument_type.setter
     def instrument_type(self, instrument_type):
-        if 0 <= instrument_type < 128:
+        if 0 <= instrument_type < 8:
             self.program = 8 * instrument_type + self.instrument_version
             self.queue.put(Command(Command.instrument_type, instrument_type))
             self.port.send(mido.Message('program_change', program=self.program, time=0, channel=self.number))
@@ -166,7 +165,7 @@ class Channel(object):
 
     @instrument_version.setter
     def instrument_version(self, instrument_version):
-        if 0 <= instrument_version < 128:
+        if 0 <= instrument_version < 8:
             self.program = 8 * self.instrument_type + instrument_version
             self.queue.put(Command(Command.instrument_version, instrument_version))
             self.port.send(mido.Message('program_change', program=self.program, time=0, channel=self.number))
@@ -192,18 +191,6 @@ class Channel(object):
                 self.effects.remove(command.value)
             elif command.name == Command.pitch_bend:
                 self.port.send(mido.Message('pitchwheel', pitch=command.value, time=0, channel=self.number))
-            # elif command.name == Command.instrument_version:
-            #     print "self.instrument_type = {}".format(self.instrument_type)
-            #     print "instrument_version = {}".format(command.value)
-            #     program = 8 * self.instrument_type + command.value
-            #     print "new_program = {}".format(program)
-            #     self.port.send(mido.Message('program_change', program=program, time=0, channel=self.number))
-            # elif command.name == Command.instrument_type:
-            #     print "instrument_type = {}".format(command.value)
-            #     print "self.instrument_version = {}".format(self.instrument_version)
-            #     program = 8 * command.value + self.instrument_version
-            #     print "new_program = {}".format(program)
-            #     self.port.send(mido.Message('program_change', program=program, time=0, channel=self.number))
 
     # Send a midi message to this channel
     def send_message(self, msg):

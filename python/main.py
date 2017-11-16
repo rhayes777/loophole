@@ -62,18 +62,14 @@ def toggle_channel(channel):
 
 # Function to listen for changes to button state
 def listener(status_dict):
-    if status_dict[dancemat.Button.triangle]:
-        print "triangle"
-        channels[1].instrument_version = 0
+    if status_dict[dancemat.Button.up]:
+        channels[1].instrument_type += 1
     if status_dict[dancemat.Button.down]:
-        print "down"
-        channels[1].instrument_version -= 1
-    if status_dict[dancemat.Button.square]:
-        print "square"
+        channels[1].instrument_type -= 1
+    if status_dict[dancemat.Button.right]:
         channels[1].instrument_version += 1
-    if status_dict[dancemat.Button.circle]:
-        print "circle"
-        channels[1].instrument_version = 3
+    if status_dict[dancemat.Button.left]:
+        channels[1].instrument_version -= 1
     # track.set_included_channels(playing_channels)
 
     # def check_fifth(button_name, channel_number):
