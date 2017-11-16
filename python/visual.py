@@ -1,6 +1,5 @@
 import mido
 import os
-import signal
 from Queue import Queue
 from threading import Thread
 from time import sleep
@@ -16,6 +15,25 @@ circle_y = 200
 
 all_dots = []
 
+"""
+I've made a couple of changes that I've pointed out below. The main problem is that iterating through every
+pixel every single frame consumes a lot of processing power and causes the music to jitter.
+
+What I've done is to move the loop that makes every pixel to the Display constructor. Then, when you want to change
+the colour of a pixel you can just call a function to do that e.g. self.change_pixel_colour(10, 20, BLUE)
+
+One problem we might have is with how you wanted to update the display. If you check the status of every single pixel
+that will be really time consuming. A better way might be to keep track of pixel colour combinations in some tuple or
+class and then use and change that list to make the dots move.
+
+e.g. [((5, 10), RED), ((7, 11), YELLOW)]
+
+You could take each item from that last and colour the pixel (i, j) the specified colour. Then you'd have to manage
+the objects in the list. Like, you'd add one to each y value each time:
+
+e.g. the list becomes [((5, 11), RED), ((7, 12), YELLOW)]
+"""
+
 
 # basic gfx class
 class Dot:
@@ -28,7 +46,7 @@ class Dot:
         self.life = life
 
     def show(self, pygame,
-             screen):  # TODO: pygame and screen are passed about rather than being visible to the whole module. I've passed them in as arguments here but that probably isn't the most elegant solution
+             screen):
 
         if self.size > 7:
             pygame.draw.ellipse(screen, self.colour,
@@ -36,7 +54,7 @@ class Dot:
 
     def update(self):
 
-        self.size *= self.time  # TODO: this is a more concise way of saying self.size = self.size * self.time
+        self.size *= self.time
 
         if self.size > 5:
             self.time -= 0.001
@@ -63,13 +81,13 @@ class Pixel:
                             [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
 
     def update(self):
-        if self.is_on is False:  # TODO: This was == False whereas it should be is False
+        if self.is_on is False:
             self.colour = BLUE
         elif self.is_on:
             self.colour = RED
 
 
-class Display:  # TODO: This class basically wraps the functionality you defined. It allows us to pass in references the pygame module and a screen
+class Display:
     def __init__(self, pygame, screen):
         self.pygame = pygame
         self.screen = screen
@@ -92,30 +110,51 @@ class Display:  # TODO: This class basically wraps the functionality you defined
 
                 self.pixel_grid.append(row)
 
-    def process_message(self, msg):  # TODO: the response to a new message should be implemented here
-        if msg.type == 'note_on':
+        self.pygame.draw.ellipse(self.screen, RED, [50, 50, 200, 200])
 
+        # TODO: This was being called in the update function. The problem is that updating every pixel every fraction
+        # TODO: of a second takes a lot of processing power. I figured we can make them all appear at first here and
+        # TODO: then update them individually.
+        for row in self.pixel_grid:
+
+            for pixel in row:
+                pixel.show(self.pygame, self.screen)
+
+    def change_pixel_colour(self, i, j, colour):
+        pixel = self.pixel_grid[i][j]
+        pixel.colour = colour
+        pixel.show(self.pygame, self.screen)
+
+    def process_message(self, msg):
+        if msg.type == 'note_on':
             recent_note = get_new_range_value(1, 128, msg.note, 1, len(self.pixel_grid[0]))
 
-            self.pixel_grid[0][recent_note].is_on = True
+            # TODO: I wrote this method to get a pixel by it's i and j position and set it's colour. You can use it to
+            # TODO: switch pixels on and off by setting different colours.
+            self.change_pixel_colour(0, recent_note, RED)
 
-            this_channel = msg.channel  # getattr(msg, 'channel')
-
-            this_colour = BLUE
-
-            if this_channel == 0:
-                this_colour = BLUE
-            elif this_channel == 1:
-                this_colour = RED
-            elif this_channel == 2:
-                this_colour = GREEN
-
-            this_size = (msg.velocity - 70) / 30
-
-
+            self.pygame.display.update()
 
             print("Incoming note value: ", msg.note)
             print("Scaled value: ", recent_note)
+
+            # TODO: The below code doesn't do anything. It seems to be about selecting a colour for a channel. I'd
+            # TODO: delete it if you're not using it. Unused code makes it harder to see what's going on.
+
+            # this_channel = msg.channel  # getattr(msg, 'channel')
+            #
+            # this_colour = BLUE
+            #
+            # if this_channel == 0:
+            #     this_colour = BLUE
+            # elif this_channel == 1:
+            #     this_colour = RED
+            # elif this_channel == 2:
+            #     this_colour = GREEN
+            #
+            # this_size = (msg.velocity - 70) / 30
+
+
 
             # all_dots.append(Dot(this_colour,
             #                     (random.randint(30, 70)),
@@ -123,30 +162,24 @@ class Display:  # TODO: This class basically wraps the functionality you defined
             #                     (msg.note * 10) - 300,
             #                     this_size))
 
-            self.pygame.display.update()
+
 
             # print len(all_dots)
 
-            #self.screen.fill(BLACK)
-
+            # self.screen.fill(BLACK)
 
     def on_message_received(self, msg):
         self.queue.put(msg)
 
     def update(self):
-
-        self.pygame.draw.ellipse(self.screen, RED, [50, 50, 200, 200])
-
-        for row in self.pixel_grid:
-
-            for pixel in row:
-
-                pixel.show(self.pygame, self.screen)
-                pixel.update()
-
         while not self.queue.empty():
             msg = self.queue.get()
             self.process_message(msg)
+
+            # TODO: there was a loop going through all the ixj pixels here. It slows down the song! I may have made a
+            # TODO: mistake with threading but I recommend trying to avoid iterating through every pixel all the time.
+            # TODO: Instead you could keep track of the coordinates of "on" pixels and use them to get a pixel by the
+            # TODO: index in the pixel matrix e.g. self.pixel_grid[i][j]
 
 
 def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
@@ -157,7 +190,7 @@ def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, 
     return int(new_value)
 
 
-def run_example():  # TODO: this runs the example you've already programmed
+def run_example():
     import pygame
     # timer
     timer = 0
@@ -201,9 +234,8 @@ def run_example():  # TODO: this runs the example you've already programmed
 
             display.on_message_received(message)
 
-
     pygame.quit()
 
 
-if __name__ == '__main__':  # TODO: This will only be true if this file is called directly rather than imported (e.g. python display.py)
+if __name__ == '__main__':
     run_example()
