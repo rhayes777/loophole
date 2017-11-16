@@ -148,13 +148,10 @@ class Channel(object):
         self.effects = []
         self.program = 1
 
-    def print_something(self):
-        print "something"
-
     @property
     def instrument_type(self):
         print self.program
-        return self.program/ 8
+        return self.program / 8
 
     @instrument_type.setter
     def instrument_type(self, instrument_type):
@@ -170,43 +167,44 @@ class Channel(object):
         print "set_instrument_version"
         self.queue.put(Command(Command.instrument_version, instrument_version))
 
+    def process_waiting_commands(self):
+        # Are there any commands waiting?
+        while not self.queue.empty():
+            command = self.queue.get()
+            print command
+            # Volume changing command. Overrides current fades
+            if command.name == Command.volume:
+                self.volume = command.value
+                self.fade_start = None
+            # Fade out command. Fade out occurs constantly until silent or overridden by volume change
+            elif command.name == Command.fade_out:
+                # Fade out command has no effect if fadeout already underway
+                if self.fade_start is None:
+                    # When did the fadeout start?
+                    self.fade_start = datetime.now()
+            elif command.name == Command.add_effect:
+                self.effects.append(command.value)
+            elif command.name == Command.remove_effect and command.value in self.effects:
+                self.effects.remove(command.value)
+            elif command.name == Command.pitch_bend:
+                self.port.send(mido.Message('pitchwheel', pitch=command.value, time=0, channel=self.number))
+            elif command.name == Command.instrument_version:
+                print "self.instrument_type = {}".format(self.instrument_type)
+                print "instrument_version = {}".format(command.value)
+                program = 8 * self.instrument_type + command.value
+                print "new_program = {}".format(program)
+                self.port.send(mido.Message('program_change', program=program, time=0, channel=self.number))
+            elif command.name == Command.instrument_type:
+                print "instrument_type = {}".format(command.value)
+                print "self.instrument_version = {}".format(self.instrument_version)
+                program = 8 * command.value + self.instrument_version
+                print "new_program = {}".format(program)
+                self.port.send(mido.Message('program_change', program=program, time=0, channel=self.number))
+
     # Send a midi message to this channel
     def send_message(self, msg):
 
         try:
-            # Are there any commands waiting?
-            if not self.queue.empty():
-                command = self.queue.get()
-                print command
-                # Volume changing command. Overrides current fades
-                if command.name == Command.volume:
-                    self.volume = command.value
-                    self.fade_start = None
-                # Fade out command. Fade out occurs constantly until silent or overridden by volume change
-                elif command.name == Command.fade_out:
-                    # Fade out command has no effect if fadeout already underway
-                    if self.fade_start is None:
-                        # When did the fadeout start?
-                        self.fade_start = datetime.now()
-                elif command.name == Command.add_effect:
-                    self.effects.append(command.value)
-                elif command.name == Command.remove_effect and command.value in self.effects:
-                    self.effects.remove(command.value)
-                elif command.name == Command.pitch_bend:
-                    self.port.send(mido.Message('pitchwheel', pitch=command.value, time=0, channel=self.number))
-                elif command.name == Command.instrument_version:
-                    print "self.instrument_type = {}".format(self.instrument_type)
-                    print "instrument_version = {}".format(command.value)
-                    program = 8 * self.instrument_type + command.value
-                    print "new_program = {}".format(program)
-                    self.port.send(mido.Message('program_change', program=program, time=0, channel=self.number))
-                elif command.name == Command.instrument_type:
-                    print "instrument_type = {}".format(command.value)
-                    print "self.instrument_version = {}".format(self.instrument_version)
-                    program = 8 * command.value + self.instrument_version
-                    print "new_program = {}".format(program)
-                    self.port.send(mido.Message('program_change', program=program, time=0, channel=self.number))
-
             # True if a fade out is in progress
             if self.fade_start is not None:
                 # How long has the fade been occurring?
@@ -292,9 +290,22 @@ class Song:
     # Play the midi file (should be called on new thread)
     def play_midi_file(self):
         self.is_stopping = False
+        play = self.mid.play(meta_messages=True)
 
-        # Take midi messages from a generator
-        for msg in self.mid.play(meta_messages=True):
+        while True:
+
+            for channel in self.channels:
+                channel.process_waiting_commands()
+
+            # Take midi messages from a generator
+            msg = play.next()
+
+            if msg is None:
+                if self.is_looping:
+                    play = self.mid.play(meta_messages=True)
+                    continue
+                break
+
             # Break if should stop
             if self.is_stopping:
                 break
@@ -316,9 +327,6 @@ class Song:
                 logging.exception(e)
             except IndexError as e:
                 logging.exception(e)
-        # Loop again if set to do so
-        if self.is_looping and not self.is_stopping:
-            self.play_midi_file()
 
     # Start this song on a new thread
     def start(self):

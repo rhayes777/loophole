@@ -65,16 +65,15 @@ def listener(status_dict):
     if status_dict[dancemat.Button.triangle]:
         print "triangle"
         channels[1].instrument_version = 0
-        channels[1].print_something()
     if status_dict[dancemat.Button.down]:
         print "down"
-        channels[1].instrument_version = 7
+        channels[1].instrument_version = 1
     if status_dict[dancemat.Button.square]:
         print "square"
-        channels[1].instrument_type = 0
+        channels[1].instrument_version = 2
     if status_dict[dancemat.Button.circle]:
         print "circle"
-        channels[1].instrument_type = 7
+        channels[1].instrument_version = 3
     # track.set_included_channels(playing_channels)
 
     # def check_fifth(button_name, channel_number):
