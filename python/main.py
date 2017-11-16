@@ -27,7 +27,6 @@ display = visual.Display(pygame, screen)
 def stop(*args):
     global play
     track.stop()
-    display.stop()
     play = False
 
 
@@ -101,9 +100,9 @@ def listener(status_dict):
 mat.set_button_listener(listener)
 
 track.start()
-display.start()
 
 # Keep reading forever
 while play:
     mat.read()
+    display.update()
     sleep(0.05)
