@@ -146,7 +146,16 @@ class Channel(object):
         self.fade_start = None
         self.playing_notes = []
         self.effects = []
-        self.program = 1
+        self.__program = 0
+
+    @property
+    def program(self):
+        return self.__program
+
+    @program.setter
+    def program(self, program):
+        self.__program = program
+        self.port.send(mido.Message('program_change', program=self.__program, time=0, channel=self.number))
 
     @property
     def instrument_type(self):
@@ -156,8 +165,6 @@ class Channel(object):
     def instrument_type(self, instrument_type):
         if 0 <= instrument_type < 8:
             self.program = 8 * instrument_type + self.instrument_version
-            self.queue.put(Command(Command.instrument_type, instrument_type))
-            self.port.send(mido.Message('program_change', program=self.program, time=0, channel=self.number))
 
     @property
     def instrument_version(self):
@@ -167,14 +174,14 @@ class Channel(object):
     def instrument_version(self, instrument_version):
         if 0 <= instrument_version < 8:
             self.program = 8 * self.instrument_type + instrument_version
-            self.queue.put(Command(Command.instrument_version, instrument_version))
-            self.port.send(mido.Message('program_change', program=self.program, time=0, channel=self.number))
+     
+    def pitch_bend(self, value):
+        self.port.send(mido.Message('pitchwheel', pitch=value, time=0, channel=self.number))
 
     def process_waiting_commands(self):
         # Are there any commands waiting?
         while not self.queue.empty():
             command = self.queue.get()
-            print command
             # Volume changing command. Overrides current fades
             if command.name == Command.volume:
                 self.volume = command.value
@@ -189,8 +196,6 @@ class Channel(object):
                 self.effects.append(command.value)
             elif command.name == Command.remove_effect and command.value in self.effects:
                 self.effects.remove(command.value)
-            elif command.name == Command.pitch_bend:
-                self.port.send(mido.Message('pitchwheel', pitch=command.value, time=0, channel=self.number))
 
     # Send a midi message to this channel
     def send_message(self, msg):
