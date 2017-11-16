@@ -23,32 +23,36 @@ simple_port = None
 key_tracker = music.KeyTracker()
 
 
-class Message(mido.Message):
-    @classmethod
-    def pitch_bend(cls, value=0, channel=0):
-        """modify the pitch of a channel.
-        Output.pitch_bend(value=0, channel=0)
-        Adjust the pitch of a channel.  The value is a signed integer
-        from -8192 to +8191.  For example, 0 means "no change", +4096 is
-        typically a semitone higher, and -8192 is 1 whole tone lower (though
-        the musical range corresponding to the pitch bend range can also be
-        changed in some synthesizers).
-        If no value is given, the pitch bend is returned to "no change".
-        """
-        if not (0 <= channel <= 15):
-            raise ValueError("Channel not between 0 and 15.")
-
-        if not (-8192 <= value <= 8191):
-            raise ValueError("Pitch bend value must be between "
-                             "-8192 and +8191, not %d." % value)
-
-        # "The 14 bit value of the pitch bend is defined so that a value of
-        # 0x2000 is the center corresponding to the normal pitch of the note
-        # (no pitch change)." so value=0 should send 0x2000
-        value += 0x2000  # Was value = value + 0x2000
-        lsb = value & 0x7f  # keep least 7 bits
-        msb = value >> 7
-        return mido.Message.from_bytes([0xe0 + channel, lsb, msb])
+# class Message(mido.Message):
+#
+#     def __init__(self, *args, **kwargs):
+#         super(self, Message).__init__(*args, **kwargs)
+#
+#     @classmethod
+#     def pitch_bend(cls, value=0, channel=0):
+#         """modify the pitch of a channel.
+#         Output.pitch_bend(value=0, channel=0)
+#         Adjust the pitch of a channel.  The value is a signed integer
+#         from -8192 to +8191.  For example, 0 means "no change", +4096 is
+#         typically a semitone higher, and -8192 is 1 whole tone lower (though
+#         the musical range corresponding to the pitch bend range can also be
+#         changed in some synthesizers).
+#         If no value is given, the pitch bend is returned to "no change".
+#         """
+#         if not (0 <= channel <= 15):
+#             raise ValueError("Channel not between 0 and 15.")
+#
+#         if not (-8192 <= value <= 8191):
+#             raise ValueError("Pitch bend value must be between "
+#                              "-8192 and +8191, not %d." % value)
+#
+#         # "The 14 bit value of the pitch bend is defined so that a value of
+#         # 0x2000 is the center corresponding to the normal pitch of the note
+#         # (no pitch change)." so value=0 should send 0x2000
+#         value += 0x2000  # Was value = value + 0x2000
+#         lsb = value & 0x7f  # keep least 7 bits
+#         msb = value >> 7
+#         return mido.Message.from_bytes([0xe0 + channel, lsb, msb])
 
 
 # Creates a port object corresponding to an instrument if it exists, else to a Simple inbuilt synth
@@ -78,6 +82,8 @@ class Command:
         self.name = name
         self.value = value
 
+    instrument_type = "instrument_type"
+    instrument_version = "instrument_version"
     add_effect = "add_effect"
     remove_effect = "remove_effect"
     pitch_bend = "pitch_bend"
@@ -118,6 +124,7 @@ class Effect:
 
 # Class representing individual midi channel
 class Channel:
+    program_change = "program_change"
     note_off = "note_off"
     note_on = "note_on"
 
@@ -133,6 +140,22 @@ class Channel:
         self.fade_start = None
         self.playing_notes = []
         self.effects = []
+        self.program = 1
+
+    def set_instrument_type(self, instrument_type):
+        self.queue.put(Command(Command.instrument_type, instrument_type))
+
+    def get_instrument_type(self):
+        return (self.program - 1) / 8 + 1
+
+    def set_instrument_version(self, instrument_version):
+        self.queue.put(Command(Command.instrument_version, instrument_version))
+
+    def get_instrument_version(self):
+        return (self.program - 1) % 8 + 1
+
+    instrument_type = property(fget=get_instrument_type, fset=set_instrument_type)
+    instrument_version = property(fget=get_instrument_version, fset=set_instrument_version)
 
     # Send a midi message to this channel
     def send_message(self, msg):
@@ -156,7 +179,13 @@ class Channel:
                 elif command.name == Command.remove_effect and command.value in self.effects:
                     self.effects.remove(command.value)
                 elif command.name == Command.pitch_bend:
-                    self.send_message(Message.pitch_bend(command.value, self.number))
+                    self.port.send(mido.Message('pitchwheel', pitch=command.value, time=0, channel=self.number))
+                elif command.name == Command.instrument_version:
+                    program = 8 * (self.instrument_type - 1) + command.value
+                    self.port.send(mido.Message('program_change', program=program, time=0, channel=self.number))
+                elif command.name == Command.instrument_type:
+                    program = 8 * (command.value - 1) + self.instrument_version
+                    self.port.send(mido.Message('program_change', program=program, time=0, channel=self.number))
 
             # True if a fade out is in progress
             if self.fade_start is not None:
@@ -166,10 +195,11 @@ class Channel:
                 if self.volume < 0:
                     self.volume = 0
                     self.fade_start = None
-            try:
+
+            if hasattr(msg, 'velocity'):
                 msg.velocity = int(self.volume * msg.velocity)
                 msgs = self.apply_effects(msg.copy())
-            except AttributeError:
+            else:
                 msgs = [msg]
 
             for msg in msgs:
@@ -180,15 +210,18 @@ class Channel:
                 if hasattr(msg, "note"):
                     # Update the key tracker
                     key_tracker.add_note(msg.note)
-            # Check if it was a note message
-            if msg.type == Channel.note_on:
-                # Keep track of notes that are currently playing
-                self.playing_notes.append(msg.note)
-                self.playing_notes.sort()
-                if self.note_on_listener is not None:
-                    self.note_on_listener(msg)
-            elif msg.type == Channel.note_off:
-                self.playing_notes.remove(msg.note)
+            if hasattr(msg, 'type'):
+                # Check if it was a note message
+                if msg.type == Channel.note_on:
+                    # Keep track of notes that are currently playing
+                    self.playing_notes.append(msg.note)
+                    self.playing_notes.sort()
+                    if self.note_on_listener is not None:
+                        self.note_on_listener(msg)
+                elif msg.type == Channel.note_off:
+                    self.playing_notes.remove(msg.note)
+                elif msg.type == Channel.program_change:
+                    self.program = msg.program
         except AttributeError as e:
             logging.exception(e)
         except ValueError as e:
