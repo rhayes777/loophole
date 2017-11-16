@@ -19,7 +19,7 @@ all_dots = []
 I've made a couple of changes that I've pointed out below. The main problem is that iterating through every
 pixel every single frame consumes a lot of processing power and causes the music to jitter.
 
-What I've done is to move the loop that makes every pixel to the Display constructor. Then, when you want to change
+What I've done is to move the loop that makes every pixel in the Display constructor. Then, when you want to change
 the colour of a pixel you can just call a function to do that e.g. self.change_pixel_colour(10, 20, BLUE)
 
 One problem we might have is with how you wanted to update the display. If you check the status of every single pixel
