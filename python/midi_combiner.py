@@ -1,7 +1,7 @@
-from mido import MidiFile
+from mido import MidiFile, Message
 import sys
 
-original_track_names = sys.argv[2:]
+original_track_names = sorted(sys.argv[2:])
 new_track_name = sys.argv[1]
 
 original_files = map(lambda tn: MidiFile(tn), original_track_names)
@@ -17,6 +17,6 @@ for n, original_file in enumerate(original_files):
         except AttributeError:
             pass
 
-    new_file.tracks.append(track)
+    new_file.tracks.append([Message('program_change', program=12, time=0)] + track)
 
 new_file.save(new_track_name)
