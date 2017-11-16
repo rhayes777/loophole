@@ -22,7 +22,7 @@ for n, (original_file, original_track_name) in enumerate(zip(original_files, ori
         except AttributeError:
             pass
 
-    new_file.tracks.append([Message('program_change', program=instrument, time=0)] + track)
+    new_file.tracks.append([Message('program_change', program=instrument, time=0, channel=n)] + track)
 
 new_file.save(new_track_name)
 
