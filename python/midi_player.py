@@ -155,8 +155,8 @@ class Channel(object):
 
     @instrument_type.setter
     def instrument_type(self, instrument_type):
-        print "set_instrument_type"
-        self.queue.put(Command(Command.instrument_type, instrument_type))
+        if 0 <= instrument_type < 128:
+            self.queue.put(Command(Command.instrument_type, instrument_type))
 
     @property
     def instrument_version(self):
@@ -164,8 +164,8 @@ class Channel(object):
 
     @instrument_version.setter
     def instrument_version(self, instrument_version):
-        print "set_instrument_version"
-        self.queue.put(Command(Command.instrument_version, instrument_version))
+        if 0 <= instrument_version < 128:
+            self.queue.put(Command(Command.instrument_version, instrument_version))
 
     def process_waiting_commands(self):
         # Are there any commands waiting?

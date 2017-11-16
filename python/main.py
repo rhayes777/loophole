@@ -67,10 +67,10 @@ def listener(status_dict):
         channels[1].instrument_version = 0
     if status_dict[dancemat.Button.down]:
         print "down"
-        channels[1].instrument_version = 1
+        channels[1].instrument_version -= 1
     if status_dict[dancemat.Button.square]:
         print "square"
-        channels[1].instrument_version = 2
+        channels[1].instrument_version += 1
     if status_dict[dancemat.Button.circle]:
         print "circle"
         channels[1].instrument_version = 3
