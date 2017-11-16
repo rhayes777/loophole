@@ -23,38 +23,6 @@ simple_port = None
 key_tracker = music.KeyTracker()
 
 
-# class Message(mido.Message):
-#
-#     def __init__(self, *args, **kwargs):
-#         super(self, Message).__init__(*args, **kwargs)
-#
-#     @classmethod
-#     def pitch_bend(cls, value=0, channel=0):
-#         """modify the pitch of a channel.
-#         Output.pitch_bend(value=0, channel=0)
-#         Adjust the pitch of a channel.  The value is a signed integer
-#         from -8192 to +8191.  For example, 0 means "no change", +4096 is
-#         typically a semitone higher, and -8192 is 1 whole tone lower (though
-#         the musical range corresponding to the pitch bend range can also be
-#         changed in some synthesizers).
-#         If no value is given, the pitch bend is returned to "no change".
-#         """
-#         if not (0 <= channel <= 15):
-#             raise ValueError("Channel not between 0 and 15.")
-#
-#         if not (-8192 <= value <= 8191):
-#             raise ValueError("Pitch bend value must be between "
-#                              "-8192 and +8191, not %d." % value)
-#
-#         # "The 14 bit value of the pitch bend is defined so that a value of
-#         # 0x2000 is the center corresponding to the normal pitch of the note
-#         # (no pitch change)." so value=0 should send 0x2000
-#         value += 0x2000  # Was value = value + 0x2000
-#         lsb = value & 0x7f  # keep least 7 bits
-#         msb = value >> 7
-#         return mido.Message.from_bytes([0xe0 + channel, lsb, msb])
-
-
 # Creates a port object corresponding to an instrument if it exists, else to a Simple inbuilt synth
 def make_port(name):
     for input_name in input_names:
@@ -88,8 +56,6 @@ class Command:
     def __str__(self):
         return self.__repr__()
 
-    instrument_type = "instrument_type"
-    instrument_version = "instrument_version"
     add_effect = "add_effect"
     remove_effect = "remove_effect"
     pitch_bend = "pitch_bend"
@@ -163,7 +129,7 @@ class Channel(object):
 
     @instrument_type.setter
     def instrument_type(self, instrument_type):
-        if 0 <= instrument_type < 8:
+        if 0 <= instrument_type < 16:
             self.program = 8 * instrument_type + self.instrument_version
 
     @property
@@ -174,7 +140,7 @@ class Channel(object):
     def instrument_version(self, instrument_version):
         if 0 <= instrument_version < 8:
             self.program = 8 * self.instrument_type + instrument_version
-     
+
     def pitch_bend(self, value):
         self.port.send(mido.Message('pitchwheel', pitch=value, time=0, channel=self.number))
 
