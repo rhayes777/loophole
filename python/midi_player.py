@@ -82,6 +82,12 @@ class Command:
         self.name = name
         self.value = value
 
+    def __repr__(self):
+        return "<Command {} = {}>".format(self.name, self.value)
+
+    def __str__(self):
+        return self.__repr__()
+
     instrument_type = "instrument_type"
     instrument_version = "instrument_version"
     add_effect = "add_effect"
@@ -123,7 +129,7 @@ class Effect:
 
 
 # Class representing individual midi channel
-class Channel:
+class Channel(object):
     program_change = "program_change"
     note_off = "note_off"
     note_on = "note_on"
@@ -142,20 +148,27 @@ class Channel:
         self.effects = []
         self.program = 1
 
-    def set_instrument_type(self, instrument_type):
+    def print_something(self):
+        print "something"
+
+    @property
+    def instrument_type(self):
+        print self.program
+        return self.program/ 8
+
+    @instrument_type.setter
+    def instrument_type(self, instrument_type):
+        print "set_instrument_type"
         self.queue.put(Command(Command.instrument_type, instrument_type))
 
-    def get_instrument_type(self):
-        return (self.program - 1) / 8 + 1
+    @property
+    def instrument_version(self):
+        return self.program % 8
 
-    def set_instrument_version(self, instrument_version):
+    @instrument_version.setter
+    def instrument_version(self, instrument_version):
+        print "set_instrument_version"
         self.queue.put(Command(Command.instrument_version, instrument_version))
-
-    def get_instrument_version(self):
-        return (self.program - 1) % 8 + 1
-
-    instrument_type = property(fget=get_instrument_type, fset=set_instrument_type)
-    instrument_version = property(fget=get_instrument_version, fset=set_instrument_version)
 
     # Send a midi message to this channel
     def send_message(self, msg):
@@ -164,6 +177,7 @@ class Channel:
             # Are there any commands waiting?
             if not self.queue.empty():
                 command = self.queue.get()
+                print command
                 # Volume changing command. Overrides current fades
                 if command.name == Command.volume:
                     self.volume = command.value
@@ -181,10 +195,16 @@ class Channel:
                 elif command.name == Command.pitch_bend:
                     self.port.send(mido.Message('pitchwheel', pitch=command.value, time=0, channel=self.number))
                 elif command.name == Command.instrument_version:
-                    program = 8 * (self.instrument_type - 1) + command.value
+                    print "self.instrument_type = {}".format(self.instrument_type)
+                    print "instrument_version = {}".format(command.value)
+                    program = 8 * self.instrument_type + command.value
+                    print "new_program = {}".format(program)
                     self.port.send(mido.Message('program_change', program=program, time=0, channel=self.number))
                 elif command.name == Command.instrument_type:
-                    program = 8 * (command.value - 1) + self.instrument_version
+                    print "instrument_type = {}".format(command.value)
+                    print "self.instrument_version = {}".format(self.instrument_version)
+                    program = 8 * command.value + self.instrument_version
+                    print "new_program = {}".format(program)
                     self.port.send(mido.Message('program_change', program=program, time=0, channel=self.number))
 
             # True if a fade out is in progress

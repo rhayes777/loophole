@@ -135,8 +135,8 @@ class Display:
 
             self.pygame.display.update()
 
-            print("Incoming note value: ", msg.note)
-            print("Scaled value: ", recent_note)
+            # print("Incoming note value: ", msg.note)
+            # print("Scaled value: ", recent_note)
 
             # TODO: The below code doesn't do anything. It seems to be about selecting a colour for a channel. I'd
             # TODO: delete it if you're not using it. Unused code makes it harder to see what's going on.
