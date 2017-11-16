@@ -81,16 +81,18 @@ class Effect:
         return msg_array
 
     @staticmethod
-    def fifth(msg_array):
+    def intervals(msg_array, intervals):
         new_array = []
         for msg in msg_array:
             if msg.note + 7 > 127:
                 continue
-            new_msg = msg.copy()
-            new_msg.note = key_tracker.scale.position_at_interval(msg.note, 5)
-            new_msg.time = 0
             new_array.append(msg)
-            new_array.append(new_msg)
+            for interval in intervals:
+                new_msg = msg.copy()
+                new_msg.note = key_tracker.scale.position_at_interval(msg.note, interval)
+                new_msg.time = 0
+                new_array.append(new_msg)
+
         return new_array
 
 
@@ -249,6 +251,9 @@ class Song:
         self.original_tempo = self.mid.ticks_per_beat
         self.channels = map(Channel, range(0, 16))
 
+    def channels_with_instrument_type(self, instrument_type):
+        return filter(lambda c: c.instrument_type == instrument_type, self.channels)
+
     # Play the midi file (should be called on new thread)
     def play_midi_file(self):
         self.is_stopping = False
@@ -319,4 +324,4 @@ class Song:
 
 
 repeat = Effect(Effect.repeat)
-fifth = Effect(Effect.fifth)
+fifth = Effect(lambda arr: Effect.intervals(arr, [5]))
