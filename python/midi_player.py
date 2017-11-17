@@ -132,8 +132,19 @@ class Channel(object):
         self.queue = Queue()
         self.fade_start = None
         self.playing_notes = []
-        self.intervals = None
+        self.__intervals = None
+        self.__intervals_queue = Queue()
         self.__program = 0
+
+    @property
+    def intervals(self):
+        while not self.__intervals_queue.empty():
+            self.__intervals = self.__intervals_queue.get()
+        return self.__intervals
+
+    @intervals.setter
+    def intervals(self, intervals):
+        self.__intervals_queue.put(intervals)
 
     @property
     def program(self):
