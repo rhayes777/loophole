@@ -87,11 +87,7 @@ class Command:
     def __str__(self):
         return self.__repr__()
 
-    add_effect = "add_effect"
-    remove_effect = "remove_effect"
-    pitch_bend = "pitch_bend"
     volume = "volume"
-    fade_out = "fade_out"
     stop = "stop"
     tempo_change = "tempo_change"
 
@@ -145,11 +141,28 @@ class Channel(object):
         self.volume = volume
         self.fade_rate = fade_rate
         self.queue = Queue()
-        self.fade_start = None
+        self.__fade_start = None
+        self.__fade_start_queue = Queue()
         self.playing_notes = []
         self.__intervals = None
         self.__intervals_queue = Queue()
         self.__program = 0
+
+    # TODO: Read about mutexes and threading in python
+    # TODO: https://stackoverflow.com/questions/6517953/clear-all-items-from-the-queue
+    @property
+    def fade_start(self):
+        while not self.__fade_start_queue.empty():
+            if self.__fade_start is None:
+                self.__fade_start = datetime.now()
+        return self.__fade_start
+
+    @fade_start.setter
+    def fade_start(self, fade_start):
+        self.__fade_start = fade_start
+
+    def fade(self):
+        self.__fade_start_queue.put("start")
 
     @property
     def intervals(self):
@@ -207,12 +220,6 @@ class Channel(object):
             if command.name == Command.volume:
                 self.volume = command.value
                 self.fade_start = None
-            # Fade out command. Fade out occurs constantly until silent or overridden by volume change
-            elif command.name == Command.fade_out:
-                # Fade out command has no effect if fadeout already underway
-                if self.fade_start is None:
-                    # When did the fadeout start?
-                    self.fade_start = datetime.now()
 
     # Send a midi message to this channel
     def send_message(self, msg):
@@ -258,12 +265,6 @@ class Channel(object):
         except ValueError as e:
             logging.exception(e)
 
-    def add_effect(self, effect):
-        self.queue.put(Command(Command.add_effect, effect))
-
-    def remove_effect(self, effect):
-        self.queue.put(Command(Command.remove_effect, effect))
-
     # Stop all currently playing notes
     def stop_playing_notes(self):
         for note in self.playing_notes:
@@ -277,10 +278,6 @@ class Channel(object):
     # Set the volume of this channel (float from 0 - 1)
     def set_volume(self, volume):
         self.queue.put(Command(Command.volume, volume))
-
-    # Start fading out this channel
-    def fade_out(self):
-        self.queue.put(Command(Command.fade_out))
 
 
 # Represents a midi song loaded from a file
@@ -358,7 +355,7 @@ class Song:
             if channel.number in pressed_positions:
                 channel.set_volume(1.0)
             else:
-                channel.fade_out()
+                channel.fade()
 
     # Play all channels
     def include_all_channels(self):
