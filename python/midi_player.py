@@ -97,10 +97,20 @@ class Command:
 
 
 class Intervals:
+    """Class used to apply set of intervals to a note, using the most likely key"""
     def __init__(self, intervals):
+        """
+
+        :param intervals: A series of intervals. For example, [2, 4] would turn a note into a triad
+        """
         self.intervals = intervals
 
     def __call__(self, msg):
+        """
+
+        :param msg: A midi note_on message
+        :return: An array of midi messages
+        """
         new_array = [msg]
 
         for interval in self.intervals:
@@ -114,13 +124,19 @@ class Intervals:
         return new_array
 
 
-# Class representing individual midi channel
 class Channel(object):
-    program_change = "program_change"
+    """Represents an individual midi channel through which messages are passed"""
     note_off = "note_off"
     note_on = "note_on"
 
     def __init__(self, number, volume=1.0, fade_rate=1, note_on_listener=None):
+        """
+
+        :param number: The number of this channel (0-15)
+        :param volume: The initial volume of this channel (0.0 - 1.0)
+        :param fade_rate: The rate at which this channel should fade
+        :param note_on_listener: A listener that is called every time a note_on is played by this channel
+        """
         self.note_on_listener = note_on_listener
         self.message_send_listener = None
         self.number = number
@@ -137,6 +153,7 @@ class Channel(object):
 
     @property
     def intervals(self):
+        """The set of intervals currently applied to notes played on this channel"""
         while not self.__intervals_queue.empty():
             self.__intervals = self.__intervals_queue.get()
         return self.__intervals
@@ -147,6 +164,7 @@ class Channel(object):
 
     @property
     def program(self):
+        """The program (i.e. instrument) of this channel"""
         return self.__program
 
     @program.setter
@@ -156,6 +174,7 @@ class Channel(object):
 
     @property
     def instrument_type(self):
+        """The type of instrument (see InstrumentType above)"""
         return self.program / 8
 
     @instrument_type.setter
@@ -165,6 +184,7 @@ class Channel(object):
 
     @property
     def instrument_version(self):
+        """The version of the instrument. Each instrument has 8 versions."""
         return self.program % 8
 
     @instrument_version.setter
@@ -173,6 +193,10 @@ class Channel(object):
             self.program = 8 * self.instrument_type + instrument_version
 
     def pitch_bend(self, value):
+        """
+        Send a pitch bend to this channel
+        :param value: The value of the pitch bend
+        """
         self.port.send(mido.Message('pitchwheel', pitch=value, time=0, channel=self.number))
 
     def process_waiting_commands(self):
