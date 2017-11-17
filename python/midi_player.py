@@ -100,7 +100,7 @@ class Intervals:
     def __init__(self, intervals):
         self.intervals = intervals
 
-    def apply(self, msg_array):
+    def __call__(self, msg_array):
         new_array = []
         for msg in msg_array:
             if msg.note + 7 > 127:
@@ -132,7 +132,7 @@ class Channel(object):
         self.queue = Queue()
         self.fade_start = None
         self.playing_notes = []
-        self.effects = []
+        self.intervals = None
         self.__program = 0
 
     @property
@@ -179,10 +179,6 @@ class Channel(object):
                 if self.fade_start is None:
                     # When did the fadeout start?
                     self.fade_start = datetime.now()
-            elif command.name == Command.add_effect:
-                self.effects.append(command.value)
-            elif command.name == Command.remove_effect and command.value in self.effects:
-                self.effects.remove(command.value)
 
     # Send a midi message to this channel
     def send_message(self, msg):
@@ -199,7 +195,9 @@ class Channel(object):
 
             if hasattr(msg, 'velocity'):
                 msg.velocity = int(self.volume * msg.velocity)
-                msgs = self.apply_effects(msg.copy())
+
+            if hasattr(msg, 'velocity') and self.intervals is not None:
+                msgs = self.intervals(msg)
             else:
                 msgs = [msg]
 
@@ -251,12 +249,6 @@ class Channel(object):
     # Start fading out this channel
     def fade_out(self):
         self.queue.put(Command(Command.fade_out))
-
-    def apply_effects(self, msg):
-        msg_array = [msg]
-        for effect in self.effects:
-            msg_array = effect.apply(msg_array)
-        return msg_array
 
 
 # Represents a midi song loaded from a file
