@@ -253,8 +253,6 @@ class Channel(object):
                         self.note_on_listener(msg)
                 elif msg.type == Channel.note_off:
                     self.playing_notes.remove(msg.note)
-                elif msg.type == Channel.program_change:
-                    self.program = msg.program
         except AttributeError as e:
             logging.exception(e)
         except ValueError as e:
