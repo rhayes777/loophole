@@ -100,15 +100,14 @@ class Intervals:
     def __init__(self, intervals):
         self.intervals = intervals
 
-    def __call__(self, msg_array):
-        new_array = []
-        for msg in msg_array:
-            if msg.note + 7 > 127:
-                continue
-            new_array.append(msg)
-            for interval in self.intervals:
-                new_msg = msg.copy()
-                new_msg.note = key_tracker.scale.position_at_interval(msg.note, interval)
+    def __call__(self, msg):
+        new_array = [msg]
+
+        for interval in self.intervals:
+            new_msg = msg.copy()
+            note = key_tracker.scale.position_at_interval(msg.note, interval)
+            if 0 <= note <= 127:
+                new_msg.note = note
                 new_msg.time = 0
                 new_array.append(new_msg)
 
