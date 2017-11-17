@@ -96,29 +96,17 @@ class Command:
     tempo_change = "tempo_change"
 
 
-class Effect:
-    def __init__(self, func):
-        self.func = func
+class Intervals:
+    def __init__(self, intervals):
+        self.intervals = intervals
 
     def apply(self, msg_array):
-        return self.func(msg_array)
-
-    @staticmethod
-    def repeat(msg_array):
-        for msg in msg_array:
-            new_msg = msg.copy()
-            new_msg.time += 0.5
-            msg_array.append(new_msg)
-        return msg_array
-
-    @staticmethod
-    def intervals(msg_array, intervals):
         new_array = []
         for msg in msg_array:
             if msg.note + 7 > 127:
                 continue
             new_array.append(msg)
-            for interval in intervals:
+            for interval in self.intervals:
                 new_msg = msg.copy()
                 new_msg.note = key_tracker.scale.position_at_interval(msg.note, interval)
                 new_msg.time = 0
@@ -352,7 +340,3 @@ class Song:
     def include_all_channels(self):
         for channel in self.channels:
             channel.set_volume(1.0)
-
-
-repeat = Effect(Effect.repeat)
-fifth = Effect(lambda arr: Effect.intervals(arr, [5]))
