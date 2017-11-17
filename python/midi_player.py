@@ -25,6 +25,7 @@ key_tracker = music.KeyTracker()
 
 # noinspection PyClassHasNoInit
 class InstrumentType:
+    """Different types of midi instrument. The program number of each instrument ranges from n * 8 to (n + 1) * 8"""
     piano = 0
     chromatic_percussion = 1
     organ = 2
@@ -43,8 +44,12 @@ class InstrumentType:
     sound_effects = 15
 
 
-# Creates a port object corresponding to an instrument if it exists, else to a Simple inbuilt synth
 def make_port(name):
+    """
+    Create a port with the given name, defaulting to the SimpleSynth port otherwise
+    :param name: The name of the port
+    :return: A port through which midi messages can be sent
+    """
     for input_name in input_names:
         if name in input_name:
             name = input_name
@@ -64,9 +69,15 @@ keys_port = make_port(REFACE)
 drum_port = make_port(MPX)
 
 
-# Class representing key-value pairs that can be queued as commands
 class Command:
+    """Contains a key value pair that can be passed into a queue to invoke a change in state of a channel"""
+
     def __init__(self, name, value=None):
+        """
+
+        :param name: The name of the command (e.g. command.add_effect)
+        :param value: The value of the command (optional)
+        """
         self.name = name
         self.value = value
 
