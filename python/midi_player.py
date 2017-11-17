@@ -89,7 +89,6 @@ class Command:
 
     volume = "volume"
     stop = "stop"
-    tempo_change = "tempo_change"
 
 
 class Intervals:
@@ -290,6 +289,17 @@ class Song:
         self.mid = mido.MidiFile("{}/{}".format(dir_path, self.filename))
         self.original_tempo = self.mid.ticks_per_beat
         self.channels = map(Channel, range(0, 16))
+        self.__tempo_shift = 1
+        self.__tempo_shift_queue = Queue()
+
+    @property
+    def tempo_shift(self):
+        return self.__tempo_shift
+
+    @tempo_shift.setter
+    def tempo_shift(self, tempo_shift):
+        self.mid.ticks_per_beat = tempo_shift * self.original_tempo
+        self.__tempo_shift = tempo_shift
 
     def channels_with_instrument_type(self, instrument_type):
         return filter(lambda c: c.instrument_type == instrument_type, self.channels)
@@ -322,8 +332,6 @@ class Song:
                 if isinstance(command, Command):
                     if command.name == Command.stop:
                         self.is_stopping = True
-                    if command.name == Command.tempo_change:
-                        self.mid.ticks_per_beat = command.value * self.original_tempo
 
             try:
                 if isinstance(msg, mido.MetaMessage):
