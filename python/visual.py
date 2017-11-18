@@ -87,8 +87,9 @@ class Pixel:
             self.colour = RED
 
 
-class Display:
+class Display(Thread):
     def __init__(self, pygame, screen):
+        super(Display, self).__init__()
         self.pygame = pygame
         self.screen = screen
         self.queue = Queue()
@@ -99,6 +100,8 @@ class Display:
 
         self.num_pixels_x = self.screen.get_width() / grid_size_x
         self.num_pixels_y = self.screen.get_height() / grid_size_y
+
+        self.is_stopping = False
 
         for j in range(self.num_pixels_y):
 
@@ -171,15 +174,26 @@ class Display:
     def on_message_received(self, msg):
         self.queue.put(msg)
 
-    def update(self):
-        while not self.queue.empty():
-            msg = self.queue.get()
-            self.process_message(msg)
+    def run(self):
+        self.is_stopping = False
+        while True:
+            while not self.queue.empty():
+                msg = self.queue.get()
+                self.process_message(msg)
+
+            # Break if should stop
+            if self.is_stopping:
+                    break
+
+            sleep(0.05)
 
             # TODO: there was a loop going through all the ixj pixels here. It slows down the song! I may have made a
             # TODO: mistake with threading but I recommend trying to avoid iterating through every pixel all the time.
             # TODO: Instead you could keep track of the coordinates of "on" pixels and use them to get a pixel by the
             # TODO: index in the pixel matrix e.g. self.pixel_grid[i][j]
+
+    def stop(self):
+        self.is_stopping = True
 
 
 def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
@@ -210,12 +224,7 @@ def run_example():
 
     display = Display(pygame, screen)
 
-    def loop():
-        while not done:
-            display.update()
-            sleep(0.1)
-
-    Thread(target=loop).start()
+    display.start()
 
     while not done:
 

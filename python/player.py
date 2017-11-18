@@ -312,7 +312,7 @@ class Song(Thread):
     def channels_with_instrument_type(self, instrument_type):
         return filter(lambda c: c.instrument_type == instrument_type, self.channels)
 
-    # Play the midi file (should be called on new thread)
+    # Play the midi file
     def run(self):
         self.is_stopping = False
         play = self.mid.play(meta_messages=True)
