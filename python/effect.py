@@ -184,7 +184,6 @@ class Intervals(ChannelEffect):
             channel.intervals = None
 
 
-
 class InstrumentType(ChannelEffect):
     """Changes the type of instrument of one or more channels. See player.InstrumentType"""
 

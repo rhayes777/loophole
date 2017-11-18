@@ -216,6 +216,8 @@ class Channel(object):
 
     @instrument_type.setter
     def instrument_type(self, instrument_type):
+        if isinstance(instrument_type, str):
+            instrument_type = InstrumentType.with_name(instrument_type)
         if 0 <= instrument_type < 16:
             self.program = 8 * instrument_type + self.instrument_version
 
