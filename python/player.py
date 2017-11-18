@@ -20,6 +20,7 @@ CHANNEL_PARTITION = 8
 
 simple_port = None
 
+# TODO: Consider passing the key tracker only into select tracks
 key_tracker = music.KeyTracker()
 
 

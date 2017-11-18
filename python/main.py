@@ -35,6 +35,7 @@ signal.signal(signal.SIGINT, stop)
 
 channels = track.channels
 
+# TODO: Test whether this message passing mechanism is causing the jitter
 channels[0].message_send_listener = display.on_message_received
 
 # Relate button names to positions in the scale
@@ -63,9 +64,13 @@ def toggle_channel(channel):
 # Function to listen for changes to button state
 def listener(status_dict):
     if status_dict[dancemat.Button.up]:
-        channels[1].instrument_type += 1
+        # channels[1].instrument_type += 1
+        for c in channels:
+            c.pitch_bend(1000)
     if status_dict[dancemat.Button.down]:
-        channels[1].instrument_type -= 1
+        for c in channels:
+            c.pitch_bend(0)
+        # channels[1].instrument_type -= 1
     if status_dict[dancemat.Button.right]:
         channels[1].instrument_version += 1
     if status_dict[dancemat.Button.left]:
@@ -85,7 +90,7 @@ def listener(status_dict):
 mat.set_button_listener(listener)
 
 track.start()
-display.start()
+# display.start()
 
 # Keep reading forever
 while play:
