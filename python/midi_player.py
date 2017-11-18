@@ -93,6 +93,7 @@ class Command:
 
 class Intervals:
     """Class used to apply set of intervals to a note, using the most likely key"""
+
     def __init__(self, intervals):
         """
 
@@ -137,18 +138,28 @@ class Channel(object):
         self.number = number
         # Decides which port output should be used depending on the channel number
         self.port = keys_port if number < CHANNEL_PARTITION else drum_port
-        self.volume = volume
+        self.__volume = volume
+        self.__volume_queue = Queue()
         self.fade_rate = fade_rate
         self.queue = Queue()
         self.__fade_start = None
         self.__fade_start_queue = Queue()
-        self.playing_notes = []
+        self.playing_notes = set()
         self.__intervals = None
         self.__intervals_queue = Queue()
         self.__program = 0
 
-    # TODO: Read about mutexes and threading in python
-    # TODO: https://stackoverflow.com/questions/6517953/clear-all-items-from-the-queue
+    @property
+    def volume(self):
+        while not self.__volume_queue.empty():
+            self.__volume = self.__volume_queue.get()
+        return self.__volume
+
+    @volume.setter
+    def volume(self, volume):
+        self.fade_start = None
+        self.__volume_queue.put(volume)
+
     @property
     def fade_start(self):
         while not self.__fade_start_queue.empty():
@@ -274,10 +285,6 @@ class Channel(object):
         # noinspection PyTypeChecker
         self.send_message(mido.Message(type=Channel.note_off, velocity=0, note=note))
 
-    # Set the volume of this channel (float from 0 - 1)
-    def set_volume(self, volume):
-        self.queue.put(Command(Command.volume, volume))
-
 
 # Represents a midi song loaded from a file
 class Song:
@@ -361,11 +368,11 @@ class Song:
     def set_included_channels(self, pressed_positions):
         for channel in self.channels:
             if channel.number in pressed_positions:
-                channel.set_volume(1.0)
+                channel.volume = 1
             else:
                 channel.fade()
 
     # Play all channels
     def include_all_channels(self):
         for channel in self.channels:
-            channel.set_volume(1.0)
+            channel.volume = 1
