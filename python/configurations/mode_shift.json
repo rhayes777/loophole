@@ -48,6 +48,10 @@
           3
         ],
         "instrument_group": "melodic"
+      },
+      {
+        "name": "tempo_shift",
+        "value": 0.75
       }
     ]
   },
@@ -62,6 +66,10 @@
           5
         ],
         "instrument_group": "melodic"
+      },
+      {
+        "name": "tempo_shift",
+        "value": 1.5
       }
     ]
   },
@@ -76,6 +84,10 @@
           6
         ],
         "instrument_group": "melodic"
+      },
+      {
+        "name": "tempo_shift",
+        "value": 0.75
       }
     ]
   },
@@ -90,6 +102,10 @@
           -2
         ],
         "instrument_group": "melodic"
+      },
+      {
+        "name": "tempo_shift",
+        "value": 1.5
       }
     ]
   },
@@ -104,6 +120,10 @@
           -3
         ],
         "instrument_group": "melodic"
+      },
+      {
+        "name": "tempo_shift",
+        "value": 1.5
       }
     ]
   },
@@ -118,6 +138,10 @@
           -5
         ],
         "instrument_group": "melodic"
+      },
+      {
+        "name": "tempo_shift",
+        "value": 0.75
       }
     ]
   }
