@@ -6,10 +6,10 @@
     "effects": [
       {
         "name": "intervals",
-        "value": [1],
-        "instrument_type": [
-          0
-        ]
+        "value": [
+          1
+        ],
+        "instrument_group": "melodic"
       }
     ]
   },
@@ -19,11 +19,11 @@
     ],
     "effects": [
       {
-        "name": "volume_change",
-        "value": 1.0,
-        "channels": [
-          1
-        ]
+        "name": "intervals",
+        "value": [
+          2
+        ],
+        "instrument_group": "melodic"
       }
     ]
   },
@@ -35,11 +35,9 @@
       {
         "name": "intervals",
         "value": [
-          1
+          3
         ],
-        "instrument_types": [
-          0
-        ]
+        "instrument_group": "melodic"
       }
     ]
   },
@@ -49,11 +47,11 @@
     ],
     "effects": [
       {
-        "name": "instrument_type",
-        "value": 4,
-        "instrument_types": [
-          0
-        ]
+        "name": "intervals",
+        "value": [
+          5
+        ],
+        "instrument_group": "melodic"
       }
     ]
   },
@@ -63,11 +61,11 @@
     ],
     "effects": [
       {
-        "name": "instrument_version",
-        "value": 4,
-        "instrument_types": [
-          0
-        ]
+        "name": "intervals",
+        "value": [
+          6
+        ],
+        "instrument_group": "melodic"
       }
     ]
   },
@@ -77,8 +75,11 @@
     ],
     "effects": [
       {
-        "name": "tempo_shift",
-        "value": 0.25
+        "name": "intervals",
+        "value": [
+          -2
+        ],
+        "instrument_group": "melodic"
       }
     ]
   },
@@ -90,12 +91,9 @@
       {
         "name": "intervals",
         "value": [
-          2
+          -3
         ],
-        "channels": [
-          1,
-          2
-        ]
+        "instrument_group": "melodic"
       }
     ]
   },
@@ -107,33 +105,9 @@
       {
         "name": "intervals",
         "value": [
-          -1
+          -5
         ],
-        "instrument_types": [
-          0
-        ]
-      }
-    ]
-  },
-  {
-    "buttons": [
-      "start"
-    ],
-    "effects": [
-      {
-        "name": "tempo_shift",
-        "value": 0.5
-      }
-    ]
-  },
-  {
-    "buttons": [
-      "select"
-    ],
-    "effects": [
-      {
-        "name": "tempo_shift",
-        "value": 2
+        "instrument_group": "melodic"
       }
     ]
   }
