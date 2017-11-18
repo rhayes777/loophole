@@ -290,27 +290,26 @@ class Track(Thread):
         while True:
 
             # Take midi messages from a generator
-            msg = play.next()
+            for msg in play:
 
-            if msg is None:
-                if self.is_looping:
-                    play = self.mid.play(meta_messages=True)
-                    continue
-                break
+                # Break if should stop
+                if self.is_stopping:
+                    break
 
-            # Break if should stop
-            if self.is_stopping:
-                break
+                try:
+                    if isinstance(msg, mido.MetaMessage):
+                        continue
+                    # Send a message to its assigned channel
+                    self.channels[msg.channel].send_message(msg)
+                except AttributeError as e:
+                    logging.exception(e)
+                except IndexError as e:
+                    logging.exception(e)
 
-            try:
-                if isinstance(msg, mido.MetaMessage):
-                    continue
-                # Send a message to its assigned channel
-                self.channels[msg.channel].send_message(msg)
-            except AttributeError as e:
-                logging.exception(e)
-            except IndexError as e:
-                logging.exception(e)
+            if self.is_looping:
+                play = self.mid.play(meta_messages=True)
+                continue
+            break
 
     # Stop this song
     # noinspection PyUnusedLocal
