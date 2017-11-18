@@ -17,6 +17,8 @@ MPX = 'MPX16'
 SIMPLE_SYNTH = 'SimpleSynth virtual input'
 
 CHANNEL_PARTITION = 8
+DEFAULT_VOLUME = 0.5
+DEFAULT_TEMPO_SHIFT = 1
 
 simple_port = None
 
@@ -104,7 +106,7 @@ class Channel(object):
     note_off = "note_off"
     note_on = "note_on"
 
-    def __init__(self, number, volume=1.0, fade_rate=1, note_on_listener=None):
+    def __init__(self, number, volume=DEFAULT_VOLUME, fade_rate=1, note_on_listener=None):
         """
 
         :param number: The number of this channel (0-15)
@@ -265,7 +267,7 @@ class Track(Thread):
         self.mid = mido.MidiFile("{}/{}".format(dir_path, self.filename))
         self.original_tempo = self.mid.ticks_per_beat
         self.channels = map(Channel, range(0, 16))
-        self.__tempo_shift = 1
+        self.__tempo_shift = DEFAULT_TEMPO_SHIFT
         self.__tempo_shift_queue = Queue()
 
     @property
