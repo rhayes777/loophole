@@ -326,7 +326,6 @@ class Track(Thread):
             # Take midi messages from a generator
             for msg in play:
 
-                # Break if should stop
                 if self.is_stopping:
                     break
 
@@ -340,7 +339,7 @@ class Track(Thread):
                 except IndexError as e:
                     logging.exception(e)
 
-            if self.is_looping:
+            if self.is_looping and not self.is_stopping:
                 play = self.mid.play(meta_messages=True)
                 continue
             break
