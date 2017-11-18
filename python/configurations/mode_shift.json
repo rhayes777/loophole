@@ -103,7 +103,7 @@
       },
       {
         "name": "pitch_bend",
-        "value": 3000,
+        "value": 1000,
         "instrument_group": "melodic"
       }
     ]
@@ -125,7 +125,7 @@
       },
       {
         "name": "pitch_bend",
-        "value": -3000,
+        "value": -1000,
         "instrument_group": "melodic"
       }
     ]
