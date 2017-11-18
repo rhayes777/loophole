@@ -34,8 +34,7 @@ signal.signal(signal.SIGINT, stop)
 
 channels = track.channels
 
-for c in channels:
-    c.message_send_listener = display.on_message_received
+channels[0].message_send_listener = display.on_message_received
 
 # Relate button names to positions in the scale
 position_dict = {dancemat.Button.triangle: 0,
