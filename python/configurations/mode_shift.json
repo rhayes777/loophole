@@ -10,6 +10,11 @@
           1
         ],
         "instrument_group": "melodic"
+      },
+      {
+        "name": "instrument_type",
+        "value": 5,
+        "instrument_group": "melodic"
       }
     ]
   },
@@ -23,6 +28,11 @@
         "value": [
           2
         ],
+        "instrument_group": "melodic"
+      },
+      {
+        "name": "instrument_type",
+        "value": "bass",
         "instrument_group": "melodic"
       }
     ]
