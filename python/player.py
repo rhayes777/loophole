@@ -73,8 +73,9 @@ class InstrumentGroup:
     """Different groups of midi instrument."""
     melodic = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
     percussive = [1, 14, 15]
+    all = range(15)
 
-    instrument_group_dict = {"melodic": melodic, "percussive": percussive}
+    instrument_group_dict = {"melodic": melodic, "percussive": percussive, "all": all}
 
     @staticmethod
     def with_name(name):
