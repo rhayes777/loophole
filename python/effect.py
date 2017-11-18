@@ -16,17 +16,16 @@ class Combinator(object):
         self.current_combo = None
         with open("{}/{}".format(dir_path, filename)) as f:
             self.combos = map(lambda d: Combo(track, d), json.loads(f.read()))
-            self.button_map = {str(combo.buttons): combo for combo in self.combos}
+            self.button_map = {sum(map(hash, combo.buttons)): combo for combo in self.combos}
 
     def apply_for_buttons(self, buttons):
         if self.current_combo is not None:
             self.current_combo.remove()
-        buttons_set = str(set(buttons))
         try:
-            self.current_combo = self.button_map[buttons_set]
+            self.current_combo = self.button_map[sum(map(hash, buttons))]
             self.current_combo.apply()
         except KeyError:
-            logger.info("{} not found in combinator".format(buttons_set))
+            logger.info("{} not found in combinator".format(buttons))
 
 
 class Combo(object):
@@ -41,6 +40,12 @@ class Combo(object):
     def remove(self):
         for effect in self.effects:
             effect.remove()
+
+    def __repr__(self):
+        return str(map(Effect.__repr__, self.effects))
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class Effect(object):
@@ -71,6 +76,12 @@ class Effect(object):
 
     def remove(self):
         raise AssertionError("{}.default not overridden".format(self.name))
+
+    def __str__(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        return "<Effect name={} value={}>".format(self.name, self.value)
 
 
 class ChannelEffect(Effect):
@@ -154,6 +165,7 @@ class TrackEffect(Effect):
 
 class TempoShift(TrackEffect):
     def apply(self):
+        print "applying tempo shift"
         self.track.tempo_shift = self.value
 
     def remove(self):
