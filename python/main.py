@@ -7,8 +7,14 @@ import visual
 import effect
 import sys
 
-filename = 'media/bicycle-ride.mid' if len(sys.argv) <= 1 else sys.argv[1]
-configuration = 'configurations/effects_1.json' if len(sys.argv) <= 2 else sys.argv[2]
+filename = 'media/bicycle-ride.mid'
+configuration = 'configurations/effects_1.json'
+
+for arg in sys.argv:
+    if '.mid' in arg:
+        filename = arg
+    elif '.json' in arg:
+        configuration = arg
 
 # Set up pygame
 pygame.init()
