@@ -264,11 +264,10 @@ class Channel(object):
                 # Check if it was a note message
                 if msg.type == Channel.note_on:
                     # Keep track of notes that are currently playing
-                    self.playing_notes.append(msg.note)
-                    self.playing_notes.sort()
+                    self.playing_notes.add(msg.note)
                     if self.note_on_listener is not None:
                         self.note_on_listener(msg)
-                elif msg.type == Channel.note_off:
+                elif msg.type == Channel.note_off and msg.note in self.playing_notes:
                     self.playing_notes.remove(msg.note)
         except AttributeError as e:
             logging.exception(e)
