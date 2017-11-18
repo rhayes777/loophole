@@ -59,7 +59,7 @@ def listener(status_dict):
 mat.set_button_listener(listener)
 
 track.start()
-# display.start()
+display.start()
 
 # Keep reading forever
 while play:
