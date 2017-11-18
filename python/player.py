@@ -238,8 +238,11 @@ class Channel(object):
         """
         self.port.send(mido.Message('pitchwheel', pitch=value, time=0, channel=self.number))
 
-    # Send a midi message to this channel
     def send_message(self, msg):
+        """
+        Apply effects and dispatch a midi message
+        :param msg: a midi message
+        """
 
         try:
             # True if a fade out is in progress
@@ -282,19 +285,23 @@ class Channel(object):
         except ValueError as e:
             logging.exception(e)
 
-    # Stop all currently playing notes
     def stop_playing_notes(self):
+        """Stop all currently playing notes"""
         for note in self.playing_notes:
             self.stop_note(note)
 
-    # Stop a specific note
     def stop_note(self, note):
+        """
+        Stop a specific note
+        :param note: The midi position of the note
+        """
         # noinspection PyTypeChecker
         self.send_message(mido.Message(type=Channel.note_off, velocity=0, note=note))
 
 
-# Represents a midi song loaded from a file
 class Track(Thread):
+    """Represents a midi song loaded from a file"""
+
     def __init__(self, filename="media/channels_test.mid", is_looping=False):
         super(Track, self).__init__()
         self.filename = filename
@@ -316,18 +323,28 @@ class Track(Thread):
         self.__tempo_shift = tempo_shift
 
     def channels_with_instrument_type(self, instrument_type):
+        """
+        Returns all channels associated with instruments of a particular type
+        :param instrument_type: The string name or integer number of the instrument type (see InstrumentType)
+        :return: A list of channels
+        """
         if isinstance(instrument_type, str):
             instrument_type = InstrumentType.with_name(instrument_type)
         return filter(lambda c: c.instrument_type == instrument_type, self.channels)
 
     def channels_with_instrument_group(self, instrument_group):
+        """
+            Returns all channels associated with instruments of a particular group
+            :param instrument_group: The string name or integer number of the instrument group (see InstrumentGroup)
+            :return: A list of channels
+            """
         channels = []
         for instrument_type in InstrumentGroup.with_name(instrument_group):
             channels.extend(self.channels_with_instrument_type(instrument_type))
         return channels
 
-    # Play the midi file
     def run(self):
+        """Play the midi file (call start() to run on new thread)"""
         self.is_stopping = False
         play = self.mid.play(meta_messages=True)
 
@@ -354,7 +371,7 @@ class Track(Thread):
                 continue
             break
 
-    # Stop this song
     # noinspection PyUnusedLocal
     def stop(self, *args):
+        """Stops the song by breaking the loop"""
         self.is_stopping = True
