@@ -314,7 +314,15 @@ class Track(Thread):
         self.__tempo_shift = tempo_shift
 
     def channels_with_instrument_type(self, instrument_type):
+        if isinstance(instrument_type, str):
+            instrument_type = InstrumentType.with_name(instrument_type)
         return filter(lambda c: c.instrument_type == instrument_type, self.channels)
+
+    def channels_with_instrument_group(self, instrument_group):
+        channels = []
+        for instrument_type in InstrumentGroup.with_name(instrument_group):
+            channels.extend(self.channels_with_instrument_type(instrument_type))
+        return channels
 
     # Play the midi file
     def run(self):
