@@ -247,6 +247,10 @@ class Channel(object):
             if hasattr(msg, 'velocity'):
                 msg.velocity = int(self.volume * msg.velocity)
 
+            if hasattr(msg, "note"):
+                # Update the key tracker
+                key_tracker.add_note(msg.note)
+
             if hasattr(msg, 'velocity') and self.intervals is not None:
                 msgs = self.intervals(msg)
             else:
@@ -257,9 +261,6 @@ class Channel(object):
                     self.message_send_listener(msg)
                 # Actually send the midi message
                 self.port.send(msg)
-                if hasattr(msg, "note"):
-                    # Update the key tracker
-                    key_tracker.add_note(msg.note)
             if hasattr(msg, 'type'):
                 # Check if it was a note message
                 if msg.type == Channel.note_on:
