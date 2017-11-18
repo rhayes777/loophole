@@ -139,6 +139,10 @@ class ChannelEffect(Effect):
                 self.channels.extend(track.channels_with_instrument_type(instrument_type))
         if "instrument_group" in effect_dict:
             self.channels.extend(track.channels_with_instrument_group(effect_dict["instrument_group"]))
+        if "channels" not in effect_dict \
+                and "instrument_types" not in effect_dict \
+                and "instrument_group" not in effect_dict:
+            self.channels = track.channels_with_instrument_group("all")
         if len(self.channels) == 0:
             raise AssertionError(
                 "At least one channel or one present instrument type must be set for {}".format(self.name))
