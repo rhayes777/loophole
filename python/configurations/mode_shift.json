@@ -1,0 +1,140 @@
+[
+  {
+    "buttons": [
+      "up"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [1],
+        "instrument_type": [
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "down"
+    ],
+    "effects": [
+      {
+        "name": "volume_change",
+        "value": 1.0,
+        "channels": [
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "left"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [
+          1
+        ],
+        "instrument_types": [
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "right"
+    ],
+    "effects": [
+      {
+        "name": "instrument_type",
+        "value": 4,
+        "instrument_types": [
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "triangle"
+    ],
+    "effects": [
+      {
+        "name": "instrument_version",
+        "value": 4,
+        "instrument_types": [
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "circle"
+    ],
+    "effects": [
+      {
+        "name": "tempo_shift",
+        "value": 0.25
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "square"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [
+          2
+        ],
+        "channels": [
+          1,
+          2
+        ]
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "x"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [
+          -1
+        ],
+        "instrument_types": [
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "start"
+    ],
+    "effects": [
+      {
+        "name": "tempo_shift",
+        "value": 0.5
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "select"
+    ],
+    "effects": [
+      {
+        "name": "tempo_shift",
+        "value": 2
+      }
+    ]
+  }
+]
