@@ -1,22 +1,30 @@
 import json
 import player
 import logging
+import os
 
 logging.basicConfig()
 
 logger = logging.getLogger(__name__)
 
+path = os.path.realpath(__file__)
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
 
 class Combinator(object):
     def __init__(self, filename, track):
-        with open(filename) as f:
+        self.current_combo = None
+        with open("{}/{}".format(dir_path, filename)) as f:
             self.combos = map(lambda d: Combo(track, d), json.loads(f.read()))
             self.button_map = {combo.buttons: combo for combo in self.combos}
 
     def apply_for_buttons(self, buttons):
+        if self.current_combo is not None:
+            self.current_combo.remove()
         buttons_set = set(buttons)
         try:
-            self.button_map[buttons_set].apply()
+            self.current_combo = self.button_map[buttons_set]
+            self.current_combo.apply()
         except KeyError:
             logger.info("{} not found in combinator".format(buttons_set))
 
@@ -75,6 +83,9 @@ class ChannelEffect(Effect):
             for instrument_type in effect_dict["instrument_types"]:
                 # TODO: standardise instrument type counting (0-15 or 1-16)
                 self.channels.extend(track.channels_with_instrument_type(instrument_type))
+        if len(self.channels) == 0:
+            raise AssertionError(
+                "At least one channel or one present instrument type must be set for {}".format(self.name))
 
 
 class PitchBend(ChannelEffect):
