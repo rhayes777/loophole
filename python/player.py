@@ -70,27 +70,6 @@ keys_port = make_port(REFACE)
 drum_port = make_port(MPX)
 
 
-class Command:
-    """Contains a key value pair that can be passed into a queue to invoke a change in state of a channel"""
-
-    def __init__(self, name, value=None):
-        """
-
-        :param name: The name of the command (e.g. command.add_effect)
-        :param value: The value of the command (optional)
-        """
-        self.name = name
-        self.value = value
-
-    def __repr__(self):
-        return "<Command {} = {}>".format(self.name, self.value)
-
-    def __str__(self):
-        return self.__repr__()
-
-    stop = "stop"
-
-
 class Intervals:
     """Class used to apply set of intervals to a note, using the most likely key"""
 
@@ -141,7 +120,6 @@ class Channel(object):
         self.__volume = volume
         self.__volume_queue = Queue()
         self.fade_rate = fade_rate
-        self.queue = Queue()
         self.__fade_start = None
         self.__fade_start_queue = Queue()
         self.playing_notes = set()
@@ -282,7 +260,6 @@ class Song(Thread):
     def __init__(self, filename="media/channels_test.mid", is_looping=False):
         super(Song, self).__init__()
         self.filename = filename
-        self.queue = Queue()
         self.is_stopping = False
         self.is_looping = is_looping
         self.mid = mido.MidiFile("{}/{}".format(dir_path, self.filename))
@@ -322,12 +299,6 @@ class Song(Thread):
             # Break if should stop
             if self.is_stopping:
                 break
-            # Check if any commands in queue
-            if not self.queue.empty():
-                command = self.queue.get()
-                if isinstance(command, Command):
-                    if command.name == Command.stop:
-                        self.is_stopping = True
 
             try:
                 if isinstance(msg, mido.MetaMessage):
@@ -342,11 +313,7 @@ class Song(Thread):
     # Stop this song
     # noinspection PyUnusedLocal
     def stop(self, *args):
-        self.send_command(Command.stop)
-
-    # Queue up a command
-    def send_command(self, name, value=None):
-        self.queue.put(Command(name, value))
+        self.is_stopping = True
 
     # Set which channels should be playing
     def set_included_channels(self, pressed_positions):
