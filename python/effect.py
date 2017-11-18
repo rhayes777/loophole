@@ -16,12 +16,12 @@ class Combinator(object):
         self.current_combo = None
         with open("{}/{}".format(dir_path, filename)) as f:
             self.combos = map(lambda d: Combo(track, d), json.loads(f.read()))
-            self.button_map = {combo.buttons: combo for combo in self.combos}
+            self.button_map = {str(combo.buttons): combo for combo in self.combos}
 
     def apply_for_buttons(self, buttons):
         if self.current_combo is not None:
             self.current_combo.remove()
-        buttons_set = set(buttons)
+        buttons_set = str(set(buttons))
         try:
             self.current_combo = self.button_map[buttons_set]
             self.current_combo.apply()
@@ -50,7 +50,7 @@ class Effect(object):
 
     @classmethod
     def from_dict(cls, track, effect_dict):
-        name = effect_dict("name")
+        name = effect_dict["name"]
         if name == "pitch_bend":
             return PitchBend(track, effect_dict)
         elif name == "volume_change":
