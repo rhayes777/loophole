@@ -16,7 +16,7 @@ screen = pygame.display.set_mode((1000, 700))
 clock = pygame.time.Clock()
 
 mat = dancemat.DanceMat(pygame)
-track = player.Song(filename=filename, is_looping=True)
+track = player.Track(filename=filename, is_looping=True)
 
 play = True
 

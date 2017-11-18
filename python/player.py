@@ -256,9 +256,9 @@ class Channel(object):
 
 
 # Represents a midi song loaded from a file
-class Song(Thread):
+class Track(Thread):
     def __init__(self, filename="media/channels_test.mid", is_looping=False):
-        super(Song, self).__init__()
+        super(Track, self).__init__()
         self.filename = filename
         self.is_stopping = False
         self.is_looping = is_looping
@@ -314,16 +314,3 @@ class Song(Thread):
     # noinspection PyUnusedLocal
     def stop(self, *args):
         self.is_stopping = True
-
-    # Set which channels should be playing
-    def set_included_channels(self, pressed_positions):
-        for channel in self.channels:
-            if channel.number in pressed_positions:
-                channel.volume = 1
-            else:
-                channel.fade()
-
-    # Play all channels
-    def include_all_channels(self):
-        for channel in self.channels:
-            channel.volume = 1
