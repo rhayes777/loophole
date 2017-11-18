@@ -120,6 +120,10 @@ class VolumeChange(ChannelEffect):
 
 
 class Intervals(ChannelEffect):
+    def __init__(self, track, effect_dict):
+        super(Intervals, self).__init__(track, effect_dict)
+        self.value = player.Intervals(self.value)
+
     def apply(self):
         for channel in self.channels:
             channel.intervals = self.value
@@ -139,7 +143,7 @@ class InstrumentType(ChannelEffect):
             channel.instrument_type = self.value
 
     def remove(self):
-        for n, channel in self.channels:
+        for n, channel in enumerate(self.channels):
             channel.instrument_type = self.defaults[n]
 
 
@@ -153,7 +157,7 @@ class InstrumentVersion(ChannelEffect):
             channel.instrument_version = self.value
 
     def remove(self):
-        for n, channel in self.channels:
+        for n, channel in enumerate(self.channels):
             channel.instrument_version = self.defaults[n]
 
 
@@ -165,7 +169,6 @@ class TrackEffect(Effect):
 
 class TempoShift(TrackEffect):
     def apply(self):
-        print "applying tempo shift"
         self.track.tempo_shift = self.value
 
     def remove(self):
