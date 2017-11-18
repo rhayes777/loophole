@@ -46,6 +46,40 @@ class InstrumentType:
     percussive = 14
     sound_effects = 15
 
+    instrument_type_dict = {"piano": piano,
+                            "chromatic_percussion": chromatic_percussion,
+                            "organ": organ,
+                            "guitar": guitar,
+                            "bass": bass,
+                            "strings": strings,
+                            "ensemble": ensemble,
+                            "brass": brass,
+                            "reed": reed,
+                            "pipe": pipe,
+                            "synth_lead": synth_lead,
+                            "synth_pad": synth_pad,
+                            "synth_effects": synth_effects,
+                            "ethnic": ethnic,
+                            "percussive": percussive,
+                            "sound_effects": sound_effects}
+
+    @staticmethod
+    def with_name(name):
+        return InstrumentType.instrument_type_dict[name]
+
+
+# noinspection PyClassHasNoInit
+class InstrumentGroup:
+    """Different groups of midi instrument."""
+    melodic = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+    percussive = [1, 14, 15]
+
+    instrument_group_dict = {"melodic": melodic, "percussive": percussive}
+
+    @staticmethod
+    def with_name(name):
+        return InstrumentGroup.instrument_group_dict[name]
+
 
 def make_port(name):
     """
