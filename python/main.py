@@ -66,10 +66,10 @@ def listener(status_dict):
     if status_dict[dancemat.Button.up]:
         # channels[1].instrument_type += 1
         for c in channels:
-            c.pitch_bend(1000)
+            c.volume = 1.0
     if status_dict[dancemat.Button.down]:
         for c in channels:
-            c.pitch_bend(0)
+            c.volume = 0.25
         # channels[1].instrument_type -= 1
     if status_dict[dancemat.Button.right]:
         channels[1].instrument_version += 1
