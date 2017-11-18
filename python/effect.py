@@ -136,8 +136,9 @@ class ChannelEffect(Effect):
             self.channels.extend([channel for channel in track.channels if channel.number in effect_dict["channels"]])
         if "instrument_types" in effect_dict:
             for instrument_type in effect_dict["instrument_types"]:
-                # TODO: standardise instrument type counting (0-15 or 1-16)
                 self.channels.extend(track.channels_with_instrument_type(instrument_type))
+        if "instrument_group" in effect_dict:
+            self.channels.extend(track.channels_with_instrument_group(effect_dict["instrument_group"]))
         if len(self.channels) == 0:
             raise AssertionError(
                 "At least one channel or one present instrument type must be set for {}".format(self.name))
@@ -181,6 +182,7 @@ class Intervals(ChannelEffect):
     def remove(self):
         for channel in self.channels:
             channel.intervals = None
+
 
 
 class InstrumentType(ChannelEffect):
