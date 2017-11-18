@@ -72,36 +72,13 @@ def listener(status_dict):
         channels[1].instrument_version -= 1
 
     if status_dict[dancemat.Button.triangle]:
-        channels[0].intervals = midi_player.Intervals([2, 4])
+        channels[0].intervals = midi_player.Intervals([1])
     if status_dict[dancemat.Button.circle]:
-        channels[0].intervals = midi_player.Intervals([4])
-    if status_dict[dancemat.Button.x]:
-        channels[0].intervals = midi_player.Intervals([7])
-    if status_dict[dancemat.Button.square]:
         channels[0].intervals = midi_player.Intervals([2])
-        # track.set_included_channels(playing_channels)
-
-        # def check_fifth(button_name, channel_number):
-        #     if status_dict[button_name] and channel_number not in channel_numbers_with_fifth:
-        #         print "on"
-        #         channels[channel_number].add_effect(midi_player.fifth)
-        #         channel_numbers_with_fifth.add(channel_number)
-        #     elif channel_number in channel_numbers_with_fifth:
-        #         print "off"
-        #         channels[channel_number].remove_effect(midi_player.fifth)
-        #         channel_numbers_with_fifth.remove(channel_number)
-        #
-        # check_fifth(dancemat.Button.left, 0)
-        # check_fifth(dancemat.Button.right, 1)
-        # check_fifth(dancemat.Button.up, 2)
-        # check_fifth(dancemat.Button.down, 3)
-        #
-        # if status_dict[dancemat.Button.select]:
-        #     track.send_command(midi_player.Command.tempo_change, value=0.5)
-        # elif status_dict[dancemat.Button.start]:
-        #     track.send_command(midi_player.Command.tempo_change, value=2)
-        # else:
-        #     track.send_command(midi_player.Command.tempo_change, value=1)
+    if status_dict[dancemat.Button.x]:
+        channels[0].intervals = midi_player.Intervals([3])
+    if status_dict[dancemat.Button.square]:
+        channels[0].intervals = midi_player.Intervals([4])
 
 
 # Attach that listener function to the dancemat

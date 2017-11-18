@@ -107,7 +107,7 @@ class Intervals:
         :param msg: A midi note_on message
         :return: An array of midi messages
         """
-        new_array = [msg]
+        new_array = []
 
         for interval in self.intervals:
             new_msg = msg.copy()
