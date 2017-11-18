@@ -65,12 +65,9 @@ def toggle_channel(channel):
 def listener(status_dict):
     if status_dict[dancemat.Button.up]:
         # channels[1].instrument_type += 1
-        for c in channels:
-            c.volume = 1.0
+        track.tempo_shift = 2
     if status_dict[dancemat.Button.down]:
-        for c in channels:
-            c.volume = 0.25
-        # channels[1].instrument_type -= 1
+        track.tempo_shift = 0.5
     if status_dict[dancemat.Button.right]:
         channels[1].instrument_version += 1
     if status_dict[dancemat.Button.left]:
