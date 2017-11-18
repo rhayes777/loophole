@@ -6,7 +6,7 @@ import signal
 import visual
 import sys
 
-filename = 'media/mute-city.mid' if len(sys.argv) == 1 else sys.argv[1]
+filename = 'media/bicycle-ride.mid' if len(sys.argv) == 1 else sys.argv[1]
 
 # Set up pygame
 pygame.init()
