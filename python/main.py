@@ -7,7 +7,8 @@ import visual
 import effect
 import sys
 
-filename = 'media/bicycle-ride.mid' if len(sys.argv) == 1 else sys.argv[1]
+filename = 'media/bicycle-ride.mid' if len(sys.argv) <= 1 else sys.argv[1]
+configuration = 'configurations/effects_1.json' if len(sys.argv) <= 2 else sys.argv[2]
 
 # Set up pygame
 pygame.init()
@@ -19,7 +20,7 @@ clock = pygame.time.Clock()
 mat = dancemat.DanceMat(pygame)
 track = player.Track(filename=filename, is_looping=True)
 
-combinator = effect.Combinator("configurations/effects_1.json", track)
+combinator = effect.Combinator(configuration, track)
 
 play = True
 
@@ -52,7 +53,7 @@ def listener(status_dict):
 mat.set_button_listener(listener)
 
 track.start()
-display.start()
+# display.start()
 
 # Keep reading forever
 while play:
