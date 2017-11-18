@@ -12,13 +12,25 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
 class Combinator(object):
+    """Interprets a JSON dancemat effects configuration and applies effects corresponding to button combinations"""
+
     def __init__(self, filename, track):
+        """
+
+        :param filename: The json configuration file (see configurations/effects_1.json)
+        :param track: The midi track
+        """
         self.current_combo = None
         with open("{}/{}".format(dir_path, filename)) as f:
             self.combos = map(lambda d: Combo(track, d), json.loads(f.read()))
             self.button_map = {sum(map(hash, combo.buttons)): combo for combo in self.combos}
 
     def apply_for_buttons(self, buttons):
+        """
+        Removes the currently applied effects and applies a new set corresponding to the buttons pressed. If no set in
+        the configuration matches the buttons passed no effects will be applied.
+        :param buttons: A list of buttons
+        """
         if self.current_combo is not None:
             self.current_combo.remove()
         try:
@@ -29,15 +41,28 @@ class Combinator(object):
 
 
 class Combo(object):
+    """Maps a set of buttons to a set of effects"""
+
     def __init__(self, track, combo_dict):
+        """
+
+        :param track: The midi track
+        :param combo_dict: A dictionary describing
+        """
         self.buttons = set(combo_dict["buttons"])
         self.effects = map(lambda d: Effect.from_dict(track, d), combo_dict["effects"])
 
     def apply(self):
+        """
+        Apply all of the effects listed in this combo
+        """
         for effect in self.effects:
             effect.apply()
 
     def remove(self):
+        """
+        Remove all of the effects listed in this combo
+        """
         for effect in self.effects:
             effect.remove()
 
@@ -49,12 +74,23 @@ class Combo(object):
 
 
 class Effect(object):
+    """An individual effect that can be applied to change the music"""
+
     def __init__(self, effect_dict):
+        """
+
+        :param effect_dict: A dictionary describing this effect.
+        """
         self.name = effect_dict["name"]
         self.value = effect_dict["value"]
 
     @classmethod
     def from_dict(cls, track, effect_dict):
+        """
+        Factory method to create an effect class for a dictionary
+        :param track: A midi track
+        :param effect_dict: A dictionary describing an effect.
+        """
         name = effect_dict["name"]
         if name == "pitch_bend":
             return PitchBend(track, effect_dict)
@@ -85,7 +121,15 @@ class Effect(object):
 
 
 class ChannelEffect(Effect):
+    """An effect that modifies one or more channels"""
+
     def __init__(self, track, effect_dict):
+        """
+
+        :param track: A midi track
+        :param effect_dict: An effect dictionary that includes one or more channels or instrument types
+        (see player.InstrumentType)
+        """
         super(ChannelEffect, self).__init__(effect_dict)
         self.channels = []
         if "channels" in effect_dict:
@@ -100,6 +144,8 @@ class ChannelEffect(Effect):
 
 
 class PitchBend(ChannelEffect):
+    """Bends the pitch of one or more channels"""
+
     def apply(self):
         for channel in self.channels:
             channel.pitch_bend(self.value)
@@ -110,6 +156,8 @@ class PitchBend(ChannelEffect):
 
 
 class VolumeChange(ChannelEffect):
+    """Changes the volume of one or more channels"""
+
     def apply(self):
         for channel in self.channels:
             channel.volume = self.value
@@ -120,6 +168,8 @@ class VolumeChange(ChannelEffect):
 
 
 class Intervals(ChannelEffect):
+    """Converts notes played through a channel into one or more relative intervals in the key"""
+
     def __init__(self, track, effect_dict):
         super(Intervals, self).__init__(track, effect_dict)
         self.value = player.Intervals(self.value)
@@ -134,6 +184,8 @@ class Intervals(ChannelEffect):
 
 
 class InstrumentType(ChannelEffect):
+    """Changes the type of instrument of one or more channels. See player.InstrumentType"""
+
     def __init__(self, track, effect_dict):
         super(InstrumentType, self).__init__(track, effect_dict)
         self.defaults = [channel.instrument_type for channel in self.channels]
@@ -148,6 +200,8 @@ class InstrumentType(ChannelEffect):
 
 
 class InstrumentVersion(ChannelEffect):
+    """Changes the version of the instrument for one or more channels. e.g. from one piano to a different piano"""
+
     def __init__(self, track, effect_dict):
         super(InstrumentVersion, self).__init__(track, effect_dict)
         self.defaults = [channel.instrument_version for channel in self.channels]
@@ -162,12 +216,16 @@ class InstrumentVersion(ChannelEffect):
 
 
 class TrackEffect(Effect):
+    """An effect that is applied to the whole track"""
+
     def __init__(self, track, effect_dict):
         super(TrackEffect, self).__init__(effect_dict)
         self.track = track
 
 
 class TempoShift(TrackEffect):
+    """Shifts the tempo of the whole track by some factor. 0.5 is half tempo and 2 double tempo"""
+
     def apply(self):
         self.track.tempo_shift = self.value
 
