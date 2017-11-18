@@ -1,4 +1,4 @@
-import midi_player
+import player
 import dancemat
 from time import sleep
 import pygame
@@ -16,7 +16,7 @@ screen = pygame.display.set_mode((1000, 700))
 clock = pygame.time.Clock()
 
 mat = dancemat.DanceMat(pygame)
-track = midi_player.Song(filename=filename, is_looping=True)
+track = player.Song(filename=filename, is_looping=True)
 
 play = True
 
@@ -72,13 +72,13 @@ def listener(status_dict):
         channels[1].instrument_version -= 1
 
     if status_dict[dancemat.Button.triangle]:
-        channels[0].intervals = midi_player.Intervals([1])
+        channels[0].intervals = player.Intervals([1])
     if status_dict[dancemat.Button.circle]:
-        channels[0].intervals = midi_player.Intervals([2])
+        channels[0].intervals = player.Intervals([2])
     if status_dict[dancemat.Button.x]:
-        channels[0].intervals = midi_player.Intervals([3])
+        channels[0].intervals = player.Intervals([3])
     if status_dict[dancemat.Button.square]:
-        channels[0].intervals = midi_player.Intervals([4])
+        channels[0].intervals = player.Intervals([4])
 
 
 # Attach that listener function to the dancemat
