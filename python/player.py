@@ -88,7 +88,6 @@ class Command:
     def __str__(self):
         return self.__repr__()
 
-    volume = "volume"
     stop = "stop"
 
 
@@ -223,15 +222,6 @@ class Channel(object):
         """
         self.port.send(mido.Message('pitchwheel', pitch=value, time=0, channel=self.number))
 
-    def process_waiting_commands(self):
-        # Are there any commands waiting?
-        while not self.queue.empty():
-            command = self.queue.get()
-            # Volume changing command. Overrides current fades
-            if command.name == Command.volume:
-                self.volume = command.value
-                self.fade_start = None
-
     # Send a midi message to this channel
     def send_message(self, msg):
 
@@ -319,9 +309,6 @@ class Song(Thread):
         play = self.mid.play(meta_messages=True)
 
         while True:
-
-            for channel in self.channels:
-                channel.process_waiting_commands()
 
             # Take midi messages from a generator
             msg = play.next()
