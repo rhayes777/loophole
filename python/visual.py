@@ -185,7 +185,7 @@ class Display(Thread):
             if self.is_stopping:
                     break
 
-            sleep(0.05)
+            sleep(0.2)
 
             # TODO: there was a loop going through all the ixj pixels here. It slows down the song! I may have made a
             # TODO: mistake with threading but I recommend trying to avoid iterating through every pixel all the time.
