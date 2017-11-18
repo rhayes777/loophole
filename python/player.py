@@ -287,8 +287,9 @@ class Channel(object):
 
 
 # Represents a midi song loaded from a file
-class Song:
+class Song(Thread):
     def __init__(self, filename="media/channels_test.mid", is_looping=False):
+        super(Song, self).__init__()
         self.filename = filename
         self.queue = Queue()
         self.is_stopping = False
@@ -312,7 +313,7 @@ class Song:
         return filter(lambda c: c.instrument_type == instrument_type, self.channels)
 
     # Play the midi file (should be called on new thread)
-    def play_midi_file(self):
+    def run(self):
         self.is_stopping = False
         play = self.mid.play(meta_messages=True)
 
@@ -349,11 +350,6 @@ class Song:
                 logging.exception(e)
             except IndexError as e:
                 logging.exception(e)
-
-    # Start this song on a new thread
-    def start(self):
-        t = Thread(target=self.play_midi_file)
-        t.start()
 
     # Stop this song
     # noinspection PyUnusedLocal
