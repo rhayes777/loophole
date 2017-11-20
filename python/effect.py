@@ -32,8 +32,8 @@ class Combinator(object):
 
     def apply_for_buttons(self, buttons):
         """
-        Removes the currently applied effects and applies a new set corresponding to the buttons pressed. If no set in
-        the configuration matches the buttons passed no effects will be applied.
+        Sets the effects that best correspond to the set of buttons. If a specific combo is defined for the set of
+        buttons that combo will be applied. Otherwise, effects for each individual buttons will be stacked.
         :param buttons: A list of buttons
         """
         buttons_hash = sum(map(hash, buttons))
@@ -50,16 +50,32 @@ class Combinator(object):
         return map(Combo.dict, self.combos)
 
     class CurrentCombos(list):
+        """Modified list to track the combos currently in effect"""
+
         def append(self, p_object):
+            """
+            Append a combo and apply its effects
+            :param p_object: A Combo
+            """
             p_object.apply()
             super(Combinator.CurrentCombos, self).append(p_object)
 
         def remove(self, value):
+            """
+            Remove a combo and remove its effects
+            :param value: A Combo
+            """
             if value in self:
                 value.remove()
                 super(Combinator.CurrentCombos, self).remove(value)
 
         def replace(self, new_combos):
+            """
+            Replaces current combos with a new set. If any combos already in effect will be unchanged. Combos that are
+            in effect but not present in new_combos will have their effects removed. Combos that are in new combos and
+            not currently in effect will be applied.
+            :param new_combos: A list of Combos
+            """
             for combo in self:
                 if combo not in new_combos:
                     self.remove(combo)
@@ -291,6 +307,8 @@ class TempoShift(TrackEffect):
 
 if __name__ == "__main__":
     import sys
+
+    """This code generates a template with every single buttons and double buttom combination"""
 
     combinator = Combinator()
     all_buttons = ['up', 'down', 'left', 'right', 'triangle', 'circle', 'square', 'x']
