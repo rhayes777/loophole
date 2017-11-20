@@ -17,8 +17,18 @@ MPX = 'MPX16'
 SIMPLE_SYNTH = 'SimpleSynth virtual input'
 
 CHANNEL_PARTITION = 8
-DEFAULT_VOLUME = 0.5
-DEFAULT_TEMPO_SHIFT = 1
+
+VOLUME_MAX = 1.0
+VOLUME_MIN = 0.0
+VOLUME_DEFAULT = 0.5
+
+TEMPO_SHIFT_MAX = 10
+TEMPO_SHIFT_DEFAULT = 1
+TEMPO_SHIFT_MIN = 0.1
+
+PITCHWHEEL_MIN = -8191
+PITCHWHEEL_DEFAULT = 0
+PITCHWHEEL_MAX = 8191
 
 simple_port = None
 
@@ -103,6 +113,10 @@ def make_port(name):
         return simple_port
 
 
+def note_on(channel=0, note=50, velocity=50):
+    keys_port.send(mido.Message('note_on', channel=channel, note=note, velocity=velocity))
+
+
 keys_port = make_port(REFACE)
 drum_port = make_port(MPX)
 
@@ -116,6 +130,7 @@ class Intervals:
         :param intervals: A series of intervals. For example, [2, 4] would turn a note into a triad
         """
         self.intervals = intervals
+        self.playing_notes = set()
 
     def __call__(self, msg):
         """
@@ -133,7 +148,16 @@ class Intervals:
                 new_msg.time = 0
                 new_array.append(new_msg)
 
+                if new_msg.type == 'note_on':
+                    self.playing_notes.add(new_msg.note)
+                elif new_msg.type == 'note_off' and new_msg.note in self.playing_notes:
+                    self.playing_notes.remove(new_msg.note)
+
         return new_array
+
+    @property
+    def note_offs(self):
+        return map(lambda note: mido.Message('note_off', note=note, velocity=0), self.playing_notes)
 
 
 class Channel(object):
@@ -141,7 +165,7 @@ class Channel(object):
     note_off = "note_off"
     note_on = "note_on"
 
-    def __init__(self, number, volume=DEFAULT_VOLUME, fade_rate=1, note_on_listener=None):
+    def __init__(self, number, volume=VOLUME_DEFAULT, fade_rate=1, note_on_listener=None):
         """
 
         :param number: The number of this channel (0-15)
@@ -193,11 +217,17 @@ class Channel(object):
     def intervals(self):
         """The set of intervals currently applied to notes played on this channel"""
         while not self.__intervals_queue.empty():
+            if self.__intervals is not None:
+                for note_off in self.__intervals.note_offs:
+                    note_off.channel = self.number
+                    self.port.send(note_off)
             self.__intervals = self.__intervals_queue.get()
         return self.__intervals
 
     @intervals.setter
     def intervals(self, intervals):
+        if isinstance(intervals, list):
+            intervals = Intervals(intervals)
         self.__intervals_queue.put(intervals)
 
     @property
@@ -311,7 +341,7 @@ class Track(Thread):
         self.mid = mido.MidiFile("{}/{}".format(dir_path, self.filename))
         self.original_tempo = self.mid.ticks_per_beat
         self.channels = map(Channel, range(0, 16))
-        self.__tempo_shift = DEFAULT_TEMPO_SHIFT
+        self.__tempo_shift = TEMPO_SHIFT_DEFAULT
         self.__tempo_shift_queue = Queue()
 
     @property

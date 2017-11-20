@@ -6,9 +6,9 @@
     "effects": [
       {
         "name": "pitch_bend",
-        "value": 1000,
+        "value": 5000,
         "channels": [
-          0
+          0, 2
         ]
       }
     ]

@@ -14,16 +14,21 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 class Combinator(object):
     """Interprets a JSON dancemat effects configuration and applies effects corresponding to button combinations"""
 
-    def __init__(self, filename, track):
+    def __init__(self, filename=None, track=None):
         """
 
         :param filename: The json configuration file (see configurations/effects_1.json)
         :param track: The midi track
+
+        If no arguments are passed this combinator can be used to generate a JSON template by adding combos
         """
-        self.current_combo = None
-        with open("{}/{}".format(dir_path, filename)) as f:
-            self.combos = map(lambda d: Combo(track, d), json.loads(f.read()))
-            self.button_map = {sum(map(hash, combo.buttons)): combo for combo in self.combos}
+        if filename is not None and track is not None:
+            self.current_combo = None
+            with open("{}/{}".format(dir_path, filename)) as f:
+                self.combos = map(lambda d: Combo(track, d), json.loads(f.read()))
+                self.button_map = {sum(map(hash, combo.buttons)): combo for combo in self.combos}
+        else:
+            self.combos = []
 
     def apply_for_buttons(self, buttons):
         """
@@ -39,18 +44,25 @@ class Combinator(object):
         except KeyError:
             logger.info("{} not found in combinator".format(buttons))
 
+    def dict(self):
+        return map(Combo.dict, self.combos)
+
 
 class Combo(object):
     """Maps a set of buttons to a set of effects"""
 
-    def __init__(self, track, combo_dict):
+    def __init__(self, track=None, combo_dict=None):
         """
 
         :param track: The midi track
         :param combo_dict: A dictionary describing
         """
-        self.buttons = set(combo_dict["buttons"])
-        self.effects = map(lambda d: Effect.from_dict(track, d), combo_dict["effects"])
+        if combo_dict is not None:
+            self.buttons = set(combo_dict["buttons"])
+            self.effects = map(lambda d: Effect.from_dict(track, d), combo_dict["effects"])
+        else:
+            self.buttons = []
+            self.effects = []
 
     def apply(self):
         """
@@ -65,6 +77,9 @@ class Combo(object):
         """
         for effect in self.effects:
             effect.remove()
+
+    def dict(self):
+        return {"buttons": self.buttons, "effects": map(Effect.dict, self.effects)}
 
     def __repr__(self):
         return str(map(Effect.__repr__, self.effects))
@@ -113,6 +128,9 @@ class Effect(object):
     def remove(self):
         raise AssertionError("{}.default not overridden".format(self.name))
 
+    def dict(self):
+        return {"name": self.name, "value": self.value}
+
     def __str__(self):
         return self.__repr__()
 
@@ -131,21 +149,38 @@ class ChannelEffect(Effect):
         (see player.InstrumentType)
         """
         super(ChannelEffect, self).__init__(effect_dict)
-        self.channels = []
+        self.instrument_types = None
+        self.instrument_group = None
+        self.__channels = None
+        self.track = track
         if "channels" in effect_dict:
-            self.channels.extend([channel for channel in track.channels if channel.number in effect_dict["channels"]])
+            self.__channels = effect_dict["channels"]
         if "instrument_types" in effect_dict:
-            for instrument_type in effect_dict["instrument_types"]:
-                self.channels.extend(track.channels_with_instrument_type(instrument_type))
+            self.instrument_types = effect_dict["instrument_types"]
         if "instrument_group" in effect_dict:
-            self.channels.extend(track.channels_with_instrument_group(effect_dict["instrument_group"]))
-        if "channels" not in effect_dict \
-                and "instrument_types" not in effect_dict \
-                and "instrument_group" not in effect_dict:
-            self.channels = track.channels_with_instrument_group("all")
-        if len(self.channels) == 0:
-            raise AssertionError(
-                "At least one channel or one present instrument type must be set for {}".format(self.name))
+            self.instrument_group = effect_dict["instrument_group"]
+        if all(map(lambda p: p is None, [self.__channels, self.instrument_types, self.instrument_group])):
+            self.channels = self.track.channels_with_instrument_group("all")
+        else:
+            self.channels = []
+            if self.__channels is not None:
+                self.channels.extend([channel for channel in self.track.channels if channel.number in self.__channels])
+            if self.instrument_types is not None:
+                for instrument_type in self.instrument_types:
+                    self.channels.extend(self.track.channels_with_instrument_type(instrument_type))
+            if self.instrument_group is not None:
+                self.channels.extend(self.track.channels_with_instrument_group(self.instrument_group))
+
+    @property
+    def dict(self):
+        d = super(ChannelEffect, self).dict()
+        if self.__channels is not None:
+            d["channels"] = self.__channels
+        if self.instrument_types is not None:
+            d["instrument_types"] = self.instrument_types
+        if self.instrument_group is not None:
+            d["instrument_group"] = self.instrument_group
+        return d
 
 
 class PitchBend(ChannelEffect):
@@ -157,7 +192,7 @@ class PitchBend(ChannelEffect):
 
     def remove(self):
         for channel in self.channels:
-            channel.pitch_bend(0)  # TODO: Is this unbent?
+            channel.pitch_bend(player.PITCHWHEEL_DEFAULT)
 
 
 class VolumeChange(ChannelEffect):
@@ -169,15 +204,11 @@ class VolumeChange(ChannelEffect):
 
     def remove(self):
         for channel in self.channels:
-            channel.volume = player.DEFAULT_VOLUME
+            channel.volume = player.VOLUME_DEFAULT
 
 
 class Intervals(ChannelEffect):
     """Converts notes played through a channel into one or more relative intervals in the key"""
-
-    def __init__(self, track, effect_dict):
-        super(Intervals, self).__init__(track, effect_dict)
-        self.value = player.Intervals(self.value)
 
     def apply(self):
         for channel in self.channels:
@@ -235,4 +266,23 @@ class TempoShift(TrackEffect):
         self.track.tempo_shift = self.value
 
     def remove(self):
-        self.track.tempo_shift = player.DEFAULT_TEMPO_SHIFT
+        self.track.tempo_shift = player.TEMPO_SHIFT_DEFAULT
+
+
+if __name__ == "__main__":
+    import sys
+
+    combinator = Combinator()
+    buttons = ['up', 'down', 'left', 'right', 'triangle', 'circle', 'square', 'x']
+
+    for button1 in buttons:
+        combo = Combo()
+        combo.buttons = [button1]
+        combinator.combos.append(combo)
+        for button2 in buttons:
+            if button1 < button2:
+                combo = Combo()
+                combo.buttons = [button1, button2]
+                combinator.combos.append(combo)
+    with open(sys.argv[1], 'w+') as f:
+        f.write(json.dumps(combinator.dict()))
