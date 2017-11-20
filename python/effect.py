@@ -23,12 +23,12 @@ class Combinator(object):
         If no arguments are passed this combinator can be used to generate a JSON template by adding combos
         """
         if filename is not None and track is not None:
-            self.current_combo = None
+            self.__current_combos = []
             with open("{}/{}".format(dir_path, filename)) as f:
-                self.combos = map(lambda d: Combo(track, d), json.loads(f.read()))
+                self.combos = Combinator.CurrentCombos(map(lambda d: Combo(track, d), json.loads(f.read())))
                 self.button_map = {sum(map(hash, combo.buttons)): combo for combo in self.combos}
         else:
-            self.combos = []
+            self.combos = Combinator.CurrentCombos()
 
     def apply_for_buttons(self, buttons):
         """
@@ -36,16 +36,36 @@ class Combinator(object):
         the configuration matches the buttons passed no effects will be applied.
         :param buttons: A list of buttons
         """
-        if self.current_combo is not None:
-            self.current_combo.remove()
-        try:
-            self.current_combo = self.button_map[sum(map(hash, buttons))]
-            self.current_combo.apply()
-        except KeyError:
-            logger.info("{} not found in combinator".format(buttons))
+        buttons_hash = sum(map(hash, buttons))
+        new_combos = []
+        if buttons_hash in self.button_map:
+            new_combos.append(self.button_map[buttons_hash])
+        else:
+            for button in buttons:
+                if hash(button) in self.button_map:
+                    new_combos.append(self.button_map[hash(button)])
+        self.combos.replace(new_combos)
 
     def dict(self):
         return map(Combo.dict, self.combos)
+
+    class CurrentCombos(list):
+        def append(self, p_object):
+            p_object.apply()
+            super(Combinator.CurrentCombos, self).append(p_object)
+
+        def remove(self, value):
+            if value in self:
+                value.remove()
+                super(Combinator.CurrentCombos, self).remove(value)
+
+        def replace(self, new_combos):
+            for combo in self:
+                if combo not in new_combos:
+                    self.remove(combo)
+            for combo in new_combos:
+                if combo not in self:
+                    self.append(combo)
 
 
 class Combo(object):
@@ -273,16 +293,16 @@ if __name__ == "__main__":
     import sys
 
     combinator = Combinator()
-    buttons = ['up', 'down', 'left', 'right', 'triangle', 'circle', 'square', 'x']
+    all_buttons = ['up', 'down', 'left', 'right', 'triangle', 'circle', 'square', 'x']
 
-    for button1 in buttons:
-        combo = Combo()
-        combo.buttons = [button1]
-        combinator.combos.append(combo)
-        for button2 in buttons:
+    for button1 in all_buttons:
+        c = Combo()
+        c.buttons = [button1]
+        combinator.combos.append(c)
+        for button2 in all_buttons:
             if button1 < button2:
-                combo = Combo()
-                combo.buttons = [button1, button2]
-                combinator.combos.append(combo)
+                c = Combo()
+                c.buttons = [button1, button2]
+                combinator.combos.append(c)
     with open(sys.argv[1], 'w+') as f:
         f.write(json.dumps(combinator.dict()))
