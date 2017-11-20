@@ -46,7 +46,8 @@ signal.signal(signal.SIGINT, stop)
 channels = track.channels
 
 # TODO: Test whether this message passing mechanism is causing the jitter
-channels[0].listening_queue = display.queue
+for channel in channels:
+    channel.listening_queue = display.queue
 
 
 # Function to listen for changes to button state

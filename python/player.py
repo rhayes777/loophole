@@ -298,7 +298,7 @@ class Channel(object):
                 msgs = [msg]
 
             for msg in msgs:
-                if self.listening_queue is not None and msg.type == "note_on" and msg.time > 0.01:
+                if self.listening_queue is not None and msg.type == "note_on":
                     self.listening_queue.put(msg)
                 # Actually send the midi message
                 self.port.send(msg)
