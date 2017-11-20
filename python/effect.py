@@ -14,16 +14,21 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 class Combinator(object):
     """Interprets a JSON dancemat effects configuration and applies effects corresponding to button combinations"""
 
-    def __init__(self, filename, track):
+    def __init__(self, filename=None, track=None):
         """
 
         :param filename: The json configuration file (see configurations/effects_1.json)
         :param track: The midi track
+
+        If no arguments are passed this combinator can be used to generate a JSON template by adding combos
         """
-        self.current_combo = None
-        with open("{}/{}".format(dir_path, filename)) as f:
-            self.combos = map(lambda d: Combo(track, d), json.loads(f.read()))
-            self.button_map = {sum(map(hash, combo.buttons)): combo for combo in self.combos}
+        if filename is not None and track is not None:
+            self.current_combo = None
+            with open("{}/{}".format(dir_path, filename)) as f:
+                self.combos = map(lambda d: Combo(track, d), json.loads(f.read()))
+                self.button_map = {sum(map(hash, combo.buttons)): combo for combo in self.combos}
+        else:
+            self.combos = []
 
     def apply_for_buttons(self, buttons):
         """
@@ -46,14 +51,18 @@ class Combinator(object):
 class Combo(object):
     """Maps a set of buttons to a set of effects"""
 
-    def __init__(self, track, combo_dict):
+    def __init__(self, track=None, combo_dict=None):
         """
 
         :param track: The midi track
         :param combo_dict: A dictionary describing
         """
-        self.buttons = set(combo_dict["buttons"])
-        self.effects = map(lambda d: Effect.from_dict(track, d), combo_dict["effects"])
+        if combo_dict is not None:
+            self.buttons = set(combo_dict["buttons"])
+            self.effects = map(lambda d: Effect.from_dict(track, d), combo_dict["effects"])
+        else:
+            self.buttons = []
+            self.effects = []
 
     def apply(self):
         """
@@ -258,3 +267,22 @@ class TempoShift(TrackEffect):
 
     def remove(self):
         self.track.tempo_shift = player.TEMPO_SHIFT_DEFAULT
+
+
+if __name__ == "__main__":
+    import sys
+
+    combinator = Combinator()
+    buttons = ['up', 'down', 'left', 'right', 'triangle', 'circle', 'square', 'x']
+
+    for button1 in buttons:
+        combo = Combo()
+        combo.buttons = [button1]
+        combinator.combos.append(combo)
+        for button2 in buttons:
+            if button1 < button2:
+                combo = Combo()
+                combo.buttons = [button1, button2]
+                combinator.combos.append(combo)
+    with open(sys.argv[1], 'w+') as f:
+        f.write(json.dumps(combinator.dict()))
