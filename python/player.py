@@ -174,7 +174,7 @@ class Channel(object):
         :param note_on_listener: A listener that is called every time a note_on is played by this channel
         """
         self.note_on_listener = note_on_listener
-        self.message_send_listener = None
+        self.listening_queue = None
         self.number = number
         # Decides which port output should be used depending on the channel number
         self.port = keys_port if number < CHANNEL_PARTITION else drum_port
@@ -298,8 +298,8 @@ class Channel(object):
                 msgs = [msg]
 
             for msg in msgs:
-                if callable(self.message_send_listener):
-                    self.message_send_listener(msg)
+                if self.listening_queue is not None and msg.type == "note_on" and msg.time > 0.01:
+                    self.listening_queue.put(msg)
                 # Actually send the midi message
                 self.port.send(msg)
             if hasattr(msg, 'type'):

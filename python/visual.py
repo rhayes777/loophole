@@ -171,9 +171,6 @@ class Display(Thread):
 
             # self.screen.fill(BLACK)
 
-    def on_message_received(self, msg):
-        self.queue.put(msg)
-
     def run(self):
         self.is_stopping = False
         while True:
@@ -183,7 +180,7 @@ class Display(Thread):
 
             # Break if should stop
             if self.is_stopping:
-                    break
+                break
 
             sleep(0.2)
 
@@ -241,7 +238,7 @@ def run_example():
         for message in mid.play():
             pygame.event.get()
 
-            display.on_message_received(message)
+            display.queue.put(message)
 
     pygame.quit()
 
