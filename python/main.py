@@ -3,9 +3,9 @@ import dancemat
 from time import sleep
 import pygame
 import signal
-import visual
 import effect
 import sys
+import message_passer
 
 filename = 'media/bicycle-ride.mid'
 configuration = 'configurations/effects_1.json'
@@ -30,14 +30,11 @@ combinator = effect.Combinator(configuration, track)
 
 play = True
 
-display = visual.Display(pygame, screen)
-
 
 # noinspection PyUnusedLocal
 def stop(*args):
     global play
     track.stop()
-    display.stop()
     play = False
 
 
@@ -45,9 +42,16 @@ signal.signal(signal.SIGINT, stop)
 
 channels = track.channels
 
+writer = message_passer.Writer()
+
+
+def note_on_listener(msg):
+    writer.write(str(msg))
+
+
 # TODO: Test whether this message passing mechanism is causing the jitter
 for channel in channels:
-    channel.listening_queue = display.queue
+    channel.note_on_listener = note_on_listener
 
 
 # Function to listen for changes to button state
@@ -60,7 +64,6 @@ def listener(status_dict):
 mat.set_button_listener(listener)
 
 track.start()
-display.start()
 
 # Keep reading forever
 while play:

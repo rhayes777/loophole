@@ -3,6 +3,7 @@ import os
 from Queue import Queue
 from threading import Thread
 from time import sleep
+import message_passer
 
 # pygame gfx constants
 BLACK = (0, 0, 0)
@@ -208,8 +209,7 @@ def run_example():
     # for the 'game loop'
     done = False
 
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    mid = mido.MidiFile("{}/media/mute-city.mid".format(dir_path))
+    reader = message_passer.Reader()
 
     # pygame setup
     # (6,0) = all good
@@ -235,10 +235,11 @@ def run_example():
             if event.type == pygame.QUIT:  # If user clicked close
                 done = True  # Flag that we are done so we exit this loop
 
-        for message in mid.play():
+        for message in reader.read():
             pygame.event.get()
+            print message
 
-            display.queue.put(message)
+            display.queue.put(mido.Message.from_str(message))
 
     pygame.quit()
 
