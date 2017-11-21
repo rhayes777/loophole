@@ -29,9 +29,12 @@ class Reader:
         while True:
             with open(FULL_PATH) as f:
                 for line in f:
-                    arr = line.split(":")
-                    if int(arr[0]) == self.counter:
-                        self.counter += 1
-                        yield arr[1].split("\n")[0]
+                    try:
+                        arr = line.split(":")
+                        if int(arr[0]) == self.counter:
+                            self.counter += 1
+                            yield arr[1].split("\n")[0]
+                    except ValueError as e:
+                        print e
 
             sleep(0.1)
