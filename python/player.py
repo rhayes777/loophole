@@ -6,6 +6,8 @@ from datetime import datetime
 import os
 import music
 
+mido.set_backend('mido.backends.pygame')
+
 path = os.path.realpath(__file__)
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
