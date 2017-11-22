@@ -2,7 +2,13 @@ import mido
 from Queue import Queue
 from threading import Thread
 from time import sleep
+import signal
+import logging
 import sys
+
+logging.basicConfig()
+
+logger = logging.getLogger(__name__)
 
 # pygame gfx constants
 BLACK = (0, 0, 0)
@@ -238,7 +244,10 @@ def run_example():
                 break
             pygame.event.get()
 
-            display.queue.put(mido.Message.from_str(message))
+            try:
+                display.queue.put(mido.Message.from_str(message))
+            except IndexError as e:
+                logger.exception(e)
 
     pygame.quit()
 
