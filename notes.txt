@@ -10,3 +10,19 @@ Midi input requires midi channel 1-16
 https://ca.yamaha.com/files/download/other_assets/7/794817/reface_en_dl_b0.pdf
 https://www.midi.org/specifications/item/table-3-control-change-messages-data-bytes-2
 https://stackoverflow.com/questions/18408775/invalid-midi-message-data-when-im-trying-to-send-control-change-messages
+
+
+Music
+
+Midi
+
+we also need to set a standard for channel in relation to instrument - 
+this will make it easier to program
+
+LIKE THIS:
+
+1_drum.mid
+2_bass.mid
+3_piano.mid
+
+figure out a way of saving midi clips with their correct midi data!

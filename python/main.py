@@ -9,15 +9,6 @@ import os
 
 dirname = os.path.dirname(os.path.realpath(__file__))
 
-filename = 'media/bicycle-ride.mid'
-configuration = 'configurations/effects_1.json'
-
-for arg in sys.argv:
-    if '.mid' in arg:
-        filename = arg
-    elif '.json' in arg:
-        configuration = arg
-
 # Set up pygame
 pygame.init()
 pygame.display.init()
