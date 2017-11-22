@@ -15,7 +15,7 @@ screen = pygame.display.set_mode((1000, 700))
 clock = pygame.time.Clock()
 
 mat = dancemat.DanceMat(pygame)
-track = player.Track(filename=filename, is_looping=True)
+track = player.Track(filename="media/song_pc.mid", is_looping=True)
 
 combinator = effect.Combinator(configuration, track)
 
