@@ -6,6 +6,11 @@ import signal
 import effect
 import sys
 import message_passer
+from sys import executable
+from subprocess import Popen
+import os
+
+dirname = os.path.dirname(os.path.realpath(__file__))
 
 filename = 'media/bicycle-ride.mid'
 configuration = 'configurations/effects_1.json'
@@ -22,6 +27,8 @@ pygame.display.init()
 # create screen for pygame to draw to
 # screen = pygame.display.set_mode((1000, 700))
 clock = pygame.time.Clock()
+
+Popen([executable, 'visual.py'])
 
 mat = dancemat.DanceMat(pygame)
 track = player.Track(filename=filename, is_looping=True)
