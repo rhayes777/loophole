@@ -148,6 +148,10 @@ class Display(Thread):
                 msg = self.queue.get()
                 self.process_message(msg)
 
+            self.draw_objects()
+            self.update_objects()
+            self.pygame.display.update()
+
             # Break if should stop
             if self.is_stopping:
                 break
