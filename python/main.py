@@ -20,7 +20,7 @@ for arg in sys.argv:
 pygame.init()
 pygame.display.init()
 # create screen for pygame to draw to
-screen = pygame.display.set_mode((1000, 700))
+# screen = pygame.display.set_mode((1000, 700))
 clock = pygame.time.Clock()
 
 mat = dancemat.DanceMat(pygame)
