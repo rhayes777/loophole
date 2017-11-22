@@ -1,9 +1,7 @@
 import mido
-import os
 from Queue import Queue
 from threading import Thread
 from time import sleep
-import message_passer
 import sys
 
 # pygame gfx constants
@@ -209,8 +207,6 @@ def run_example():
     timer = 0
     # for the 'game loop'
     done = False
-
-    reader = message_passer.Reader()
 
     # pygame setup
     # (6,0) = all good

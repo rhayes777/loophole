@@ -5,9 +5,6 @@ import pygame
 import signal
 import effect
 import sys
-import message_passer
-from sys import executable
-from subprocess import Popen
 import os
 
 dirname = os.path.dirname(os.path.realpath(__file__))
@@ -48,8 +45,6 @@ def stop(*args):
 signal.signal(signal.SIGINT, stop)
 
 channels = track.channels
-
-writer = message_passer.Writer()
 
 
 def note_on_listener(msg):
