@@ -4,6 +4,7 @@ from Queue import Queue
 from threading import Thread
 from time import sleep
 import message_passer
+import sys
 
 # pygame gfx constants
 BLACK = (0, 0, 0)
@@ -235,9 +236,11 @@ def run_example():
             if event.type == pygame.QUIT:  # If user clicked close
                 done = True  # Flag that we are done so we exit this loop
 
-        for message in reader.read():
+        while True:
+            message = sys.stdin.readline()
+            if message is None:
+                break
             pygame.event.get()
-            print message
 
             display.queue.put(mido.Message.from_str(message))
 

@@ -28,7 +28,7 @@ pygame.display.init()
 # screen = pygame.display.set_mode((1000, 700))
 clock = pygame.time.Clock()
 
-Popen([executable, 'visual.py'])
+# Popen([executable, 'visual.py'])
 
 mat = dancemat.DanceMat(pygame)
 track = player.Track(filename=filename, is_looping=True)
@@ -53,7 +53,8 @@ writer = message_passer.Writer()
 
 
 def note_on_listener(msg):
-    writer.write(str(msg))
+    print str(msg)
+    sys.stdout.flush()
 
 
 # TODO: Test whether this message passing mechanism is causing the jitter
