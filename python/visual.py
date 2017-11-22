@@ -53,8 +53,7 @@ class Dot:
         self.pos_y = pos_y
         self.life = life
 
-    def show(self, pygame,
-             screen):
+    def show(self, pygame, screen):
 
         if self.size > 7:
             pygame.draw.ellipse(screen, self.colour,
@@ -90,7 +89,8 @@ class Pixel:
 
     def update(self):
 
-        self.pos_y +- 1
+        #self.pos_y = self.pos_y - 1
+        print(".")
 
 
 class Display(Thread):
@@ -117,21 +117,13 @@ class Display(Thread):
                 row.append(Pixel((grid_size_x / 2) + grid_size_x * i, (grid_size_y / 2) + (grid_size_y * j), False,
                                  grid_size_x, i))
 
-                self.pixel_grid.append(row)
-
-        # TODO: This was being called in the update function. The problem is that updating every pixel every fraction
-        # TODO: of a second takes a lot of processing power. I figured we can make them all appear at first here and
-        # TODO: then update them individually.
-        for row in self.pixel_grid:
-
-            for pixel in row:
-                pixel.show(self.pygame, self.screen)
+            self.pixel_grid.append(row)
 
 
     def change_pixel_colour(self, i, j, colour):
         pixel = self.pixel_grid[i][j]
         pixel.colour = colour
-        pixel.show(self.pygame, self.screen)
+        #pixel.show(self.pygame, self.screen)
 
     def shift_pixel_grid(self):
 
@@ -155,12 +147,6 @@ class Display(Thread):
             self.change_pixel_colour(0, recent_note, RED)
             self.shift_pixel_grid()
 
-
-
-            self.pygame.display.update()
-
-
-
     def run(self):
         self.is_stopping = False
         while True:
@@ -168,19 +154,29 @@ class Display(Thread):
                 msg = self.queue.get()
                 self.process_message(msg)
 
+            self.draw_objects()
+            self.update_objects()
+            self.pygame.display.update()
+
             # Break if should stop
             if self.is_stopping:
                 break
 
             sleep(0.2)
 
-            # TODO: there was a loop going through all the ixj pixels here. It slows down the song! I may have made a
-            # TODO: mistake with threading but I recommend trying to avoid iterating through every pixel all the time.
-            # TODO: Instead you could keep track of the coordinates of "on" pixels and use them to get a pixel by the
-            # TODO: index in the pixel matrix e.g. self.pixel_grid[i][j]
 
     def stop(self):
         self.is_stopping = True
+
+    def draw_objects(self):
+        for row in self.pixel_grid:
+            for pixel in row:
+                pixel.show(self.pygame, self.screen)
+
+    def update_objects(self):
+        for row in self.pixel_grid:
+            for pixel in row:
+                pixel.update()
 
 
 def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
@@ -189,6 +185,8 @@ def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, 
     new_value = (float(((old_value - old_range_min) * new_range) / old_range)) + new_range_min
 
     return int(new_value)
+
+
 
 
 def run_example():
@@ -218,7 +216,12 @@ def run_example():
 
         timer += 1
 
-        # print(timer)
+        screen.fill(BLACK)
+
+        display.update_objects()
+        display.draw_objects()
+
+        pygame.display.update()
 
         for event in pygame.event.get():  # User did something
             if event.type == pygame.QUIT:  # If user clicked close
@@ -234,6 +237,9 @@ def run_example():
                 display.queue.put(mido.Message.from_str(message))
             except IndexError as e:
                 logger.exception(e)
+
+
+        #pygame.display.update()
 
     pygame.quit()
 

@@ -16,7 +16,7 @@ pygame.display.init()
 # screen = pygame.display.set_mode((1000, 700))
 clock = pygame.time.Clock()
 
-filename = 'media/bicycle-ride.mid'
+filename = 'media/song_pc.mid'
 configuration = 'configurations/effects_1.json'
 
 for arg in sys.argv:
