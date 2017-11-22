@@ -1,0 +1,279 @@
+[
+  {
+    "buttons": [
+      "triangle",
+      "square"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [
+          0,
+          2
+        ],
+        "instrument_group": "melodic"
+      },
+      {
+        "name": "instrument_type",
+        "value": "ensemble",
+        "instrument_group": "melodic"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "left",
+      "right"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [
+          0,
+          4
+        ],
+        "instrument_group": "melodic"
+      },
+      {
+        "name": "instrument_type",
+        "value": "ensemble",
+        "instrument_group": "melodic"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "circle",
+      "x"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [
+          0,
+          2,
+          4
+        ],
+        "instrument_group": "melodic"
+      },
+      {
+        "name": "instrument_type",
+        "value": "ensemble",
+        "instrument_group": "melodic"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "up",
+      "down"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [
+          0,
+          2,
+          4,
+          7
+        ],
+        "instrument_group": "melodic"
+      },
+      {
+        "name": "instrument_type",
+        "value": "ensemble",
+        "instrument_group": "melodic"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "triangle",
+      "circle"
+    ],
+    "effects": [
+      {
+        "name": "instrument_type",
+        "value": "pip",
+        "instrument_group": "melodic"
+      },
+      {
+        "name": "tempo_shift",
+        "value": 1.5
+      },
+      {
+        "name": "pitch_bend",
+        "value": 1000,
+        "instrument_group": "melodic"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "x",
+      "square"
+    ],
+    "effects": [
+      {
+        "name": "instrument_type",
+        "value": "pip",
+        "instrument_group": "melodic"
+      },
+      {
+        "name": "tempo_shift",
+        "value": 1.5
+      },
+      {
+        "name": "pitch_bend",
+        "value": -1000,
+        "instrument_group": "melodic"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "up"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [
+          1
+        ],
+        "instrument_group": "melodic"
+      },
+      {
+        "name": "instrument_type",
+        "value": 5,
+        "instrument_group": "melodic"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "down"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [
+          2
+        ],
+        "instrument_group": "melodic"
+      },
+      {
+        "name": "instrument_type",
+        "value": "bass",
+        "instrument_group": "melodic"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "left"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [
+          3
+        ],
+        "instrument_group": "melodic"
+      },
+      {
+        "name": "tempo_shift",
+        "value": 0.75
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "right"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [
+          5
+        ],
+        "instrument_group": "melodic"
+      },
+      {
+        "name": "tempo_shift",
+        "value": 1.5
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "triangle"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [
+          6
+        ],
+        "instrument_group": "melodic"
+      },
+      {
+        "name": "tempo_shift",
+        "value": 0.75
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "circle"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [
+          -2
+        ],
+        "instrument_group": "melodic"
+      },
+      {
+        "name": "tempo_shift",
+        "value": 1.5
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "square"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [
+          -3
+        ],
+        "instrument_group": "melodic"
+      },
+      {
+        "name": "tempo_shift",
+        "value": 1.5
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "x"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [
+          -5
+        ],
+        "instrument_group": "melodic"
+      },
+      {
+        "name": "tempo_shift",
+        "value": 0.75
+      }
+    ]
+  }
+]
