@@ -14,6 +14,15 @@ pygame.display.init()
 screen = pygame.display.set_mode((1000, 700))
 clock = pygame.time.Clock()
 
+filename = 'media/bicycle-ride.mid'
+configuration = 'configurations/effects_1.json'
+
+for arg in sys.argv:
+    if '.mid' in arg:
+        filename = arg
+    elif '.json' in arg:
+        configuration = arg
+
 mat = dancemat.DanceMat(pygame)
 track = player.Track(filename=filename, is_looping=True)
 
