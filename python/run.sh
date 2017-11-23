@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-python main.py | python visual.py -i
+python main.py $1 $2 | python visual.py -i
