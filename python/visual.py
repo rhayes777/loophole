@@ -77,8 +77,9 @@ class Pixel:
                             [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
 
     def update(self):
+        pass
         # self.pos_y = self.pos_y - 1
-        print(".")
+        # print(".")
 
 
 class Display(Thread):
@@ -216,27 +217,18 @@ def run_for_stdin():
 
 
 def run_for_mido():
+    import os
     global done
+    dirname = os.path.dirname(os.path.realpath(__file__))
+    filename = 'media/song_pc.mid'
+    mid = mido.MidiFile("{}/{}".format(dirname, filename))
     while not done:
 
-        # This limits the while loop to a max of 10 times per second.
-        # Leave this out and we will use all CPU we can.
-        clock.tick(10)
-
-        for event in pygame.event.get():  # User did something
-            if event.type == pygame.QUIT:  # If user clicked close
-                done = True  # Flag that we are done so we exit this loop
-
-        while True:
-            message = sys.stdin.readline()
-            if message is None:
-                break
-            pygame.event.get()
-
-            try:
-                display.queue.put(mido.Message.from_str(message))
-            except IndexError as e:
-                logger.exception(e)
+        for message in mid.play():
+            for event in pygame.event.get():  # User did something
+                if event.type == pygame.QUIT:  # If user clicked close
+                    done = True  # Flag that we are done so we exit this loop
+            display.queue.put(message)
 
     pygame.quit()
 
