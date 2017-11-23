@@ -1,7 +1,6 @@
 import mido
 from Queue import Queue
 from threading import Thread
-from time import sleep
 import logging
 import sys
 import pygame
@@ -28,39 +27,9 @@ timer = 0
 # (6,0) = all good
 print(pygame.init())
 clock = pygame.time.Clock()
+pygame.display.init()
 # create screen for pygame to draw to
 screen = pygame.display.set_mode((1000, 700))
-
-
-# basic gfx class
-class Dot:
-    def __init__(self, colour, size, pos_x, pos_y, life):
-        self.colour = colour
-        self.time = 1
-        self.size = size
-        self.pos_x = pos_x
-        self.pos_y = pos_y
-        self.life = life
-
-    def show(self):
-
-        if self.size > 7:
-            pygame.draw.ellipse(screen, self.colour,
-                                [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
-
-    def update(self):
-
-        self.size *= self.time
-
-        if self.size > 5:
-            self.time -= 0.001
-        else:
-            self.size = 5
-            self.die()
-
-    def die(self):
-
-        all_dots.remove(self)
 
 
 class Pixel:
@@ -87,6 +56,7 @@ class Display(Thread):
         super(Display, self).__init__()
         self.queue = Queue()
         self.pixel_grid = []  # numpy later maybe
+        self.counter = 0
 
         grid_size_x = 20
         grid_size_y = grid_size_x  # self.screen.get_width()
@@ -109,28 +79,31 @@ class Display(Thread):
     def change_pixel_colour(self, i, j, colour):
         pixel = self.pixel_grid[i][j]
         pixel.colour = colour
-        # pixel.show(self.pygame, self.screen)
+        # pixel.show()
 
     def shift_pixel_grid(self):
 
-        for z in range(timer, timer + 1):
+        for y in range(timer, timer + 1):
 
-            for x in range(0, len(self.pixel_grid[z])):
+            for x in range(0, len(self.pixel_grid[y])):
 
-                if self.pixel_grid[z - 1][x].colour == RED:
-                    self.change_pixel_colour(z, x, self.pixel_grid[z - 1][x].colour)
+                if self.pixel_grid[y - 1][x].colour == RED:
+                    self.pixel_grid[y][x].colour = RED
+                    self.pixel_grid[y - 1][x].colour = BLUE
+                    # self.change_pixel_colour(y, x, self.pixel_grid[y - 1][x].colour)
 
-                self.pixel_grid[z][x].pos_y += self.pixel_grid[z][x].size
+                # self.pixel_grid[y][x].pos_y += self.pixel_grid[y][x].size
 
     def process_message(self, msg):
+        # self.shift_pixel_grid()
         if msg.type == 'note_on':
             recent_note = get_new_range_value(1, 128, msg.note, 1, len(self.pixel_grid[0]))
 
             # TODO: I wrote this method to get a pixel by it's i and j position and set it's colour. You can use it to
             # TODO: switch pixels on and off by setting different colours.
 
-            self.change_pixel_colour(0, recent_note, RED)
-            self.shift_pixel_grid()
+            self.change_pixel_colour(self.counter, recent_note, RED)
+            self.counter += 1
 
     def run(self):
         """
@@ -141,16 +114,16 @@ class Display(Thread):
             while not self.queue.empty():
                 msg = self.queue.get()
                 self.process_message(msg)
-            screen.fill(BLACK)
+            # screen.fill(BLACK)
             self.draw_objects()
-            self.update_objects()
+            # self.update_objects()
             pygame.display.update()
 
             # Break if should stop
             if self.is_stopping:
                 break
 
-            sleep(0.2)
+            clock.tick(5)
 
     def stop(self):
         self.is_stopping = True
