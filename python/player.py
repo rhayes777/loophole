@@ -343,6 +343,10 @@ class Track(Thread):
         self.mid = mido.MidiFile("{}/{}".format(dir_path, self.filename))
         self.original_tempo = self.mid.ticks_per_beat
         self.channels = map(Channel, range(0, 16))
+        for track in self.mid.tracks:
+            msg = track[0]
+            if msg.type == "program_change":
+                self.channels[msg.channel].instrument_type = msg.program
         self.__tempo_shift = TEMPO_SHIFT_DEFAULT
         self.__tempo_shift_queue = Queue()
 
