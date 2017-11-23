@@ -1,6 +1,5 @@
 import player
 import dancemat
-from time import sleep
 import pygame
 import signal
 import effect
@@ -69,4 +68,4 @@ track.start()
 # Keep reading forever
 while play:
     mat.read()
-    sleep(0.05)
+    clock.tick(5)

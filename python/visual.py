@@ -126,7 +126,7 @@ class Display(Thread):
             y_position = j * self.grid_size_y
             # Now we individually draw each pixel
             for pixel in row:
-                # We have to update the y position of the pixels here. 
+                # We have to update the y position of the pixels here.
                 pixel.pos_y = y_position
                 pixel.show()
 
