@@ -5,6 +5,7 @@ import signal
 import effect
 import sys
 import os
+from random import randint
 
 dirname = os.path.dirname(os.path.realpath(__file__))
 
@@ -15,7 +16,9 @@ pygame.display.init()
 # screen = pygame.display.set_mode((1000, 700))
 clock = pygame.time.Clock()
 
-filename = 'media/song_pc.mid'
+files = filter(lambda s: ".mid" in s, os.listdir("media"))
+filename = "media/{}".format(files[randint(0, len(files) - 1)])
+
 configuration = 'configurations/examples.json'
 
 for arg in sys.argv:
