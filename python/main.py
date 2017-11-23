@@ -65,9 +65,11 @@ def start_track_with_name(track_name):
         on_buttons = [button for (button, is_on) in status_dict.iteritems() if is_on]
         if dancemat.Button.start in on_buttons:
             track_number += 1
+            track.stop()
             start_track_with_name(track_names[track_number % len(track_names)])
         elif dancemat.Button.select in on_buttons:
             track_number -= 1
+            track.stop()
             start_track_with_name(track_names[track_number % len(track_names)])
         else:
             combinator.apply_for_buttons(on_buttons)
