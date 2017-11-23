@@ -114,7 +114,7 @@ class Display(Thread):
             while not self.queue.empty():
                 msg = self.queue.get()
                 self.process_message(msg)
-            # screen.fill(BLACK)
+            screen.fill(BLACK)
             self.draw_objects()
             # self.update_objects()
             pygame.display.update()
