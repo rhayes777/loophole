@@ -45,11 +45,6 @@ class Pixel:
         pygame.draw.ellipse(screen, self.colour,
                             [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
 
-    def update(self):
-        pass
-        # self.pos_y = self.pos_y - 1
-        # print(".")
-
 
 class Display(Thread):
     def __init__(self):
@@ -59,6 +54,8 @@ class Display(Thread):
         self.grid_size_x = 20
         self.grid_size_y = self.grid_size_x  # self.screen.get_width()
 
+        # This is a queue to keep rows of "pixels" in. You put things in one end and get them out the other which is
+        # what we need to make scrolling notes.
         self.row_queue = Queue()
 
         self.num_pixels_x = screen.get_width() / self.grid_size_x
@@ -67,6 +64,10 @@ class Display(Thread):
         self.is_stopping = False
 
     def new_row(self):
+        """
+        Created a new row
+        :return: A list of blue pixels at the top of the screen of length num_pixels_x
+        """
         row = []
         for i in range(self.num_pixels_x):
             row.append(
@@ -81,36 +82,51 @@ class Display(Thread):
         """
         self.is_stopping = False
         while True:
+            # Make a new row each time the loop runs
             row = self.new_row()
+            # Keep grabbing messages from the incoming message queue until it's empty
             while not self.queue.empty():
                 msg = self.queue.get()
                 if msg.type == 'note_on':
-                    recent_note = get_new_range_value(1, 128, msg.note, 1, self.num_pixels_x)
-                    row[recent_note].colour = RED
+                    # Use your function to convert to screen cooordinates
+                    x_position = get_new_range_value(1, 128, msg.note, 1, self.num_pixels_x)
+                    # Set the "pixel" at that position in this row to red
+                    row[x_position].colour = RED
 
+            # Add the newly created row to the queue
             self.row_queue.put(row)
 
+            # If there are so many rows that it's going off screen, remove the row that was added first
             if len(self.row_queue.queue) > self.num_pixels_y:
                 self.row_queue.get()
 
             screen.fill(BLACK)
+            # Draw all those objects
             self.draw_objects()
+            # Actually update the display
             pygame.display.update()
 
             # Break if should stop
             if self.is_stopping:
                 break
 
-            clock.tick(5)
+            clock.tick(10)
 
     def stop(self):
         self.is_stopping = True
 
     def draw_objects(self):
+        """
+        Draws all the objects in the queue
+        """
+        # This function goes through each line in the queue. It gets that row of pixels (row) and also what number it is
+        # is in queue (j)
         for j, row in enumerate(self.row_queue.queue):
+            # We can work out what the y position should be from the position in the list
             y_position = j * self.grid_size_y
+            # Now we individually draw each pixel
             for pixel in row:
-                print pixel
+                # We have to update the y position of the pixels here. 
                 pixel.pos_y = y_position
                 pixel.show()
 
