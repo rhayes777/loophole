@@ -5,6 +5,7 @@ from time import sleep
 import logging
 import sys
 import pygame
+import signal
 
 logging.basicConfig()
 
@@ -29,25 +30,6 @@ print(pygame.init())
 clock = pygame.time.Clock()
 # create screen for pygame to draw to
 screen = pygame.display.set_mode((1000, 700))
-
-"""
-I've made a couple of changes that I've pointed out below. The main problem is that iterating through every
-pixel every single frame consumes a lot of processing power and causes the music to jitter.
-
-What I've done is to move the loop that makes every pixel in the Display constructor. Then, when you want to change
-the colour of a pixel you can just call a function to do that e.g. self.change_pixel_colour(10, 20, BLUE)
-
-One problem we might have is with how you wanted to update the display. If you check the status of every single pixel
-that will be really time consuming. A better way might be to keep track of pixel colour combinations in some tuple or
-class and then use and change that list to make the dots move.
-
-e.g. [((5, 10), RED), ((7, 11), YELLOW)]
-
-You could take each item from that last and colour the pixel (i, j) the specified colour. Then you'd have to manage
-the objects in the list. Like, you'd add one to each y value each time:
-
-e.g. the list becomes [((5, 11), RED), ((7, 12), YELLOW)]
-"""
 
 
 # basic gfx class
@@ -197,6 +179,16 @@ def run_example():
 
     # dir_path = os.path.dirname(os.path.realpath(__file__))
     # mid = mido.MidiFile("{}/media/mute-city.mid".format(dir_path))
+
+    # noinspection PyUnusedLocal
+    def stop(*args):
+        global done
+        done = True
+        display.stop()
+        pygame.quit()
+        # exit()
+
+    signal.signal(signal.SIGINT, stop)
 
     while not done:
 
