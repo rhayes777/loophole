@@ -1,1 +1,246 @@
-[{"buttons": ["up"], "effects": []}, {"buttons": ["up", "x"], "effects": []}, {"buttons": ["down"], "effects": []}, {"buttons": ["down", "up"], "effects": []}, {"buttons": ["down", "left"], "effects": []}, {"buttons": ["down", "right"], "effects": []}, {"buttons": ["down", "triangle"], "effects": []}, {"buttons": ["down", "square"], "effects": []}, {"buttons": ["down", "x"], "effects": []}, {"buttons": ["left"], "effects": []}, {"buttons": ["left", "up"], "effects": []}, {"buttons": ["left", "right"], "effects": []}, {"buttons": ["left", "triangle"], "effects": []}, {"buttons": ["left", "square"], "effects": []}, {"buttons": ["left", "x"], "effects": []}, {"buttons": ["right"], "effects": []}, {"buttons": ["right", "up"], "effects": []}, {"buttons": ["right", "triangle"], "effects": []}, {"buttons": ["right", "square"], "effects": []}, {"buttons": ["right", "x"], "effects": []}, {"buttons": ["triangle"], "effects": []}, {"buttons": ["triangle", "up"], "effects": []}, {"buttons": ["triangle", "x"], "effects": []}, {"buttons": ["circle"], "effects": []}, {"buttons": ["circle", "up"], "effects": []}, {"buttons": ["circle", "down"], "effects": []}, {"buttons": ["circle", "left"], "effects": []}, {"buttons": ["circle", "right"], "effects": []}, {"buttons": ["circle", "triangle"], "effects": []}, {"buttons": ["circle", "square"], "effects": []}, {"buttons": ["circle", "x"], "effects": []}, {"buttons": ["square"], "effects": []}, {"buttons": ["square", "up"], "effects": []}, {"buttons": ["square", "triangle"], "effects": []}, {"buttons": ["square", "x"], "effects": []}, {"buttons": ["x"], "effects": []}]
+[
+  {
+    "buttons": [
+      "up"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "up",
+      "x"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "down"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "down",
+      "up"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "down",
+      "left"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "down",
+      "right"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "down",
+      "triangle"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "down",
+      "square"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "down",
+      "x"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "left"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "left",
+      "up"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "left",
+      "right"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "left",
+      "triangle"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "left",
+      "square"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "left",
+      "x"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "right"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "right",
+      "up"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "right",
+      "triangle"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "right",
+      "square"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "right",
+      "x"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "triangle"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "triangle",
+      "up"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "triangle",
+      "x"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "circle"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "circle",
+      "up"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "circle",
+      "down"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "circle",
+      "left"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "circle",
+      "right"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "circle",
+      "triangle"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "circle",
+      "square"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "circle",
+      "x"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "square"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "square",
+      "up"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "square",
+      "triangle"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "square",
+      "x"
+    ],
+    "effects": []
+  },
+  {
+    "buttons": [
+      "x"
+    ],
+    "effects": []
+  }
+]

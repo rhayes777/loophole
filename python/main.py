@@ -16,7 +16,7 @@ pygame.display.init()
 clock = pygame.time.Clock()
 
 filename = 'media/song_pc.mid'
-configuration = 'configurations/effects_1.json'
+configuration = 'configurations/examples.json'
 
 for arg in sys.argv:
     if '.mid' in arg:
@@ -45,11 +45,10 @@ channels = track.channels
 
 
 def note_on_listener(msg):
-    print str(msg)
+    print msg
     sys.stdout.flush()
 
 
-# TODO: Test whether this message passing mechanism is causing the jitter
 for channel in channels:
     channel.note_on_listener = note_on_listener
 

@@ -1,0 +1,105 @@
+[
+  {
+    "buttons": [
+      "up"
+    ],
+    "effects": [
+      {
+        "name": "pitch_bend",
+        "value": 5000,
+        "instrument_group": "melodic"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "down"
+    ],
+    "effects": [
+      {
+        "name": "pitch_bend",
+        "value": -5000,
+        "instrument_group": "melodic"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "left"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [
+          -5
+        ],
+        "instrument_group": "melodic"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "right"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [
+          5
+        ],
+        "instrument_group": "melodic"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "triangle"
+    ],
+    "effects": [
+      {
+        "name": "instrument_version",
+        "value": 4,
+        "instrument_group": "melodic"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "circle"
+    ],
+    "effects": [
+      {
+        "name": "tempo_shift",
+        "value": 1.5
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "square"
+    ],
+    "effects": [
+      {
+        "name": "instrument_type",
+        "value": "ensemble",
+        "instrument_group": "melodic"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "x"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [
+          0,
+          2,
+          4
+        ],
+        "instrument_group": "melodic"
+      }
+    ]
+  }
+]
