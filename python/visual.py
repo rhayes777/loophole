@@ -55,55 +55,25 @@ class Display(Thread):
     def __init__(self):
         super(Display, self).__init__()
         self.queue = Queue()
-        self.pixel_grid = []  # numpy later maybe
-        self.counter = 0
 
-        grid_size_x = 20
-        grid_size_y = grid_size_x  # self.screen.get_width()
+        self.grid_size_x = 20
+        self.grid_size_y = self.grid_size_x  # self.screen.get_width()
 
-        self.num_pixels_x = screen.get_width() / grid_size_x
-        self.num_pixels_y = screen.get_height() / grid_size_y
+        self.row_queue = Queue()
+
+        self.num_pixels_x = screen.get_width() / self.grid_size_x
+        self.num_pixels_y = screen.get_height() / self.grid_size_y
 
         self.is_stopping = False
 
-        for j in range(self.num_pixels_y):
-
-            row = []
-
-            for i in range(self.num_pixels_x):
-                row.append(Pixel((grid_size_x / 2) + grid_size_x * i, (grid_size_y / 2) + (grid_size_y * j), False,
-                                 grid_size_x, i))
-
-            self.pixel_grid.append(row)
-
-    def change_pixel_colour(self, i, j, colour):
-        pixel = self.pixel_grid[i][j]
-        pixel.colour = colour
-        # pixel.show()
-
-    def shift_pixel_grid(self):
-
-        for y in range(timer, timer + 1):
-
-            for x in range(0, len(self.pixel_grid[y])):
-
-                if self.pixel_grid[y - 1][x].colour == RED:
-                    self.pixel_grid[y][x].colour = RED
-                    self.pixel_grid[y - 1][x].colour = BLUE
-                    # self.change_pixel_colour(y, x, self.pixel_grid[y - 1][x].colour)
-
-                # self.pixel_grid[y][x].pos_y += self.pixel_grid[y][x].size
-
-    def process_message(self, msg):
-        # self.shift_pixel_grid()
-        if msg.type == 'note_on':
-            recent_note = get_new_range_value(1, 128, msg.note, 1, len(self.pixel_grid[0]))
-
-            # TODO: I wrote this method to get a pixel by it's i and j position and set it's colour. You can use it to
-            # TODO: switch pixels on and off by setting different colours.
-
-            self.change_pixel_colour(self.counter, recent_note, RED)
-            self.counter += 1
+    def new_row(self):
+        row = []
+        for i in range(self.num_pixels_x):
+            row.append(
+                Pixel((self.grid_size_x / 2) + self.grid_size_x * i, (self.grid_size_y / 2), False, self.grid_size_x,
+                      i))
+        return row
+        # + (self.grid_size_y * j)
 
     def run(self):
         """
@@ -111,12 +81,20 @@ class Display(Thread):
         """
         self.is_stopping = False
         while True:
+            row = self.new_row()
             while not self.queue.empty():
                 msg = self.queue.get()
-                self.process_message(msg)
+                if msg.type == 'note_on':
+                    recent_note = get_new_range_value(1, 128, msg.note, 1, self.num_pixels_x)
+                    row[recent_note].colour = RED
+
+            self.row_queue.put(row)
+
+            if len(self.row_queue.queue) > self.num_pixels_y:
+                self.row_queue.get()
+
             screen.fill(BLACK)
             self.draw_objects()
-            # self.update_objects()
             pygame.display.update()
 
             # Break if should stop
@@ -129,14 +107,12 @@ class Display(Thread):
         self.is_stopping = True
 
     def draw_objects(self):
-        for row in self.pixel_grid:
+        for j, row in enumerate(self.row_queue.queue):
+            y_position = j * self.grid_size_y
             for pixel in row:
+                print pixel
+                pixel.pos_y = y_position
                 pixel.show()
-
-    def update_objects(self):
-        for row in self.pixel_grid:
-            for pixel in row:
-                pixel.update()
 
 
 def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
