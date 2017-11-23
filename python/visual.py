@@ -2,9 +2,9 @@ import mido
 from Queue import Queue
 from threading import Thread
 from time import sleep
-import signal
 import logging
 import sys
+import pygame
 
 logging.basicConfig()
 
@@ -22,6 +22,13 @@ circle_y = 200
 all_dots = []
 
 timer = 0
+
+# pygame setup
+# (6,0) = all good
+print(pygame.init())
+clock = pygame.time.Clock()
+# create screen for pygame to draw to
+screen = pygame.display.set_mode((1000, 700))
 
 """
 I've made a couple of changes that I've pointed out below. The main problem is that iterating through every
@@ -53,7 +60,7 @@ class Dot:
         self.pos_y = pos_y
         self.life = life
 
-    def show(self, pygame, screen):
+    def show(self):
 
         if self.size > 7:
             pygame.draw.ellipse(screen, self.colour,
@@ -83,29 +90,26 @@ class Pixel:
         self.ref = ref
         self.colour = colour
 
-    def show(self, pygame, screen):
+    def show(self):
         pygame.draw.ellipse(screen, self.colour,
                             [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
 
     def update(self):
-
-        #self.pos_y = self.pos_y - 1
+        # self.pos_y = self.pos_y - 1
         print(".")
 
 
 class Display(Thread):
-    def __init__(self, pygame, screen):
+    def __init__(self):
         super(Display, self).__init__()
-        self.pygame = pygame
-        self.screen = screen
         self.queue = Queue()
         self.pixel_grid = []  # numpy later maybe
 
         grid_size_x = 20
         grid_size_y = grid_size_x  # self.screen.get_width()
 
-        self.num_pixels_x = self.screen.get_width() / grid_size_x
-        self.num_pixels_y = self.screen.get_height() / grid_size_y
+        self.num_pixels_x = screen.get_width() / grid_size_x
+        self.num_pixels_y = screen.get_height() / grid_size_y
 
         self.is_stopping = False
 
@@ -119,21 +123,19 @@ class Display(Thread):
 
             self.pixel_grid.append(row)
 
-
     def change_pixel_colour(self, i, j, colour):
         pixel = self.pixel_grid[i][j]
         pixel.colour = colour
-        #pixel.show(self.pygame, self.screen)
+        # pixel.show(self.pygame, self.screen)
 
     def shift_pixel_grid(self):
 
-        for z in range(timer, timer+1):
+        for z in range(timer, timer + 1):
 
             for x in range(0, len(self.pixel_grid[z])):
 
-                if(self.pixel_grid[z-1][x].colour == RED):
-
-                    self.change_pixel_colour(z, x, self.pixel_grid[z-1][x].colour)
+                if self.pixel_grid[z - 1][x].colour == RED:
+                    self.change_pixel_colour(z, x, self.pixel_grid[z - 1][x].colour)
 
                 self.pixel_grid[z][x].pos_y += self.pixel_grid[z][x].size
 
@@ -156,7 +158,7 @@ class Display(Thread):
 
             self.draw_objects()
             self.update_objects()
-            self.pygame.display.update()
+            pygame.display.update()
 
             # Break if should stop
             if self.is_stopping:
@@ -164,14 +166,13 @@ class Display(Thread):
 
             sleep(0.2)
 
-
     def stop(self):
         self.is_stopping = True
 
     def draw_objects(self):
         for row in self.pixel_grid:
             for pixel in row:
-                pixel.show(self.pygame, self.screen)
+                pixel.show()
 
     def update_objects(self):
         for row in self.pixel_grid:
@@ -187,26 +188,15 @@ def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, 
     return int(new_value)
 
 
-
-
 def run_example():
-    import pygame
-    # timer
-    timer = 0
-    # for the 'game loop'
     done = False
 
-    # pygame setup
-    # (6,0) = all good
-    print(pygame.init())
-    clock = pygame.time.Clock()
-
-    # create screen for pygame to draw to
-    screen = pygame.display.set_mode((1000, 700))
-
-    display = Display(pygame, screen)
+    display = Display()
 
     display.start()
+
+    # dir_path = os.path.dirname(os.path.realpath(__file__))
+    # mid = mido.MidiFile("{}/media/mute-city.mid".format(dir_path))
 
     while not done:
 
@@ -214,9 +204,10 @@ def run_example():
         # Leave this out and we will use all CPU we can.
         clock.tick(10)
 
-        timer += 1
-
         screen.fill(BLACK)
+
+        display = Display()
+        display.start()
 
         display.update_objects()
         display.draw_objects()
@@ -237,9 +228,6 @@ def run_example():
                 display.queue.put(mido.Message.from_str(message))
             except IndexError as e:
                 logger.exception(e)
-
-
-        #pygame.display.update()
 
     pygame.quit()
 
