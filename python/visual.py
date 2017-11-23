@@ -132,12 +132,15 @@ class Display(Thread):
             self.shift_pixel_grid()
 
     def run(self):
+        """
+        Runs the game loop
+        """
         self.is_stopping = False
         while True:
             while not self.queue.empty():
                 msg = self.queue.get()
                 self.process_message(msg)
-
+            screen.fill(BLACK)
             self.draw_objects()
             self.update_objects()
             pygame.display.update()
@@ -170,41 +173,55 @@ def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, 
     return int(new_value)
 
 
-def run_example():
-    done = False
+done = False
+display = Display()
 
-    display = Display()
 
-    display.start()
+# noinspection PyUnusedLocal
+def stop(*args):
+    global done
+    done = True
+    display.stop()
+    pygame.quit()
 
-    # dir_path = os.path.dirname(os.path.realpath(__file__))
-    # mid = mido.MidiFile("{}/media/mute-city.mid".format(dir_path))
 
-    # noinspection PyUnusedLocal
-    def stop(*args):
-        global done
-        done = True
-        display.stop()
-        pygame.quit()
-        # exit()
+signal.signal(signal.SIGINT, stop)
+display.start()
 
-    signal.signal(signal.SIGINT, stop)
 
+def run_for_stdin():
+    global done
     while not done:
 
         # This limits the while loop to a max of 10 times per second.
         # Leave this out and we will use all CPU we can.
         clock.tick(10)
 
-        screen.fill(BLACK)
+        for event in pygame.event.get():  # User did something
+            if event.type == pygame.QUIT:  # If user clicked close
+                done = True  # Flag that we are done so we exit this loop
 
-        display = Display()
-        display.start()
+        while True:
+            message = sys.stdin.readline()
+            if message is None:
+                break
+            pygame.event.get()
 
-        display.update_objects()
-        display.draw_objects()
+            try:
+                display.queue.put(mido.Message.from_str(message))
+            except IndexError as e:
+                logger.exception(e)
 
-        pygame.display.update()
+    pygame.quit()
+
+
+def run_for_mido():
+    global done
+    while not done:
+
+        # This limits the while loop to a max of 10 times per second.
+        # Leave this out and we will use all CPU we can.
+        clock.tick(10)
 
         for event in pygame.event.get():  # User did something
             if event.type == pygame.QUIT:  # If user clicked close
@@ -225,4 +242,7 @@ def run_example():
 
 
 if __name__ == '__main__':
-    run_example()
+    if len(sys.argv) > 1 and sys.argv[1] == "-i":
+        run_for_stdin()
+    else:
+        run_for_mido()
