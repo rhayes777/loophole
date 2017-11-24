@@ -29,7 +29,8 @@ print(pygame.init())
 clock = pygame.time.Clock()
 pygame.display.init()
 # create screen for pygame to draw to
-screen = pygame.display.set_mode((1000, 700))
+info = pygame.display.Info()
+screen = pygame.display.set_mode((info.current_w, info.current_h))
 
 
 class Pixel:
