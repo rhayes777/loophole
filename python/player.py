@@ -189,6 +189,7 @@ class Channel(object):
         self.__intervals = None
         self.__intervals_queue = Queue()
         self.__program = 0
+        self.key_tracker = None
 
     @property
     def volume(self):
@@ -290,9 +291,9 @@ class Channel(object):
             if hasattr(msg, 'velocity'):
                 msg.velocity = int(self.volume * msg.velocity)
 
-            if hasattr(msg, "note"):
+            if self.key_tracker and hasattr(msg, "note"):
                 # Update the key tracker
-                key_tracker.add_note(msg.note)
+                self.key_tracker.add_note(msg.note)
 
             if hasattr(msg, 'velocity') and self.intervals is not None:
                 msgs = self.intervals(msg)
@@ -351,6 +352,8 @@ class Track(Thread):
             msg = track[0]
             if msg.type == "program_change":
                 self.channels[msg.channel].instrument_type = msg.program
+        for channel in self.channels_with_instrument_group("melodic"):
+            channel.key_tracker = key_tracker
         self.__tempo_shift = TEMPO_SHIFT_DEFAULT
         self.__tempo_shift_queue = Queue()
 
