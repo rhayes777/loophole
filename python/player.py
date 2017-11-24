@@ -5,6 +5,7 @@ import logging
 from datetime import datetime
 import os
 import music
+from time import sleep
 
 mido.set_backend('mido.backends.pygame')
 
@@ -400,15 +401,22 @@ class Track(Thread):
                     new_time = back_time_dict[msg.channel]
                     back_time_dict[msg.channel] = msg.time
                     msg.time = new_time
+                    sleep(msg.time)
                     yield msg
             back_time_dict = {c: 0 for c in range(16)}
             if len(self.forward_stack) > 0:
-                yield self.forward_stack.pop()
+                msg = self.forward_stack.pop()
+                sleep(msg.time)
+                yield msg
             try:
                 msg = play.next()
-                self.reverse_stack.append(msg)
+                if hasattr(msg, "channel") and hasattr(msg, "time"):
+                    self.reverse_stack.append(msg)
                 yield msg
             except StopIteration:
+                if self.is_looping and not self.is_stopping:
+                    play = self.mid.play(meta_messages=True)
+                    continue
                 break
 
     def run(self):
@@ -433,9 +441,6 @@ class Track(Thread):
                 except IndexError as e:
                     logging.exception(e)
 
-            if self.is_looping and not self.is_stopping:
-                play = self.mid.play(meta_messages=True)
-                continue
             break
         for channel in self.channels:
             channel.stop_all_notes()
