@@ -408,8 +408,7 @@ class Track(Thread):
                 msg = play.next()
                 self.reverse_stack.append(msg)
                 yield msg
-            except Exception as e:
-                logging.exception(e)
+            except StopIteration:
                 break
 
     def run(self):

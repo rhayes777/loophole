@@ -167,6 +167,8 @@ def run_for_stdin():
             if event.type == pygame.QUIT:  # If user clicked close
                 done = True  # Flag that we are done so we exit this loop
 
+        exception_count = 0
+
         while True:
             message = sys.stdin.readline()
             if message is None:
@@ -175,8 +177,15 @@ def run_for_stdin():
 
             try:
                 display.queue.put(mido.Message.from_str(message))
-            except IndexError as e:
-                logger.exception(e)
+                exception_count = 0
+            except IndexError:
+                logger.exception("Can't read input")
+                exception_count += 1
+                if exception_count > 10:
+                    logger.exception("No valid messages received")
+                    display.stop()
+                    done = True
+                    break
 
     pygame.quit()
 
