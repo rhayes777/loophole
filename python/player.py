@@ -353,6 +353,9 @@ class Track(Thread):
                 self.channels[msg.channel].instrument_type = msg.program
         self.__tempo_shift = TEMPO_SHIFT_DEFAULT
         self.__tempo_shift_queue = Queue()
+        self.is_reverse = False
+        self.reverse_stack = []
+        self.forward_stack = []
 
     @property
     def tempo_shift(self):
@@ -384,15 +387,39 @@ class Track(Thread):
             channels.extend(self.channels_with_instrument_type(instrument_type))
         return channels
 
+    def message_generator(self):
+        play = self.mid.play(meta_messages=True)
+        back_time_dict = {c: 0 for c in range(16)}
+        while True:
+            if self.is_reverse:
+                if len(self.reverse_stack) == 0:
+                    self.is_reverse = False
+                else:
+                    msg = self.reverse_stack.pop()
+                    self.forward_stack.append(msg.copy())
+                    new_time = back_time_dict[msg.channel]
+                    back_time_dict[msg.channel] = msg.time
+                    msg.time = new_time
+                    yield msg
+            back_time_dict = {c: 0 for c in range(16)}
+            if len(self.forward_stack) > 0:
+                yield self.forward_stack.pop()
+            try:
+                msg = play.next()
+                self.reverse_stack.append(msg)
+                yield msg
+            except Exception as e:
+                logging.exception(e)
+                break
+
     def run(self):
         """Play the midi file (call start() to run on new thread)"""
         self.is_stopping = False
-        play = self.mid.play(meta_messages=True)
 
         while True:
 
             # Take midi messages from a generator
-            for msg in play:
+            for msg in self.message_generator():
 
                 if self.is_stopping:
                     break
