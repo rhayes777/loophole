@@ -320,7 +320,7 @@ class Channel(object):
 
     def stop_playing_notes(self):
         """Stop all currently playing notes"""
-        for note in self.playing_notes:
+        for note in self.playing_notes.copy():
             self.stop_note(note)
 
     def stop_note(self, note):
@@ -330,6 +330,10 @@ class Channel(object):
         """
         # noinspection PyTypeChecker
         self.send_message(mido.Message(type=Channel.note_off, velocity=0, note=note))
+
+    def stop_all_notes(self):
+        for i in range(128):
+            self.port.send(mido.Message(type="note_off", velocity=0, channel=self.number, note=i))
 
 
 class Track(Thread):
@@ -407,6 +411,8 @@ class Track(Thread):
                 play = self.mid.play(meta_messages=True)
                 continue
             break
+        for channel in self.channels:
+            channel.stop_all_notes()
 
     # noinspection PyUnusedLocal
     def stop(self, *args):

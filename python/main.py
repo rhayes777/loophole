@@ -34,10 +34,31 @@ mat = dancemat.DanceMat(pygame)
 
 play = True
 
+track = None
+combinator = None
+
+
+# Function to listen for changes to button state
+def listener(status_dict):
+    global track_number
+    on_buttons = [button for (button, is_on) in status_dict.iteritems() if is_on]
+    if dancemat.Button.start in on_buttons:
+        track_number += 1
+        track.stop()
+        start_track_with_name(track_names[track_number % len(track_names)])
+    elif dancemat.Button.select in on_buttons:
+        track_number -= 1
+        track.stop()
+        start_track_with_name(track_names[track_number % len(track_names)])
+    else:
+        combinator.apply_for_buttons(on_buttons)
+
 
 def start_track_with_name(track_name):
     global track_number
     global play
+    global track
+    global combinator
     filename = "media/{}".format(track_name)
     track = player.Track(filename=filename, is_looping=True)
 
@@ -45,6 +66,7 @@ def start_track_with_name(track_name):
 
     # noinspection PyUnusedLocal
     def stop(*args):
+        global play
         track.stop()
         play = False
 
@@ -59,28 +81,11 @@ def start_track_with_name(track_name):
     for channel in channels:
         channel.note_on_listener = note_on_listener
 
-    # Function to listen for changes to button state
-    def listener(status_dict):
-        global track_number
-        on_buttons = [button for (button, is_on) in status_dict.iteritems() if is_on]
-        if dancemat.Button.start in on_buttons:
-            track_number += 1
-            track.stop()
-            start_track_with_name(track_names[track_number % len(track_names)])
-        elif dancemat.Button.select in on_buttons:
-            track_number -= 1
-            track.stop()
-            start_track_with_name(track_names[track_number % len(track_names)])
-        else:
-            combinator.apply_for_buttons(on_buttons)
-
-    # Attach that listener function to the dancemat
-    mat.set_button_listener(listener)
-
     track.start()
 
 
 start_track_with_name(track_names[track_number])
+mat.set_button_listener(listener)
 
 # Keep reading forever
 while play:
