@@ -11,10 +11,12 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 # pygame gfx constants
+WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (180, 60, 30)
 GREEN = (46, 190, 60)
 BLUE = (30, 48, 180)
+PINK_MASK = (255, 0, 255)
 
 circle_x = 200
 circle_y = 200
@@ -32,6 +34,18 @@ pygame.display.init()
 info = pygame.display.Info()
 screen = pygame.display.set_mode((info.current_w, info.current_h))
 
+all_sprites = pygame.sprite.Group()
+
+class Quaver(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("media/quaver.bmp")
+        self.image.convert()
+        self.image.set_colorkey(PINK_MASK)
+        self.image = pygame.transform.scale(self.image, (100,100))
+        self.rect = self.image.get_rect()
+        self.rect.center = (screen.get_width() /2, screen.get_height() / 2)
+
 
 class Pixel:
     def __init__(self, pos_x, pos_y, is_on, size, ref, colour=BLUE):
@@ -45,7 +59,6 @@ class Pixel:
     def show(self):
         pygame.draw.ellipse(screen, self.colour,
                             [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
-
 
 class Display(Thread):
     def __init__(self):
@@ -104,6 +117,7 @@ class Display(Thread):
             screen.fill(BLACK)
             # Draw all those objects
             self.draw_objects()
+
             # Actually update the display
             pygame.display.update()
 
@@ -131,6 +145,8 @@ class Display(Thread):
                 pixel.pos_y = y_position
                 pixel.show()
 
+        all_sprites.draw(screen)
+
 
 def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
     old_range = old_range_max - old_range_min
@@ -142,7 +158,8 @@ def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, 
 
 done = False
 display = Display()
-
+my_quaver = Quaver()
+all_sprites.add(my_quaver)
 
 # noinspection PyUnusedLocal
 def stop(*args):
