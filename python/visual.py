@@ -57,8 +57,23 @@ class Pixel:
         self.colour = colour
 
     def show(self):
-        pygame.draw.ellipse(screen, self.colour,
+
+        if self.colour == BLUE:
+            pygame.draw.ellipse(screen, self.colour,
                             [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
+
+        #Gradually shifts colour of 'RED' (On) Pixels as they move up the screen
+        #Get_new_range_value scales y position to a 0-255 RGB range
+
+        if self.colour == RED:
+            pygame.draw.ellipse(screen,
+                                [
+                                get_new_range_value(0, 800, self.pos_y, 30, 255), #Red
+                                get_new_range_value(0, 800, self.pos_y, 20, 140), #Green
+                                get_new_range_value(0, 800, self.pos_y, 255, 120) #Blue
+                                ],
+                            [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
+
 
 class Display(Thread):
     def __init__(self):
