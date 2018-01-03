@@ -5,6 +5,7 @@ import logging
 import sys
 import pygame
 import signal
+import random
 
 logging.basicConfig()
 
@@ -48,6 +49,41 @@ all_sprites = pygame.sprite.Group()
 
 #notice class handles messages displayed to screen using fonts
 
+class Notice_pro():
+    def __init__(self, words, colour, size, this_font):
+        self.words = words
+        self.char_list = []
+        self.colour = colour
+        self.size = size
+        self.this_font = this_font
+
+        for i in range(len(self.words)):
+            self.char_list.append(Letter(self.words[i], self.colour, self.size, self.this_font))
+
+    def blit_text(self, this_surface, xpos, ypos, drop = False):
+
+        for i in range(len(self.char_list)-1):
+
+            char_size_x, char_size_y = self.this_font.size("a")
+
+            text_width, text_height = self.this_font.size(self.words)
+            start_x = text_width / 2
+
+            this_surface.blit(self.char_list[i].char_render,
+                              (xpos - start_x + (i*char_size_x),
+                               ypos + random.randint(0,15)))
+
+class Letter:
+
+    def __init__(self, char, colour, size, this_font):
+
+        self.colour = colour
+        self.size = size
+        self.this_font = this_font
+        self.char = char
+
+        self.char_render = self.this_font.render(self.char, True, self.colour)
+
 class Notice():
     def __init__(self, words, colour, drop_colour, size, this_font):
         self.words = words
@@ -70,7 +106,7 @@ class Notice():
                     (xpos - (self.main_render.get_width() / 2),
                      ypos - (self.main_render.get_height() / 2)))
 
-my_message = Notice("Hello! This is a test!", RED, BLUE, 56, font_arcade)
+my_message = Notice_pro("Hello! This is a test!", RED, 56, font_arcade)
 
 
 class Quaver(pygame.sprite.Sprite):
@@ -199,7 +235,7 @@ class Display(Thread):
 
         all_sprites.draw(screen)
 
-        my_message.blit_text(screen, screen.get_width() / 2 , screen.get_height() / 2, shadow = True)
+        my_message.blit_text(screen, screen.get_width() / 2 , screen.get_height() / 2)
 
 
 def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
@@ -208,15 +244,6 @@ def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, 
     new_value = (float(((old_value - old_range_min) * new_range) / old_range)) + new_range_min
 
     return int(new_value)
-
-def draw_text(text_render, xpos, ypos, shadow = False):
-
-    if shadow is False:
-        screen.blit(text_render,
-                    (xpos - (my_text.get_width() / 2),
-                     ypos - (my_text.get_height() / 2)))
-
-
 
 done = False
 display = Display()
