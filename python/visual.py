@@ -10,6 +10,8 @@ logging.basicConfig()
 
 logger = logging.getLogger(__name__)
 
+
+
 # pygame gfx constants
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -17,6 +19,16 @@ RED = (180, 60, 30)
 GREEN = (46, 190, 60)
 BLUE = (30, 48, 180)
 PINK_MASK = (255, 0, 255)
+
+#pygame Font setup
+
+#Init pygame font module
+pygame.font.init()
+
+#Loading font
+font_arcade = pygame.font.Font("media/font_arcade_classic.ttf", 56)
+
+my_text = font_arcade.render("Hello!", True, RED)
 
 circle_x = 200
 circle_y = 200
@@ -162,6 +174,8 @@ class Display(Thread):
 
         all_sprites.draw(screen)
 
+        screen.blit(my_text, (screen.get_width() / 2 - (my_text.get_width() / 2), screen.get_height() / 2 - (my_text.get_height() / 2)))
+
 
 def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
     old_range = old_range_max - old_range_min
@@ -174,7 +188,7 @@ def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, 
 done = False
 display = Display()
 my_quaver = Quaver()
-all_sprites.add(my_quaver)
+#all_sprites.add(my_quaver)
 
 # noinspection PyUnusedLocal
 def stop(*args):
