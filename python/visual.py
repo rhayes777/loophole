@@ -26,9 +26,12 @@ PINK_MASK = (255, 0, 255)
 pygame.font.init()
 
 #Loading font
-font_arcade = pygame.font.Font("media/font_arcade_classic.ttf", 56)
+font_arcade = pygame.font.Font("media/arcadeclassic.ttf", 56)
 
-my_text = font_arcade.render("Hello!", True, RED)
+my_message = "Hello! This is a test"
+my_text = font_arcade.render(my_message, True, RED)
+
+
 
 circle_x = 200
 circle_y = 200
@@ -174,7 +177,7 @@ class Display(Thread):
 
         all_sprites.draw(screen)
 
-        screen.blit(my_text, (screen.get_width() / 2 - (my_text.get_width() / 2), screen.get_height() / 2 - (my_text.get_height() / 2)))
+        draw_text(my_text, (screen.get_width() / 2), (screen.get_height() / 2))
 
 
 def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
@@ -183,6 +186,14 @@ def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, 
     new_value = (float(((old_value - old_range_min) * new_range) / old_range)) + new_range_min
 
     return int(new_value)
+
+def draw_text(text_render, xpos, ypos, shadow = False):
+
+    if shadow is False:
+        screen.blit(text_render,
+                    (xpos - (my_text.get_width() / 2),
+                     ypos - (my_text.get_height() / 2)))
+
 
 
 done = False
