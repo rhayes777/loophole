@@ -28,11 +28,6 @@ pygame.font.init()
 #Loading font
 font_arcade = pygame.font.Font("media/arcadeclassic.ttf", 56)
 
-my_message = "Hello! This is a test"
-my_text = font_arcade.render(my_message, True, RED)
-
-
-
 circle_x = 200
 circle_y = 200
 
@@ -50,6 +45,33 @@ info = pygame.display.Info()
 screen = pygame.display.set_mode((info.current_w, info.current_h))
 
 all_sprites = pygame.sprite.Group()
+
+#notice class handles messages displayed to screen using fonts
+
+class Notice():
+    def __init__(self, words, colour, drop_colour, size, this_font):
+        self.words = words
+        self.colour = colour
+        self.drop_colour = drop_colour
+        self.size = size
+        self.this_font = this_font
+
+        self.main_render = self.this_font.render(self.words, True, self.colour)
+
+        self.drop_render = self.this_font.render(self.words, True, self.drop_colour)
+
+    def blit_text(self, this_surface, xpos, ypos, shadow = False):
+        if shadow is True:
+            this_surface.blit(self.drop_render,
+                              (xpos - (self.drop_render.get_width() / 2) + 8,
+                               ypos - (self.drop_render.get_height() / 2) + 8))
+
+        this_surface.blit(self.main_render,
+                    (xpos - (self.main_render.get_width() / 2),
+                     ypos - (self.main_render.get_height() / 2)))
+
+my_message = Notice("Hello! This is a test!", RED, BLUE, 56, font_arcade)
+
 
 class Quaver(pygame.sprite.Sprite):
     def __init__(self):
@@ -177,7 +199,7 @@ class Display(Thread):
 
         all_sprites.draw(screen)
 
-        draw_text(my_text, (screen.get_width() / 2), (screen.get_height() / 2))
+        my_message.blit_text(screen, screen.get_width() / 2 , screen.get_height() / 2, shadow = True)
 
 
 def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
