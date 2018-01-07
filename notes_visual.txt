@@ -1,0 +1,60 @@
+MIDI VISUALISER
+
+grid of all possible notes - circles or whatevs
+
+each circle lights up when a midi message is recieved. 
+
+VISUAL FEEDBACK FOR CONTROLS
+
+..............
+
+GENERAL AESTHETIC 
+
+I want this to look like some sort of 80s/90s arcade game
+
+-> How will we achieve this?
+
+Research arcade games.....
+
+MAME
+Dreamcast
+Late Sega console games
+
+Possible ideas to rip:
+
+- A 'score counter'
+-> Score would have to be based on something that the user is doing, or it wouldn't feel correct.
+-> 'Energy' or 'Life' or ...'music'[?] meter.
+-> Timers
+-> Checkpoints/'bonuses'
+
+-> Bright colours
+-> Explosions!
+
+...-> a 'hi score' table/demo mode
+
+Text...
+
+Text in these games always seems to have a top-to-bottom gradient. Could figure out a function to draw text like this.
+
+What font is used for all these games? Seems to be very similar one
+
+
+
+
+
+
+Look at [more modern] rythm games as well.
+
+Some parts of this need to be quite literal. Eg. midi notes being created/affected by the user
+
+Other parts I want to be slightly more mysterious (but perhaps could be figured out given time...)
+
+
+
+
+
+
+
+
+

@@ -7,6 +7,8 @@ import pygame
 import signal
 import random
 
+import math
+
 logging.basicConfig()
 
 logger = logging.getLogger(__name__)
@@ -21,20 +23,20 @@ GREEN = (46, 190, 60)
 BLUE = (30, 48, 180)
 PINK_MASK = (255, 0, 255)
 
+mouse_x, mouse_y = (400,400)
+
 #pygame Font setup
 
 #Init pygame font module
 pygame.font.init()
 
 #Loading font
-font_arcade = pygame.font.Font("media/arcadeclassic.ttf", 56)
+font_arcade = pygame.font.Font("media/arcadeclassic.ttf", 46)
 
 circle_x = 200
 circle_y = 200
 
 all_dots = []
-
-timer = 0
 
 # pygame setup
 # (6,0) = all good
@@ -69,9 +71,11 @@ class Notice_pro():
             text_width, text_height = self.this_font.size(self.words)
             start_x = text_width / 2
 
+            mouse_shake = get_new_range_value(0, screen.get_height(), mouse_y, 15, 0)
+
             this_surface.blit(self.char_list[i].char_render,
                               (xpos - start_x + (i*char_size_x),
-                               ypos + random.randint(0,15)))
+                               ypos + random.randint(0,mouse_shake)))
 
 class Letter:
 
@@ -84,29 +88,99 @@ class Letter:
 
         self.char_render = self.this_font.render(self.char, True, self.colour)
 
-class Notice():
-    def __init__(self, words, colour, drop_colour, size, this_font):
+class Shrink(Notice_pro):
+
+    def __init__(self, words, colour, size, this_font, is_Shrinkning = True, drop_colour = BLUE):
         self.words = words
         self.colour = colour
         self.drop_colour = drop_colour
         self.size = size
         self.this_font = this_font
+        self.is_Shrinkning = is_Shrinkning
+        self.char_list = []
 
-        self.main_render = self.this_font.render(self.words, True, self.colour)
+        for i in range(len(self.words)):
+            self.char_list.append(Shrink_Letter(self.words[i], self.colour, self.size, self.this_font))
 
-        self.drop_render = self.this_font.render(self.words, True, self.drop_colour)
+    def blit_text(self, this_surface, xpos, ypos, drop = False):
 
-    def blit_text(self, this_surface, xpos, ypos, shadow = False):
-        if shadow is True:
-            this_surface.blit(self.drop_render,
-                              (xpos - (self.drop_render.get_width() / 2) + 8,
-                               ypos - (self.drop_render.get_height() / 2) + 8))
+        for i in range(len(self.char_list)):
 
-        this_surface.blit(self.main_render,
-                    (xpos - (self.main_render.get_width() / 2),
-                     ypos - (self.main_render.get_height() / 2)))
+            char_size_x, char_size_y = self.this_font.size("a")
 
-my_message = Notice_pro("Hello! This is a test!", RED, 56, font_arcade)
+            text_width, text_height = self.this_font.size(self.words)
+            start_x = text_width / 2
+
+            less = display.timer
+
+            print(display.timer)
+
+            for j in range(len(self.char_list[i].anim_list)-less):
+
+                this_surface.blit(self.char_list[i].anim_list[j].img,
+                                  (xpos - start_x - (j*25) + (i*char_size_x),
+                                   ypos-(j*15)))
+
+class Shrink_Letter():
+
+    def __init__(self, char, colour, size, this_font):
+
+        self.colour = colour
+        self.size = size
+        self.this_font = this_font
+        self.char = char
+
+        self.anim_list = []
+
+        self.char_render = self.this_font.render(self.char, True, self.colour)
+
+        for i in range(1, 7):
+
+            frame = Font_Frame(self.size, self.this_font, self.char_render, i)
+            self.anim_list.append(frame)
+
+
+class Font_Frame():
+
+    def __init__(self, size, this_font, img, icount = 1):
+        self.size = size
+        self.this_font = this_font
+        self.icount = icount
+        self.img = pygame.transform.scale(img, (self.size / icount, self.size / icount))
+
+        char_size_x, char_size_y = self.this_font.size("a")
+
+        img_w = char_size_x / self.icount
+        img_h = char_size_y / self.icount
+
+        pygame.transform.smoothscale(img, (img_w, img_h))
+
+my_message = Shrink("Hello! This is a test!", RED, 30, font_arcade)
+
+# class Notice():
+#     def __init__(self, words, colour, drop_colour, size, this_font):
+#         self.words = words
+#         self.colour = colour
+#         self.drop_colour = drop_colour
+#         self.size = size
+#         self.this_font = this_font
+#
+#         self.main_render = self.this_font.render(self.words, True, self.colour)
+#
+#         self.drop_render = self.this_font.render(self.words, True, self.drop_colour)
+#
+#     def blit_text(self, this_surface, xpos, ypos, shadow = False):
+#         if shadow is True:
+#             this_surface.blit(self.drop_render,
+#                               (xpos - (self.drop_render.get_width() / 2) + 8,
+#                                ypos - (self.drop_render.get_height() / 2) + 8))
+#
+#         this_surface.blit(self.main_render,
+#                     (xpos - (self.main_render.get_width() / 2),
+#                      ypos - (self.main_render.get_height() / 2)))
+#
+#
+#
 
 
 class Quaver(pygame.sprite.Sprite):
@@ -131,21 +205,32 @@ class Pixel:
 
     def show(self):
 
-        if self.colour == BLUE:
-            pygame.draw.ellipse(screen, self.colour,
-                            [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
+        # if self.colour == BLUE:
+            # pygame.draw.ellipse(screen, self.colour,
+            #                 [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
 
         #Gradually shifts colour of 'RED' (On) Pixels as they move up the screen
         #Get_new_range_value scales y position to a 0-255 RGB range
 
         if self.colour == RED:
+
+            self.size = self.size + 1
+
             pygame.draw.ellipse(screen,
                                 [
-                                get_new_range_value(0, 800, self.pos_y, 30, 255), #Red
+                                get_new_range_value(0, 1200, self.pos_x, 30, 255), #Red
                                 get_new_range_value(0, 800, self.pos_y, 20, 140), #Green
                                 get_new_range_value(0, 800, self.pos_y, 255, 120) #Blue
                                 ],
-                            [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
+                            [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 0)
+
+            pygame.draw.ellipse(screen,
+                                [
+                                get_new_range_value(0, 1200, self.pos_x, 255, 120), #Red
+                                get_new_range_value(0, 800, self.pos_y, 30, 255), #Green
+                                get_new_range_value(0, 800, self.pos_y, 20, 140) #Blue
+                                ],
+                            [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 4)
 
 
 class Display(Thread):
@@ -164,6 +249,8 @@ class Display(Thread):
         self.num_pixels_y = screen.get_height() / self.grid_size_y
 
         self.is_stopping = False
+
+        self.timer = 0
 
     def new_row(self):
         """
@@ -203,6 +290,18 @@ class Display(Thread):
                 self.row_queue.get()
 
             screen.fill(BLACK)
+
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+
+
+
+            if (self.timer >= 1):
+                self.timer -= 1
+            else:
+                self.timer = 6
+
+
+
             # Draw all those objects
             self.draw_objects()
 
@@ -217,6 +316,9 @@ class Display(Thread):
 
     def stop(self):
         self.is_stopping = True
+
+
+
 
     def draw_objects(self):
         """
@@ -235,6 +337,7 @@ class Display(Thread):
 
         all_sprites.draw(screen)
 
+        #Draw text
         my_message.blit_text(screen, screen.get_width() / 2 , screen.get_height() / 2)
 
 
@@ -292,7 +395,7 @@ def run_for_mido():
     import os
     global done
     dirname = os.path.dirname(os.path.realpath(__file__))
-    filename = 'media/song_pc.mid'
+    filename = 'media/mute-city.mid'
     mid = mido.MidiFile("{}/{}".format(dirname, filename))
     while not done:
 
