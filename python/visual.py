@@ -7,13 +7,9 @@ import pygame
 import signal
 import random
 
-import math
-
 logging.basicConfig()
 
 logger = logging.getLogger(__name__)
-
-
 
 # pygame gfx constants
 WHITE = (255, 255, 255)
@@ -23,14 +19,14 @@ GREEN = (46, 190, 60)
 BLUE = (30, 48, 180)
 PINK_MASK = (255, 0, 255)
 
-mouse_x, mouse_y = (400,400)
+mouse_x, mouse_y = (400, 400)
 
-#pygame Font setup
+# pygame Font setup
 
-#Init pygame font module
+# Init pygame font module
 pygame.font.init()
 
-#Loading font
+# Loading font
 font_arcade = pygame.font.Font("media/arcadeclassic.ttf", 46)
 
 circle_x = 200
@@ -49,9 +45,9 @@ screen = pygame.display.set_mode((info.current_w, info.current_h))
 
 all_sprites = pygame.sprite.Group()
 
-#notice class handles messages displayed to screen using fonts
 
-class Notice_pro():
+# notice class handles messages displayed to screen using fonts
+class NoticePro(object):
     def __init__(self, words, colour, size, this_font):
         self.words = words
         self.char_list = []
@@ -62,10 +58,9 @@ class Notice_pro():
         for i in range(len(self.words)):
             self.char_list.append(Letter(self.words[i], self.colour, self.size, self.this_font))
 
-    def blit_text(self, this_surface, xpos, ypos, drop = False):
+    def blit_text(self, this_surface, xpos, ypos, drop=False):
 
-        for i in range(len(self.char_list)-1):
-
+        for i in range(len(self.char_list) - 1):
             char_size_x, char_size_y = self.this_font.size("a")
 
             text_width, text_height = self.this_font.size(self.words)
@@ -74,13 +69,12 @@ class Notice_pro():
             mouse_shake = get_new_range_value(0, screen.get_height(), mouse_y, 15, 0)
 
             this_surface.blit(self.char_list[i].char_render,
-                              (xpos - start_x + (i*char_size_x),
-                               ypos + random.randint(0,mouse_shake)))
+                              (xpos - start_x + (i * char_size_x),
+                               ypos + random.randint(0, mouse_shake)))
+
 
 class Letter:
-
     def __init__(self, char, colour, size, this_font):
-
         self.colour = colour
         self.size = size
         self.this_font = this_font
@@ -88,21 +82,18 @@ class Letter:
 
         self.char_render = self.this_font.render(self.char, True, self.colour)
 
-class Shrink(Notice_pro):
 
-    def __init__(self, words, colour, size, this_font, is_Shrinkning = True, drop_colour = BLUE):
-        self.words = words
-        self.colour = colour
+class Shrink(NoticePro):
+    def __init__(self, words, colour, size, this_font, is_shrinking=True, drop_colour=BLUE):
+        NoticePro.__init__(self, words, colour, size, this_font)
         self.drop_colour = drop_colour
-        self.size = size
-        self.this_font = this_font
-        self.is_Shrinkning = is_Shrinkning
+        self.is_shrinking = is_shrinking
         self.char_list = []
 
         for i in range(len(self.words)):
-            self.char_list.append(Shrink_Letter(self.words[i], self.colour, self.size, self.this_font))
+            self.char_list.append(ShrinkLetter(self.words[i], self.colour, self.size, self.this_font))
 
-    def blit_text(self, this_surface, xpos, ypos, drop = False):
+    def blit_text(self, this_surface, xpos, ypos, drop=False):
 
         for i in range(len(self.char_list)):
 
@@ -115,16 +106,14 @@ class Shrink(Notice_pro):
 
             print(display.timer)
 
-            for j in range(len(self.char_list[i].anim_list)-less):
-
+            for j in range(len(self.char_list[i].anim_list) - less):
                 this_surface.blit(self.char_list[i].anim_list[j].img,
-                                  (xpos - start_x - (j*25) + (i*char_size_x),
-                                   ypos-(j*15)))
+                                  (xpos - start_x - (j * 25) + (i * char_size_x),
+                                   ypos - (j * 15)))
 
-class Shrink_Letter():
 
+class ShrinkLetter(object):
     def __init__(self, char, colour, size, this_font):
-
         self.colour = colour
         self.size = size
         self.this_font = this_font
@@ -135,14 +124,12 @@ class Shrink_Letter():
         self.char_render = self.this_font.render(self.char, True, self.colour)
 
         for i in range(1, 7):
-
-            frame = Font_Frame(self.size, self.this_font, self.char_render, i)
+            frame = FontFrame(self.size, self.this_font, self.char_render, i)
             self.anim_list.append(frame)
 
 
-class Font_Frame():
-
-    def __init__(self, size, this_font, img, icount = 1):
+class FontFrame(object):
+    def __init__(self, size, this_font, img, icount=1):
         self.size = size
         self.this_font = this_font
         self.icount = icount
@@ -155,7 +142,9 @@ class Font_Frame():
 
         pygame.transform.smoothscale(img, (img_w, img_h))
 
+
 my_message = Shrink("Hello! This is a test!", RED, 30, font_arcade)
+
 
 # class Notice():
 #     def __init__(self, words, colour, drop_colour, size, this_font):
@@ -189,9 +178,9 @@ class Quaver(pygame.sprite.Sprite):
         self.image = pygame.image.load("media/quaver.bmp")
         self.image.convert()
         self.image.set_colorkey(PINK_MASK)
-        self.image = pygame.transform.scale(self.image, (100,100))
+        self.image = pygame.transform.scale(self.image, (100, 100))
         self.rect = self.image.get_rect()
-        self.rect.center = (screen.get_width() /2, screen.get_height() / 2)
+        self.rect.center = (screen.get_width() / 2, screen.get_height() / 2)
 
 
 class Pixel:
@@ -204,33 +193,31 @@ class Pixel:
         self.colour = colour
 
     def show(self):
-
         # if self.colour == BLUE:
-            # pygame.draw.ellipse(screen, self.colour,
-            #                 [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
+        # pygame.draw.ellipse(screen, self.colour,
+        #                 [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
 
-        #Gradually shifts colour of 'RED' (On) Pixels as they move up the screen
-        #Get_new_range_value scales y position to a 0-255 RGB range
+        # Gradually shifts colour of 'RED' (On) Pixels as they move up the screen
+        # Get_new_range_value scales y position to a 0-255 RGB range
 
         if self.colour == RED:
-
-            self.size = self.size + 1
-
-            pygame.draw.ellipse(screen,
-                                [
-                                get_new_range_value(0, 1200, self.pos_x, 30, 255), #Red
-                                get_new_range_value(0, 800, self.pos_y, 20, 140), #Green
-                                get_new_range_value(0, 800, self.pos_y, 255, 120) #Blue
-                                ],
-                            [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 0)
+            self.size += 1
 
             pygame.draw.ellipse(screen,
                                 [
-                                get_new_range_value(0, 1200, self.pos_x, 255, 120), #Red
-                                get_new_range_value(0, 800, self.pos_y, 30, 255), #Green
-                                get_new_range_value(0, 800, self.pos_y, 20, 140) #Blue
+                                    get_new_range_value(0, 1200, self.pos_x, 30, 255),  # Red
+                                    get_new_range_value(0, 800, self.pos_y, 20, 140),  # Green
+                                    get_new_range_value(0, 800, self.pos_y, 255, 120)  # Blue
                                 ],
-                            [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 4)
+                                [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 0)
+
+            pygame.draw.ellipse(screen,
+                                [
+                                    get_new_range_value(0, 1200, self.pos_x, 255, 120),  # Red
+                                    get_new_range_value(0, 800, self.pos_y, 30, 255),  # Green
+                                    get_new_range_value(0, 800, self.pos_y, 20, 140)  # Blue
+                                ],
+                                [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 4)
 
 
 class Display(Thread):
@@ -293,14 +280,10 @@ class Display(Thread):
 
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
-
-
             if (self.timer >= 1):
                 self.timer -= 1
             else:
                 self.timer = 6
-
-
 
             # Draw all those objects
             self.draw_objects()
@@ -316,9 +299,6 @@ class Display(Thread):
 
     def stop(self):
         self.is_stopping = True
-
-
-
 
     def draw_objects(self):
         """
@@ -337,8 +317,8 @@ class Display(Thread):
 
         all_sprites.draw(screen)
 
-        #Draw text
-        my_message.blit_text(screen, screen.get_width() / 2 , screen.get_height() / 2)
+        # Draw text
+        my_message.blit_text(screen, screen.get_width() / 2, screen.get_height() / 2)
 
 
 def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
@@ -348,10 +328,13 @@ def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, 
 
     return int(new_value)
 
+
 done = False
 display = Display()
 my_quaver = Quaver()
-#all_sprites.add(my_quaver)
+
+
+# all_sprites.add(my_quaver)
 
 # noinspection PyUnusedLocal
 def stop(*args):
