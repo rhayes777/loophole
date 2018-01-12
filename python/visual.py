@@ -85,6 +85,8 @@ class Letter:
 
 class Shrink(NoticePro):
     def __init__(self, words, colour, size, this_font, is_shrinking=True, drop_colour=BLUE):
+        # TODO: When you inherit from a call you should call its super constructor. You did have words, colour, size
+        # TODO: and this_font set in this constructor. Calling the super constructor saves repeating yourself.
         NoticePro.__init__(self, words, colour, size, this_font)
         self.drop_colour = drop_colour
         self.is_shrinking = is_shrinking
@@ -146,7 +148,7 @@ class FontFrame(object):
 my_message = Shrink("Hello! This is a test!", RED, 30, font_arcade)
 
 
-# class Notice():
+# class Notice():  # TODO: What would this code do? Does it still need to be here?
 #     def __init__(self, words, colour, drop_colour, size, this_font):
 #         self.words = words
 #         self.colour = colour
@@ -174,6 +176,7 @@ my_message = Shrink("Hello! This is a test!", RED, 30, font_arcade)
 
 class Quaver(pygame.sprite.Sprite):
     def __init__(self):
+        # TODO: this looks weird. self probably shouldn't be passed into the super constructor
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("media/quaver.bmp")
         self.image.convert()
@@ -278,9 +281,9 @@ class Display(Thread):
 
             screen.fill(BLACK)
 
-            mouse_x, mouse_y = pygame.mouse.get_pos()
+            # mouse_x, mouse_y = pygame.mouse.get_pos()  TODO: this line wasn't doing anything
 
-            if (self.timer >= 1):
+            if self.timer >= 1:
                 self.timer -= 1
             else:
                 self.timer = 6
