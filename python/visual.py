@@ -214,6 +214,8 @@ class Pixel:
                                 ],
                                 [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 0)
 
+            # TODO: What does get_new_range_value do? It seems to be producing values outside of the range 0-255 which
+            # TODO: causes 'TypeError: invalid color argument'
             pygame.draw.ellipse(screen,
                                 [
                                     get_new_range_value(0, 1200, self.pos_x, 255, 120),  # Red
