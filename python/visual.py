@@ -49,6 +49,8 @@ screen = pygame.display.set_mode((info.current_w, info.current_h))
 
 all_sprites = pygame.sprite.Group()
 
+main_timer = 0
+
 #notice class handles messages displayed to screen using fonts
 
 class Notice_pro():
@@ -64,7 +66,7 @@ class Notice_pro():
 
     def blit_text(self, this_surface, xpos, ypos, drop = False):
 
-        for i in range(len(self.char_list)-1):
+        for i in range(len(self.char_list)):
 
             char_size_x, char_size_y = self.this_font.size("a")
 
@@ -77,6 +79,7 @@ class Notice_pro():
                               (xpos - start_x + (i*char_size_x),
                                ypos + random.randint(0,mouse_shake)))
 
+
 class Letter:
 
     def __init__(self, char, colour, size, this_font):
@@ -88,15 +91,77 @@ class Letter:
 
         self.char_render = self.this_font.render(self.char, True, self.colour)
 
+
+class Wave(Notice_pro):
+
+    def __init__(self, words, colour, size, this_font, shrink = False):
+        self.words = words
+        self.char_list = []
+        self.colour = colour
+        self.size = size
+        self.this_font = this_font
+        self.wave_timer = 0
+        self.shrink = shrink
+
+        if self.shrink is False:
+
+            for i in range(len(self.words)):
+                self.char_list.append(Letter(self.words[i], self.colour, self.size, self.this_font))
+
+        else:
+
+            for i in range(len(self.words)):
+                self.char_list.append(Shrink_Letter(self.words[i], self.colour, self.size, self.this_font))
+
+    def blit_text(self, this_surface, xpos, ypos):
+
+        self.wave_timer =+ 1
+
+        if self.wave_timer > 10 :
+            self.wave_timer = 0
+
+        for i in range(len(self.char_list)):
+            char_size_x, char_size_y = self.this_font.size("a")
+
+            text_width, text_height = self.this_font.size(self.words)
+            start_x = text_width / 2
+
+            wave_add = 10 * (math.sin((i*10) + display.timer))
+
+            if self.shrink is False:
+
+                this_surface.blit(self.char_list[i].char_render,
+                                  (xpos - start_x + (i * char_size_x),
+                                   ypos + wave_add))
+
+            elif self.shrink is True:
+
+                less = display.timer
+
+                for j in range(len(self.char_list[i].anim_list) - less):
+                    this_surface.blit(self.char_list[i].anim_list[j].img,
+                                      ((xpos - start_x) + (i * char_size_x * 1.5),
+                                       (ypos + wave_add) - (j * 25)))
+#
+# class Wave_Letter():
+#
+#     def __init__(self, char, colour, size, this_font):
+#
+#         self.colour = colour
+#         self.size = size
+#         self.this_font = this_font
+#         self.char = char
+
+
 class Shrink(Notice_pro):
 
-    def __init__(self, words, colour, size, this_font, is_Shrinkning = True, drop_colour = BLUE):
+    def __init__(self, words, colour, size, this_font, is_shrinking = True, drop_colour = BLUE):
         self.words = words
         self.colour = colour
         self.drop_colour = drop_colour
         self.size = size
         self.this_font = this_font
-        self.is_Shrinkning = is_Shrinkning
+        self.is_shrinking = is_shrinking
         self.char_list = []
 
         for i in range(len(self.words)):
@@ -106,20 +171,20 @@ class Shrink(Notice_pro):
 
         for i in range(len(self.char_list)):
 
-            char_size_x, char_size_y = self.this_font.size("a")
-
             text_width, text_height = self.this_font.size(self.words)
             start_x = text_width / 2
 
             less = display.timer
 
-            print(display.timer)
-
             for j in range(len(self.char_list[i].anim_list)-less):
 
+                char_size_x = self.char_list[i].anim_list[j].img.get_width
+
                 this_surface.blit(self.char_list[i].anim_list[j].img,
-                                  (xpos - start_x - (j*25) + (i*char_size_x),
-                                   ypos-(j*15)))
+                                  (xpos - start_x) - (j*(char_size_x*2)) + (i*char_size_x),
+                                   ypos-(j*15))
+
+                print(char_size_x)
 
 class Shrink_Letter():
 
@@ -155,7 +220,7 @@ class Font_Frame():
 
         pygame.transform.smoothscale(img, (img_w, img_h))
 
-my_message = Shrink("Hello! This is a test!", RED, 30, font_arcade)
+my_message = Wave("Welcome to the MidiZone", RED, 30, font_arcade, True)
 
 # class Notice():
 #     def __init__(self, words, colour, drop_colour, size, this_font):
