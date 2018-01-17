@@ -48,7 +48,8 @@ all_sprites = pygame.sprite.Group()
 
 main_timer = 0
 
-#notice class handles messages displayed to screen using fonts
+
+# notice class handles messages displayed to screen using fonts
 
 # notice class handles messages displayed to screen using fonts
 class NoticePro(object):
@@ -61,7 +62,6 @@ class NoticePro(object):
 
         for i in range(len(self.words)):
             self.char_list.append(Letter(self.words[i], self.colour, self.size, self.this_font))
-
 
     def blit_text(self, this_surface, xpos, ypos, drop=False):
 
@@ -87,9 +87,9 @@ class Letter:
 
         self.char_render = self.this_font.render(self.char, True, self.colour)
 
-class Wave(NoticePro):
 
-    def __init__(self, words, colour, size, this_font, shrink = False):
+class Wave(NoticePro):
+    def __init__(self, words, colour, size, this_font, shrink=False):
         self.words = words
         self.char_list = []
         self.colour = colour
@@ -110,9 +110,9 @@ class Wave(NoticePro):
 
     def blit_text(self, this_surface, xpos, ypos):
 
-        self.wave_timer =+ 1
+        self.wave_timer = + 1
 
-        if self.wave_timer > 10 :
+        if self.wave_timer > 10:
             self.wave_timer = 0
 
         for i in range(len(self.char_list)):
@@ -121,7 +121,7 @@ class Wave(NoticePro):
             text_width, text_height = self.this_font.size(self.words)
             start_x = text_width / 2
 
-            wave_add = 10 * (math.sin((i*10) + display.timer))
+            wave_add = 10 * (math.sin((i * 10) + display.timer))
 
             if self.shrink is False:
 
@@ -137,6 +137,8 @@ class Wave(NoticePro):
                     this_surface.blit(self.char_list[i].anim_list[j].img,
                                       ((xpos - start_x) + (i * char_size_x * 1.5),
                                        (ypos + wave_add) - (j * 25)))
+
+
 #
 # class Wave_Letter():
 #
@@ -149,13 +151,13 @@ class Wave(NoticePro):
 
 
 class Shrink(NoticePro):
-
-    def __init__(self, words, colour, size, this_font, is_shrinking = True, drop_colour = BLUE):
+    def __init__(self, words, colour, size, this_font, is_shrinking=True, drop_colour=BLUE):
         self.words = words
         self.colour = colour
         self.drop_colour = drop_colour
         self.size = size
         self.this_font = this_font
+
 
 class Shrink(NoticePro):
     def __init__(self, words, colour, size, this_font, is_shrinking=True, drop_colour=BLUE):
@@ -178,13 +180,12 @@ class Shrink(NoticePro):
 
             less = display.timer
 
-            for j in range(len(self.char_list[i].anim_list)-less):
-
+            for j in range(len(self.char_list[i].anim_list) - less):
                 char_size_x = self.char_list[i].anim_list[j].img.get_width
 
                 this_surface.blit(self.char_list[i].anim_list[j].img,
-                                  (xpos - start_x) - (j*(char_size_x*2)) + (i*char_size_x),
-                                   ypos-(j*15))
+                                  (xpos - start_x) - (j * (char_size_x * 2)) + (i * char_size_x),
+                                  ypos - (j * 15))
 
                 print(char_size_x)
 
@@ -226,7 +227,9 @@ class FontFrame(object):
 
         pygame.transform.smoothscale(img, (img_w, img_h))
 
+
 my_message = Wave("Welcome to the MidiZone", RED, 30, font_arcade, True)
+
 
 # class Notice():  # TODO: What would this code do? Does it still need to be here?
 #     def __init__(self, words, colour, drop_colour, size, this_font):
