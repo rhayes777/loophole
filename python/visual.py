@@ -90,11 +90,11 @@ class Letter:
 
 class Wave(NoticePro):
     def __init__(self, words, colour, size, this_font, shrink=False):
-        self.words = words
+        super(Wave, self).__init__(words, colour, size, this_font)
+        # TODO: you'd put words, colour, font and size in this constructor when they can just be passed to super.
+        # TODO: like, because Wave is a child of NoticePro it needs to give NoticePro everything NoticePro needs to
+        # TODO: work
         self.char_list = []
-        self.colour = colour
-        self.size = size
-        self.this_font = this_font
         self.wave_timer = 0
         self.shrink = shrink
 
@@ -108,7 +108,7 @@ class Wave(NoticePro):
             for i in range(len(self.words)):
                 self.char_list.append(ShrinkLetter(self.words[i], self.colour, self.size, self.this_font))
 
-    def blit_text(self, this_surface, xpos, ypos):
+    def blit_text(self, this_surface, xpos, ypos, drop=False):
 
         self.wave_timer = + 1
 
