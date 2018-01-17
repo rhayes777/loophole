@@ -152,15 +152,6 @@ class Wave(NoticePro):
 
 class Shrink(NoticePro):
     def __init__(self, words, colour, size, this_font, is_shrinking=True, drop_colour=BLUE):
-        self.words = words
-        self.colour = colour
-        self.drop_colour = drop_colour
-        self.size = size
-        self.this_font = this_font
-
-
-class Shrink(NoticePro):
-    def __init__(self, words, colour, size, this_font, is_shrinking=True, drop_colour=BLUE):
         # TODO: When you inherit from a call you should call its super constructor. You did have words, colour, size
         # TODO: and this_font set in this constructor. Calling the super constructor saves repeating yourself.
         NoticePro.__init__(self, words, colour, size, this_font)
