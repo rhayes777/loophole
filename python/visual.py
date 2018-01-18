@@ -280,19 +280,22 @@ class Pixel:
         if self.colour == RED:
             self.size += 1
 
-            pygame.draw.ellipse(screen,
-                                [
-                                    get_new_range_value(0, 1200, self.pos_x, 30, 255),  # Red
-                                    get_new_range_value(0, 800, self.pos_y, 20, 140),  # Green
-                                    get_new_range_value(0, 800, self.pos_y, 255, 120)  # Blue
-                                ],
+            color = [
+                get_new_range_value(0, 1200, self.pos_x, 30, 255),  # Red
+                get_new_range_value(0, 800, self.pos_y, 20, 140),  # Green
+                get_new_range_value(0, 800, self.pos_y, 120, 255)  # Blue
+            ]
+
+            print color
+
+            pygame.draw.ellipse(screen, color,
                                 [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 0)
 
             # TODO: What does get_new_range_value do? It seems to be producing values outside of the range 0-255 which
             # TODO: causes 'TypeError: invalid color argument'
             pygame.draw.ellipse(screen,
                                 [
-                                    get_new_range_value(0, 1200, self.pos_x, 255, 120),  # Red
+                                    get_new_range_value(0, 1200, self.pos_x, 120, 255),  # Red
                                     get_new_range_value(0, 800, self.pos_y, 30, 255),  # Green
                                     get_new_range_value(0, 800, self.pos_y, 20, 140)  # Blue
                                 ],
@@ -401,11 +404,12 @@ class Display(Thread):
 
 
 def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
-    old_range = old_range_max - old_range_min
-    new_range = new_range_max - new_range_min
-    new_value = (float(((old_value - old_range_min) * new_range) / old_range)) + new_range_min
-
-    return int(new_value)
+    if old_value > old_range_max:
+        old_value = old_range_max
+    if old_value < old_range_min:
+        old_value = old_range_min
+    return (old_value - old_range_min) * (new_range_max - new_range_min) / (
+        old_range_max - old_range_min) + new_range_min
 
 
 done = False
