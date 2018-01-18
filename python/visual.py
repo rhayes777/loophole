@@ -281,9 +281,9 @@ class Pixel:
             self.size += 1
 
             color = [
-                get_new_range_value(0, 1200, self.pos_x, 30, 255),  # Red
-                get_new_range_value(0, 800, self.pos_y, 20, 140),  # Green
-                get_new_range_value(0, 800, self.pos_y, 120, 255)  # Blue
+                get_new_range_value(0, info.current_w, self.pos_x, 30, 255),  # Red
+                get_new_range_value(0, info.current_h, self.pos_y, 20, 140),  # Green
+                get_new_range_value(0, info.current_h, self.pos_y, 120, 255)  # Blue
             ]
 
             print color
@@ -295,9 +295,9 @@ class Pixel:
             # TODO: causes 'TypeError: invalid color argument'
             pygame.draw.ellipse(screen,
                                 [
-                                    get_new_range_value(0, 1200, self.pos_x, 120, 255),  # Red
-                                    get_new_range_value(0, 800, self.pos_y, 30, 255),  # Green
-                                    get_new_range_value(0, 800, self.pos_y, 20, 140)  # Blue
+                                    get_new_range_value(0, info.current_w, self.pos_x, 120, 255),  # Red
+                                    get_new_range_value(0, info.current_h, self.pos_y, 30, 255),  # Green
+                                    get_new_range_value(0, info.current_h, self.pos_y, 20, 140)  # Blue
                                 ],
                                 [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 4)
 
