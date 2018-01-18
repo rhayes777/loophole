@@ -6,6 +6,7 @@ import effect
 import sys
 import os
 from random import randint
+import messaging
 
 dirname = os.path.dirname(os.path.realpath(__file__))
 
@@ -37,7 +38,6 @@ play = True
 track = None
 combinator = None
 
-
 last_on_buttons = []
 
 
@@ -48,6 +48,9 @@ def listener(status_dict):
     on_buttons = [button for (button, is_on) in status_dict.iteritems() if is_on]
     new_on_buttons = filter(lambda b: b not in last_on_buttons, on_buttons)
     last_on_buttons = on_buttons
+
+    for button in new_on_buttons:
+        messaging.write(messaging.ButtonMessage(button))
 
     if len(new_on_buttons) > 0 and track is not None:
         player.set_program(15, program=116)
@@ -86,8 +89,7 @@ def start_track_with_name(track_name):
     channels = track.channels
 
     def note_on_listener(msg):
-        print msg
-        sys.stdout.flush()
+        messaging.write(messaging.MidiMessage(msg))
 
     for channel in channels:
         channel.note_on_listener = note_on_listener

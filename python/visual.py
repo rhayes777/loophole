@@ -14,6 +14,7 @@ import pygame
 import signal
 import random
 import math
+import messaging
 
 from pygame.locals import *
 
@@ -106,7 +107,7 @@ class Grid():
     def render(self, this_surface):
 
         if self.this_timer <= 10:
-            self.this_timer +=1
+            self.this_timer += 1
         else:
             self.this_timer = 0
 
@@ -116,16 +117,14 @@ class Grid():
             self.segment_list.append(segment)
 
         for i in range(len(self.segment_list)):
-
             self.segment_list[i].render(this_surface)
-
 
 
 class GridSegment():
     def __init__(self, xpos, ypos, zpos, size):
         self.xpos = xpos
         self.ypos = ypos
-        self.zpos = zpos # zpos determines Z value ie. Segment's 'depth into the screen'
+        self.zpos = zpos  # zpos determines Z value ie. Segment's 'depth into the screen'
         self.size = size
 
     def render(self, this_surface):
@@ -137,9 +136,9 @@ class GridSegment():
         if self.size < 1600:
             self.size = self.size * 1.15  # Increase size over time
 
-
         # draw rect boundary line
-        pygame.draw.rect(this_surface, (red, green, blue), (self.xpos - (self.size/2), self.ypos - (self.size/2), self.size, self.size), 3)
+        pygame.draw.rect(this_surface, (red, green, blue),
+                         (self.xpos - (self.size / 2), self.ypos - (self.size / 2), self.size, self.size), 3)
 
         # count = 10
         #
@@ -165,17 +164,19 @@ class GridSegment():
         if self.xpos - (self.size / 2) < 0 or self.size > 1590:
             del self
 
+
 # Create an instance of Grid
-the_grid = Grid(info.current_w/2, info.current_h/2,20,info.current_w/2, info.current_h/2, 40)
+the_grid = Grid(info.current_w / 2, info.current_h / 2, 20, info.current_w / 2, info.current_h / 2, 40)
+
 
 # notice class handles messages displayed to screen using fonts
 class Notice():
     def __init__(self, words, colour, size, this_font):
         self.words = words
-        self.char_list = [] # Character list - to store Letter instances
+        self.char_list = []  # Character list - to store Letter instances
         self.colour = colour
-        self.size = size # size (Font size)
-        self.this_font = this_font # font
+        self.size = size  # size (Font size)
+        self.this_font = this_font  # font
 
         # append each Letter instance to char_list
         for i in range(len(self.words)):
@@ -184,18 +185,19 @@ class Notice():
     # draw text
     def blit_text(self, this_surface, xpos, ypos, drop=False):
 
-        #iterate through each Letter in char_list
+        # iterate through each Letter in char_list
         for i in range(len(self.char_list) - 1):
-            char_size_x, char_size_y = self.this_font.size("a") # get size of characters in string
+            char_size_x, char_size_y = self.this_font.size("a")  # get size of characters in string
 
-            text_width, text_height = self.this_font.size(self.words) # get size of text
-            start_x = text_width / 2 # get x-offset (coordinate to start drawing Letters from)
+            text_width, text_height = self.this_font.size(self.words)  # get size of text
+            start_x = text_width / 2  # get x-offset (coordinate to start drawing Letters from)
 
             mouse_shake = get_new_range_value(0, screen.get_height(), mouse_y, 15, 0)
 
             this_surface.blit(self.char_list[i].char_render,
                               (xpos - start_x + (i * char_size_x),
                                ypos + random.randint(0, mouse_shake)))
+
 
 # Letter class stores individual characters in strings in Notices
 class Letter:
@@ -205,31 +207,34 @@ class Letter:
         self.this_font = this_font
         self.char = char
 
-        self.char_render = self.this_font.render(self.char, True, self.colour) # Actual raster render of the character
+        self.char_render = self.this_font.render(self.char, True, self.colour)  # Actual raster render of the character
+
 
 class Wave(Notice, object):
     def __init__(self, words, colour, size, this_font, shrink=False):
         super(Wave, self).__init__(words, colour, size, this_font)
         self.char_list = []
         self.wave_timer = 0
-        self.shrink = shrink # shrinking effect
+        self.shrink = shrink  # shrinking effect
 
         if self.shrink is False:
 
             for i in range(len(self.words)):
-                self.char_list.append(Letter(self.words[i], self.colour, self.size, self.this_font)) # Use normal letters
+                self.char_list.append(
+                    Letter(self.words[i], self.colour, self.size, self.this_font))  # Use normal letters
 
         else:
 
             for i in range(len(self.words)):
-                self.char_list.append(ShrinkLetter(self.words[i], self.colour, self.size, self.this_font)) # Use ShrinkLetters
+                self.char_list.append(
+                    ShrinkLetter(self.words[i], self.colour, self.size, self.this_font))  # Use ShrinkLetters
 
     def blit_text(self, this_surface, xpos, ypos, drop=False):
 
-        self.wave_timer = + 1 # timer
+        self.wave_timer = + 1  # timer
 
         if self.wave_timer > 10:
-            self.wave_timer = 0 # max is 10 so go back to 0
+            self.wave_timer = 0  # max is 10 so go back to 0
 
         for i in range(len(self.char_list)):
             char_size_x, char_size_y = self.this_font.size("a")
@@ -237,15 +242,15 @@ class Wave(Notice, object):
             text_width, text_height = self.this_font.size(self.words)
             start_x = text_width / 2
 
-            wave_add = 10 * (math.sin((i * 10) + display.timer)) # multiply by sin to get wavy variable
+            wave_add = 10 * (math.sin((i * 10) + display.timer))  # multiply by sin to get wavy variable
 
-            if self.shrink is False: # if shrink effect is off just do the wavy effect
+            if self.shrink is False:  # if shrink effect is off just do the wavy effect
 
                 this_surface.blit(self.char_list[i].char_render,
                                   (xpos - start_x + (i * char_size_x),
-                                   ypos + wave_add)) # wav_add determines oscillation in the y-direction
+                                   ypos + wave_add))  # wav_add determines oscillation in the y-direction
 
-            elif self.shrink is True: # if shrink effect is on do the wavy effect and the shrink effect
+            elif self.shrink is True:  # if shrink effect is on do the wavy effect and the shrink effect
 
                 less = display.timer
 
@@ -256,7 +261,6 @@ class Wave(Notice, object):
 
 
 class Shrink(Notice):
-
     def __init__(self, words, colour, size, this_font, is_shrinking=True, drop_colour=BLUE):
         Notice.__init__(self, words, colour, size, this_font)
         self.drop_colour = drop_colour
@@ -282,6 +286,8 @@ class Shrink(Notice):
                                   (xpos - start_x) - (j * (char_size_x * 2)) + (i * char_size_x),
                                   ypos - (j * 15))
 
+
+            print(display.timer)
 
             for j in range(len(self.char_list[i].anim_list) - less):
                 char_size_x = self.char_list[i].anim_list[j].img.get_width
@@ -321,7 +327,9 @@ class FontFrame(object):
 
         pygame.transform.smoothscale(img, (img_w, img_h))
 
+
 my_message = Wave("Welcome to the MidiZone", RED, 30, font_arcade, True)
+
 
 class Pixel:
     def __init__(self, pos_x, pos_y, is_on, size, ref, colour=BLUE):
@@ -333,7 +341,6 @@ class Pixel:
         self.colour = colour
 
     def show(self):
-
         if self.colour == RED:
             self.size += 1
 
@@ -417,11 +424,11 @@ class Display(Thread):
             if len(self.row_queue.queue) > self.num_pixels_y:
                 self.row_queue.get()
 
-            main_timer =+1
+            main_timer = +1
 
             screen.fill(BLACK)
 
-            #render grid
+            # render grid
             the_grid.render(screen)
 
             if self.flashing_now is False:
@@ -493,6 +500,7 @@ def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, 
 done = False
 display = Display()
 
+
 # noinspection PyUnusedLocal
 def stop(*args):
     global done
@@ -517,16 +525,14 @@ def run_for_stdin():
             if event.type == pygame.QUIT:  # If user clicked close
                 done = True  # Flag that we are done so we exit this loop
 
-        while True:
-            message = sys.stdin.readline()
-            if message is None:
-                break
+        for message in messaging.read():
+
             pygame.event.get()
 
-            try:
-                display.queue.put(mido.Message.from_str(message))
-            except IndexError as e:
-                logger.exception(e)
+            if isinstance(message, messaging.MidiMessage):
+                display.queue.put(message.mido_message)
+            elif isinstance(message, messaging.ButtonMessage):
+                print message.button
 
     pygame.quit()
 

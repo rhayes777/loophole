@@ -155,6 +155,10 @@ class Effect(object):
             return InstrumentVersion(track, effect_dict)
         elif name == "tempo_shift":
             return TempoShift(track, effect_dict)
+        elif name == "modulation":
+            pass
+        elif name == "pan":
+            pass
 
         raise AssertionError("No effect named {}".format(name))
 
