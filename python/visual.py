@@ -5,7 +5,6 @@
 # Vector mountains method (midpoint algorhythm)
 # Grid
 
-
 import mido
 from Queue import Queue
 from threading import Thread
@@ -37,9 +36,6 @@ pygame.font.init()
 
 # Loading font
 font_arcade = pygame.font.Font("media/arcadeclassic.ttf", 46)
-
-circle_x = 200
-circle_y = 200
 
 all_dots = []
 
@@ -100,7 +96,7 @@ class GridSegment():
     def __init__(self, xpos, ypos, zpos, size):
         self.xpos = xpos
         self.ypos = ypos
-        self.zpos = zpos
+        self.zpos = zpos # zpos determines Z value ie. Segment's 'depth into the screen'
         self.size = size
 
     def render(self, this_surface):
@@ -110,10 +106,8 @@ class GridSegment():
         blue = 240
 
         if self.size < 1600:
-            self.size = self.size * 1.15
+            self.size = self.size * 1.15  # Increase size over time
 
-        # draw colour fill
-        # pygame.draw.rect(this_surface, (red, green, blue), (self.xpos - (self.size/2), self.ypos - (self.size/2), self.size, self.size))
 
         # draw rect boundary line
         pygame.draw.rect(this_surface, (red, green, blue), (self.xpos - (self.size/2), self.ypos - (self.size/2), self.size, self.size), 3)
@@ -124,31 +118,35 @@ class GridSegment():
         #                  ((self.xpos - (self.size/2)),(self.ypos - (self.size/2)),
         #                   ))
 
+        # if xpos is outside os screen, delete instance
         if self.xpos - (self.size / 2) < 0 or self.size > 1590:
             del self
 
+# Create an instance of Grid
 the_grid = Grid(info.current_w/2, info.current_h/2,20,info.current_w/2, info.current_h/2, 40)
 
 # notice class handles messages displayed to screen using fonts
 class Notice():
     def __init__(self, words, colour, size, this_font):
         self.words = words
-        self.char_list = []
+        self.char_list = [] # Character list - to store Letter instances
         self.colour = colour
-        self.size = size
-        self.this_font = this_font
+        self.size = size # size (Font size)
+        self.this_font = this_font # font
 
+        # append each Letter instance to char_list
         for i in range(len(self.words)):
             self.char_list.append(Letter(self.words[i], self.colour, self.size, self.this_font))
 
-
+    # draw text
     def blit_text(self, this_surface, xpos, ypos, drop=False):
 
+        #iterate through each Letter in char_list
         for i in range(len(self.char_list) - 1):
-            char_size_x, char_size_y = self.this_font.size("a")
+            char_size_x, char_size_y = self.this_font.size("a") # get size of characters in string
 
-            text_width, text_height = self.this_font.size(self.words)
-            start_x = text_width / 2
+            text_width, text_height = self.this_font.size(self.words) # get size of text
+            start_x = text_width / 2 # get x-offset (coordinate to start drawing Letters from)
 
             mouse_shake = get_new_range_value(0, screen.get_height(), mouse_y, 15, 0)
 
@@ -156,7 +154,7 @@ class Notice():
                               (xpos - start_x + (i * char_size_x),
                                ypos + random.randint(0, mouse_shake)))
 
-
+# Letter class stores individual characters in strings in Notices
 class Letter:
     def __init__(self, char, colour, size, this_font):
         self.colour = colour
@@ -164,35 +162,31 @@ class Letter:
         self.this_font = this_font
         self.char = char
 
-        self.char_render = self.this_font.render(self.char, True, self.colour)
+        self.char_render = self.this_font.render(self.char, True, self.colour) # Actual raster render of the character
 
-class Wave(Notice):
-
-    def __init__(self, words, colour, size, this_font, shrink = False):
-        self.words = words
+class Wave(Notice, object):
+    def __init__(self, words, colour, size, this_font, shrink=False):
+        super(Wave, self).__init__(words, colour, size, this_font)
         self.char_list = []
-        self.colour = colour
-        self.size = size
-        self.this_font = this_font
         self.wave_timer = 0
-        self.shrink = shrink
+        self.shrink = shrink # shrinking effect
 
         if self.shrink is False:
 
             for i in range(len(self.words)):
-                self.char_list.append(Letter(self.words[i], self.colour, self.size, self.this_font))
+                self.char_list.append(Letter(self.words[i], self.colour, self.size, self.this_font)) # Use normal letters
 
         else:
 
             for i in range(len(self.words)):
-                self.char_list.append(ShrinkLetter(self.words[i], self.colour, self.size, self.this_font))
+                self.char_list.append(ShrinkLetter(self.words[i], self.colour, self.size, self.this_font)) # Use ShrinkLetters
 
-    def blit_text(self, this_surface, xpos, ypos):
+    def blit_text(self, this_surface, xpos, ypos, drop=False):
 
-        self.wave_timer =+ 1
+        self.wave_timer = + 1 # timer
 
-        if self.wave_timer > 10 :
-            self.wave_timer = 0
+        if self.wave_timer > 10:
+            self.wave_timer = 0 # max is 10 so go back to 0
 
         for i in range(len(self.char_list)):
             char_size_x, char_size_y = self.this_font.size("a")
@@ -200,15 +194,15 @@ class Wave(Notice):
             text_width, text_height = self.this_font.size(self.words)
             start_x = text_width / 2
 
-            wave_add = 10 * (math.sin((i*10) + display.timer))
+            wave_add = 10 * (math.sin((i * 10) + display.timer)) # multiply by sin to get wavy variable
 
-            if self.shrink is False:
+            if self.shrink is False: # if shrink effect is off just do the wavy effect
 
                 this_surface.blit(self.char_list[i].char_render,
                                   (xpos - start_x + (i * char_size_x),
-                                   ypos + wave_add))
+                                   ypos + wave_add)) # wav_add determines oscillation in the y-direction
 
-            elif self.shrink is True:
+            elif self.shrink is True: # if shrink effect is on do the wavy effect and the shrink effect
 
                 less = display.timer
 
@@ -217,19 +211,10 @@ class Wave(Notice):
                                       ((xpos - start_x) + (i * char_size_x * 1.5),
                                        (ypos + wave_add) - (j * 25)))
 
-class Shrink(Notice):
-
-    def __init__(self, words, colour, size, this_font, is_shrinking = True, drop_colour = BLUE):
-        self.words = words
-        self.colour = colour
-        self.drop_colour = drop_colour
-        self.size = size
-        self.this_font = this_font
 
 class Shrink(Notice):
+
     def __init__(self, words, colour, size, this_font, is_shrinking=True, drop_colour=BLUE):
-        # TODO: When you inherit from a call you should call its super constructor. You did have words, colour, size
-        # TODO: and this_font set in this constructor. Calling the super constructor saves repeating yourself.
         Notice.__init__(self, words, colour, size, this_font)
         self.drop_colour = drop_colour
         self.is_shrinking = is_shrinking
@@ -247,19 +232,19 @@ class Shrink(Notice):
 
             less = display.timer
 
-            for j in range(len(self.char_list[i].anim_list)-less):
-
+            for j in range(len(self.char_list[i].anim_list) - less):
                 char_size_x = self.char_list[i].anim_list[j].img.get_width
 
                 this_surface.blit(self.char_list[i].anim_list[j].img,
-                                  (xpos - start_x) - (j*(char_size_x*2)) + (i*char_size_x),
-                                   ypos-(j*15))
+                                  (xpos - start_x) - (j * (char_size_x * 2)) + (i * char_size_x),
+                                  ypos - (j * 15))
 
-                print(char_size_x)
 
             print(display.timer)
 
             for j in range(len(self.char_list[i].anim_list) - less):
+                char_size_x = self.char_list[i].anim_list[j].img.get_width
+
                 this_surface.blit(self.char_list[i].anim_list[j].img,
                                   (xpos - start_x - (j * 25) + (i * char_size_x),
                                    ypos - (j * 15)))
@@ -295,19 +280,7 @@ class FontFrame(object):
 
         pygame.transform.smoothscale(img, (img_w, img_h))
 
-my_message = Wave("Videogames", RED, 30, font_arcade, True)
-
-class Quaver(pygame.sprite.Sprite):
-    def __init__(self):
-        # TODO: this looks weird. self probably shouldn't be passed into the super constructor
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("media/quaver.bmp")
-        self.image.convert()
-        self.image.set_colorkey(PINK_MASK)
-        self.image = pygame.transform.scale(self.image, (100, 100))
-        self.rect = self.image.get_rect()
-        self.rect.center = (screen.get_width() / 2, screen.get_height() / 2)
-
+my_message = Wave("Welcome to the MidiZone", RED, 30, font_arcade, True)
 
 class Pixel:
     def __init__(self, pos_x, pos_y, is_on, size, ref, colour=BLUE):
@@ -323,21 +296,23 @@ class Pixel:
         if self.colour == RED:
             self.size += 1
 
-            pygame.draw.ellipse(screen,
-                                [
-                                    get_new_range_value(0, 1200, self.pos_x, 30, 255),  # Red
-                                    get_new_range_value(0, 800, self.pos_y, 20, 140),  # Green
-                                    get_new_range_value(0, 800, self.pos_y, 255, 120)  # Blue
-                                ],
+            # determine colour based on position
+            color = [
+                get_new_range_value(0, info.current_w, self.pos_x, 30, 255),  # Red
+                get_new_range_value(0, info.current_h, self.pos_y, 20, 140),  # Green
+                get_new_range_value(0, info.current_h, self.pos_y, 120, 255)  # Blue
+            ]
+
+            print color
+
+            pygame.draw.ellipse(screen, color,
                                 [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 0)
 
-            # TODO: What does get_new_range_value do? It seems to be producing values outside of the range 0-255 which
-            # TODO: causes 'TypeError: invalid color argument'
             pygame.draw.ellipse(screen,
                                 [
-                                    get_new_range_value(0, 1200, self.pos_x, 255, 120),  # Red
-                                    get_new_range_value(0, 800, self.pos_y, 30, 255),  # Green
-                                    get_new_range_value(0, 800, self.pos_y, 20, 140)  # Blue
+                                    get_new_range_value(0, info.current_w, self.pos_x, 120, 255),  # Red
+                                    get_new_range_value(0, info.current_h, self.pos_y, 30, 255),  # Green
+                                    get_new_range_value(0, info.current_h, self.pos_y, 20, 140)  # Blue
                                 ],
                                 [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 4)
 
@@ -451,19 +426,16 @@ class Display(Thread):
 
 
 def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
-    old_range = old_range_max - old_range_min
-    new_range = new_range_max - new_range_min
-    new_value = (float(((old_value - old_range_min) * new_range) / old_range)) + new_range_min
-
-    return int(new_value)
+    if old_value > old_range_max:
+        old_value = old_range_max
+    if old_value < old_range_min:
+        old_value = old_range_min
+    return (old_value - old_range_min) * (new_range_max - new_range_min) / (
+        old_range_max - old_range_min) + new_range_min
 
 
 done = False
 display = Display()
-my_quaver = Quaver()
-
-
-# all_sprites.add(my_quaver)
 
 # noinspection PyUnusedLocal
 def stop(*args):
