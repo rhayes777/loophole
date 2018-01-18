@@ -4,11 +4,17 @@ import mido
 import json
 
 
-class ProcessMessage(object):
-    def send(self):
-        print self
-        sys.stdout.flush()
+def read():
+    while True:
+        yield Message.from_string(sys.stdin.readline())
 
+
+def write(message):
+    print message
+    sys.stdout.flush()
+
+
+class Message(object):
     def __repr__(self):
         return self.__str__()
 
@@ -23,7 +29,7 @@ class ProcessMessage(object):
         return globals()[class_name](**json.loads(as_array[1]))
 
 
-class MidiMessage(ProcessMessage, object):
+class MidiMessage(Message, object):
     def __init__(self, mido_message):
         if isinstance(mido_message, str) or isinstance(mido_message, unicode):
             self.mido_message = mido.Message.from_str(mido_message)
@@ -34,7 +40,7 @@ class MidiMessage(ProcessMessage, object):
         return self.mido_message == other.mido_message
 
 
-class ButtonMessage(ProcessMessage, object):
+class ButtonMessage(Message, object):
     def __init__(self, button):
         self.button = button
 
@@ -51,7 +57,7 @@ class MidiTestCase(unittest.TestCase):
         self.assertEqual(self.as_string, str(self.as_message))
 
     def test_from_string(self):
-        self.assertEqual(self.as_message, ProcessMessage.from_string(self.as_string))
+        self.assertEqual(self.as_message, Message.from_string(self.as_string))
 
 
 class ButtonTestCase(unittest.TestCase):
@@ -63,7 +69,7 @@ class ButtonTestCase(unittest.TestCase):
         self.assertEqual(self.as_string, str(self.as_message))
 
     def test_from_string(self):
-        self.assertEqual(self.as_message, ProcessMessage.from_string(self.as_string))
+        self.assertEqual(self.as_message, Message.from_string(self.as_string))
 
 
 if __name__ == "__main__":
