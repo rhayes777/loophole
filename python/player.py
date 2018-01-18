@@ -119,6 +119,10 @@ def note_on(channel=0, note=50, velocity=50):
     keys_port.send(mido.Message('note_on', channel=channel, note=note, velocity=velocity))
 
 
+def set_program(channel=0, program=0):
+    keys_port.send(mido.Message('program_change', program=program, time=0, channel=channel))
+
+
 keys_port = make_port(REFACE)
 drum_port = make_port(MPX)
 
