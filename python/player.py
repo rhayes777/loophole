@@ -193,6 +193,8 @@ class Channel(object):
         self.__intervals = None
         self.__intervals_queue = Queue()
         self.__program = 0
+        self.__modulation = 0
+        self.__pan = 63
         self.key_tracker = None
 
     @property
@@ -205,6 +207,24 @@ class Channel(object):
     def volume(self, volume):
         self.fade_start = None
         self.__volume_queue.put(volume)
+
+    @property
+    def modulation(self):
+        return self.__modulation
+
+    @modulation.setter
+    def modulation(self, modulation):
+        self.__modulation = modulation
+        self.port.send(mido.Message('control_change', channel=self.number, control=1, value=self.__modulation))
+
+    @property
+    def pan(self):
+        return self.__pan
+
+    @pan.setter
+    def pan(self, pan):
+        self.__pan = pan
+        self.port.send(mido.Message('control_change', channel=self.number, control=10, value=self.__modulation))
 
     @property
     def fade_start(self):
