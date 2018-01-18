@@ -6,7 +6,10 @@ import json
 
 def read():
     while True:
-        yield Message.from_string(sys.stdin.readline())
+        line = sys.stdin.readline()
+        if line is None:
+            break
+        yield Message.from_string(line)
 
 
 def write(message):
