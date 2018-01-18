@@ -5,6 +5,10 @@ import json
 
 
 def read():
+    """
+    Read messages. Messages will be returned until readline returns None.
+    :return: Message
+    """
     while True:
         line = sys.stdin.readline()
         if line is None:
@@ -13,11 +17,16 @@ def read():
 
 
 def write(message):
+    """
+    Write a message to stdout
+    :param message: Message
+    """
     print message
     sys.stdout.flush()
 
 
 class Message(object):
+    """A message to be passed from stdout to stdin"""
     def __repr__(self):
         return self.__str__()
 
@@ -33,6 +42,7 @@ class Message(object):
 
 
 class MidiMessage(Message, object):
+    """A message wrapping a mido_message"""
     def __init__(self, mido_message):
         if isinstance(mido_message, str) or isinstance(mido_message, unicode):
             self.mido_message = mido.Message.from_str(mido_message)
@@ -44,6 +54,7 @@ class MidiMessage(Message, object):
 
 
 class ButtonMessage(Message, object):
+    """A message wrapping a button message"""
     def __init__(self, button):
         self.button = button
 
