@@ -6,6 +6,7 @@ import effect
 import sys
 import os
 from random import randint
+import messaging
 
 dirname = os.path.dirname(os.path.realpath(__file__))
 
@@ -86,8 +87,7 @@ def start_track_with_name(track_name):
     channels = track.channels
 
     def note_on_listener(msg):
-        print msg
-        sys.stdout.flush()
+        messaging.MidiMessage(msg).send()
 
     for channel in channels:
         channel.note_on_listener = note_on_listener
