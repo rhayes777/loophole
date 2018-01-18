@@ -26,3 +26,8 @@ LIKE THIS:
 3_piano.mid
 
 figure out a way of saving midi clips with their correct midi data!
+
+
+STANDARD MIDI CONTINUOUS CONTROLLERS:
+
+http://www.nortonmusic.com/midi_cc.html
