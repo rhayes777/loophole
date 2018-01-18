@@ -15,6 +15,8 @@ import signal
 import random
 import math
 
+from pygame.locals import *
+
 logging.basicConfig()
 
 logger = logging.getLogger(__name__)
@@ -52,9 +54,38 @@ all_sprites = pygame.sprite.Group()
 
 main_timer = 0
 
-#Background stuff
+# Fullscreen 'flash' effect
 
-#Grid class draws a "3D" grid as a background
+class Flash():
+    def __init__(self, time):
+
+        self.time = time
+        self.blit_surface = pygame.Surface((info.current_w, info.current_h))
+
+        self.blit_surface.fill((255,255,255))
+        self.timer = -2
+
+    def make_flash(self):
+
+        self.timer = self.time
+
+    def render(self, render_to):
+        self.render_to = render_to
+
+        if self.timer >= 0:
+            alpha = get_new_range_value(1, self.time, self.timer, 0, 255)
+            print(alpha)
+            self.timer -= 1
+            self.blit_surface.set_alpha(alpha)
+            self.render_to.blit(self.blit_surface, (0, 0))
+
+    def is_flashing(self):
+        return self.timer > 1 # if timer is greater than 1, is_flashing is true
+
+
+# Background stuff
+
+# Grid class draws a "3D" grid as a background
 
 class Grid():
     def __init__(self, start_x, start_y, start_size, end_center, end_size, gap):
@@ -84,8 +115,6 @@ class Grid():
 
             self.segment_list.append(segment)
 
-        print(self.this_timer)
-
         for i in range(len(self.segment_list)):
 
             self.segment_list[i].render(this_surface)
@@ -111,6 +140,20 @@ class GridSegment():
 
         # draw rect boundary line
         pygame.draw.rect(this_surface, (red, green, blue), (self.xpos - (self.size/2), self.ypos - (self.size/2), self.size, self.size), 3)
+
+        # count = 10
+        #
+        # for i in range(0, count):
+        #     start_pos_x = self.xpos - (self.size / 2)
+        #     end_pos_x = self.xpos + (self.size / 2)
+        #     start_pos_y = self.ypos - (self.size / 2)
+        #     end_pos_y = self.ypos + (self.size / 2)
+        #     gap = (self.size / count)
+        #     pygame.draw.line(this_surface, (red, green, blue),
+        #                      (start_pos_x + gap * i, start_pos_y),(end_pos_x + gap * i, start_pos_y + gap * i), 1)
+        #     pygame.draw.line(this_surface, (red, green, blue),
+        #                      (start_pos_y + gap * i, start_pos_x + gap * i),(end_pos_y + gap * i, start_pos_x + gap * i), 1)
+
 
         # # draw lines to next rect
         # pygame.draw.line(this_surface,
@@ -240,8 +283,6 @@ class Shrink(Notice):
                                   ypos - (j * 15))
 
 
-            print(display.timer)
-
             for j in range(len(self.char_list[i].anim_list) - less):
                 char_size_x = self.char_list[i].anim_list[j].img.get_width
 
@@ -303,8 +344,6 @@ class Pixel:
                 get_new_range_value(0, info.current_h, self.pos_y, 120, 255)  # Blue
             ]
 
-            print color
-
             pygame.draw.ellipse(screen, color,
                                 [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 0)
 
@@ -336,6 +375,9 @@ class Display(Thread):
 
         self.timer = 0
 
+        self.flash = Flash(15)
+        self.flashing_now = False
+
     def new_row(self):
         """
         Created a new row
@@ -347,6 +389,8 @@ class Display(Thread):
                 Pixel((self.grid_size_x / 2) + self.grid_size_x * i, (self.grid_size_y / 2), False, self.grid_size_x,
                       i))
         return row
+
+
         # + (self.grid_size_y * j)
 
     def run(self):
@@ -380,6 +424,12 @@ class Display(Thread):
             #render grid
             the_grid.render(screen)
 
+            if self.flashing_now is False:
+                self.flash.make_flash()
+                self.flashing_now = self.flash.is_flashing()
+
+            self.flash.render(screen)
+
             # mouse_x, mouse_y = pygame.mouse.get_pos()
             # the_grid.start_x = mouse_x
             # the_grid.start_y = mouse_y
@@ -388,6 +438,7 @@ class Display(Thread):
                 self.timer -= 1
             else:
                 self.timer = 6
+
 
             # Draw all those objects
             self.draw_objects()
@@ -423,6 +474,11 @@ class Display(Thread):
 
         # Draw text
         my_message.blit_text(screen, screen.get_width() / 2, screen.get_height() / 2)
+
+
+
+
+
 
 
 def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
