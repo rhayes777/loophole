@@ -30,22 +30,34 @@ class MidiMessage(ProcessMessage, object):
         else:
             self.mido_message = mido_message
 
-    # def __repr__(self):
-    #     return "{},{}".format(super(MidiMessage, self).__repr__(), self.mido_message)
-
     def __eq__(self, other):
         return self.mido_message == other.mido_message
 
 
-class ButtonPress(ProcessMessage, object):
+class ButtonMessage(ProcessMessage, object):
     def __init__(self, button):
         self.button = button
+
+    def __eq__(self, other):
+        return self.button == other.button
 
 
 class MidiTestCase(unittest.TestCase):
     def setUp(self):
         self.as_string = 'MidiMessage,{"mido_message": "note_on channel=0 note=0 velocity=64 time=0"}'
         self.as_message = MidiMessage(mido.Message(type="note_on"))
+
+    def test_midi_to_string(self):
+        self.assertEqual(self.as_string, str(self.as_message))
+
+    def test_from_string(self):
+        self.assertEqual(self.as_message, ProcessMessage.from_string(self.as_string))
+
+
+class ButtonTestCase(unittest.TestCase):
+    def setUp(self):
+        self.as_string = 'ButtonMessage,{"button": "up"}'
+        self.as_message = ButtonMessage("up")
 
     def test_midi_to_string(self):
         self.assertEqual(self.as_string, str(self.as_message))
