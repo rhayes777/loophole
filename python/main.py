@@ -38,10 +38,21 @@ track = None
 combinator = None
 
 
+last_on_buttons = []
+
+
 # Function to listen for changes to button state
 def listener(status_dict):
+    global last_on_buttons
     global track_number
     on_buttons = [button for (button, is_on) in status_dict.iteritems() if is_on]
+    new_on_buttons = filter(lambda b: b not in last_on_buttons, on_buttons)
+    last_on_buttons = on_buttons
+
+    if len(new_on_buttons) > 0 and track is not None:
+        player.set_program(15, program=116)
+        player.note_on(15, velocity=127)
+
     if dancemat.Button.start in on_buttons:
         track_number += 1
         track.stop()
