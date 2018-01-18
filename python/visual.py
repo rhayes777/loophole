@@ -55,19 +55,18 @@ all_sprites = pygame.sprite.Group()
 
 main_timer = 0
 
+
 # Fullscreen 'flash' effect
 
 class Flash():
     def __init__(self, time):
-
         self.time = time
         self.blit_surface = pygame.Surface((info.current_w, info.current_h))
 
-        self.blit_surface.fill((255,255,255))
+        self.blit_surface.fill((255, 255, 255))
         self.timer = -2
 
     def make_flash(self):
-
         self.timer = self.time
 
     def render(self, render_to):
@@ -81,7 +80,7 @@ class Flash():
             self.render_to.blit(self.blit_surface, (0, 0))
 
     def is_flashing(self):
-        return self.timer > 1 # if timer is greater than 1, is_flashing is true
+        return self.timer > 1  # if timer is greater than 1, is_flashing is true
 
 
 # Background stuff
@@ -286,7 +285,6 @@ class Shrink(Notice):
                                   (xpos - start_x) - (j * (char_size_x * 2)) + (i * char_size_x),
                                   ypos - (j * 15))
 
-
             print(display.timer)
 
             for j in range(len(self.char_list[i].anim_list) - less):
@@ -446,7 +444,6 @@ class Display(Thread):
             else:
                 self.timer = 6
 
-
             # Draw all those objects
             self.draw_objects()
 
@@ -481,11 +478,6 @@ class Display(Thread):
 
         # Draw text
         my_message.blit_text(screen, screen.get_width() / 2, screen.get_height() / 2)
-
-
-
-
-
 
 
 def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
@@ -532,7 +524,8 @@ def run_for_stdin():
             if isinstance(message, messaging.MidiMessage):
                 display.queue.put(message.mido_message)
             elif isinstance(message, messaging.ButtonMessage):
-                print message.button
+                display.flash.make_flash()
+                display.flashing_now = display.flash.is_flashing()
 
     pygame.quit()
 
