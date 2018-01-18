@@ -1,3 +1,11 @@
+##
+## TO DO
+##
+## Background -
+# Vector mountains method (midpoint algorhythm)
+# Grid
+
+
 import mido
 from Queue import Queue
 from threading import Thread
@@ -48,10 +56,81 @@ all_sprites = pygame.sprite.Group()
 
 main_timer = 0
 
-#notice class handles messages displayed to screen using fonts
+#Background stuff
+
+#Grid class draws a "3D" grid as a background
+
+class Grid():
+    def __init__(self, start_x, start_y, start_size, end_center, end_size, gap):
+        self.start_x = start_x
+        self.start_y = start_y
+        self.start_size = start_size
+        self.end_center = end_center
+        self.end_size = end_size
+        self.gap = gap
+        self.this_timer = 0
+
+        self.segment_list = []
+
+        segment = GridSegment(self.start_x, self.start_y, 1, 20)
+
+        self.segment_list.append(segment)
+
+    def render(self, this_surface):
+
+        if self.this_timer <= 10:
+            self.this_timer +=1
+        else:
+            self.this_timer = 0
+
+        if self.this_timer is 5:
+            segment = GridSegment(self.start_x, self.start_y, 1, 20)
+
+            self.segment_list.append(segment)
+
+        print(self.this_timer)
+
+        for i in range(len(self.segment_list)):
+
+            self.segment_list[i].render(this_surface)
+
+
+
+class GridSegment():
+    def __init__(self, xpos, ypos, zpos, size):
+        self.xpos = xpos
+        self.ypos = ypos
+        self.zpos = zpos
+        self.size = size
+
+    def render(self, this_surface):
+
+        red = 230
+        green = 230
+        blue = 240
+
+        if self.size < 1600:
+            self.size = self.size * 1.15
+
+        # draw colour fill
+        # pygame.draw.rect(this_surface, (red, green, blue), (self.xpos - (self.size/2), self.ypos - (self.size/2), self.size, self.size))
+
+        # draw rect boundary line
+        pygame.draw.rect(this_surface, (red, green, blue), (self.xpos - (self.size/2), self.ypos - (self.size/2), self.size, self.size), 3)
+
+        # # draw lines to next rect
+        # pygame.draw.line(this_surface,
+        #                  (red, green, blue),
+        #                  ((self.xpos - (self.size/2)),(self.ypos - (self.size/2)),
+        #                   ))
+
+        if self.xpos - (self.size / 2) < 0 or self.size > 1590:
+            del self
+
+the_grid = Grid(info.current_w/2, info.current_h/2,20,info.current_w/2, info.current_h/2, 40)
 
 # notice class handles messages displayed to screen using fonts
-class NoticePro(object):
+class Notice():
     def __init__(self, words, colour, size, this_font):
         self.words = words
         self.char_list = []
@@ -87,7 +166,7 @@ class Letter:
 
         self.char_render = self.this_font.render(self.char, True, self.colour)
 
-class Wave(NoticePro):
+class Wave(Notice):
 
     def __init__(self, words, colour, size, this_font, shrink = False):
         self.words = words
@@ -137,18 +216,8 @@ class Wave(NoticePro):
                     this_surface.blit(self.char_list[i].anim_list[j].img,
                                       ((xpos - start_x) + (i * char_size_x * 1.5),
                                        (ypos + wave_add) - (j * 25)))
-#
-# class Wave_Letter():
-#
-#     def __init__(self, char, colour, size, this_font):
-#
-#         self.colour = colour
-#         self.size = size
-#         self.this_font = this_font
-#         self.char = char
 
-
-class Shrink(NoticePro):
+class Shrink(Notice):
 
     def __init__(self, words, colour, size, this_font, is_shrinking = True, drop_colour = BLUE):
         self.words = words
@@ -157,11 +226,11 @@ class Shrink(NoticePro):
         self.size = size
         self.this_font = this_font
 
-class Shrink(NoticePro):
+class Shrink(Notice):
     def __init__(self, words, colour, size, this_font, is_shrinking=True, drop_colour=BLUE):
         # TODO: When you inherit from a call you should call its super constructor. You did have words, colour, size
         # TODO: and this_font set in this constructor. Calling the super constructor saves repeating yourself.
-        NoticePro.__init__(self, words, colour, size, this_font)
+        Notice.__init__(self, words, colour, size, this_font)
         self.drop_colour = drop_colour
         self.is_shrinking = is_shrinking
         self.char_list = []
@@ -226,33 +295,7 @@ class FontFrame(object):
 
         pygame.transform.smoothscale(img, (img_w, img_h))
 
-my_message = Wave("Welcome to the MidiZone", RED, 30, font_arcade, True)
-
-# class Notice():  # TODO: What would this code do? Does it still need to be here?
-#     def __init__(self, words, colour, drop_colour, size, this_font):
-#         self.words = words
-#         self.colour = colour
-#         self.drop_colour = drop_colour
-#         self.size = size
-#         self.this_font = this_font
-#
-#         self.main_render = self.this_font.render(self.words, True, self.colour)
-#
-#         self.drop_render = self.this_font.render(self.words, True, self.drop_colour)
-#
-#     def blit_text(self, this_surface, xpos, ypos, shadow = False):
-#         if shadow is True:
-#             this_surface.blit(self.drop_render,
-#                               (xpos - (self.drop_render.get_width() / 2) + 8,
-#                                ypos - (self.drop_render.get_height() / 2) + 8))
-#
-#         this_surface.blit(self.main_render,
-#                     (xpos - (self.main_render.get_width() / 2),
-#                      ypos - (self.main_render.get_height() / 2)))
-#
-#
-#
-
+my_message = Wave("Videogames", RED, 30, font_arcade, True)
 
 class Quaver(pygame.sprite.Sprite):
     def __init__(self):
@@ -276,12 +319,6 @@ class Pixel:
         self.colour = colour
 
     def show(self):
-        # if self.colour == BLUE:
-        # pygame.draw.ellipse(screen, self.colour,
-        #                 [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 2)
-
-        # Gradually shifts colour of 'RED' (On) Pixels as they move up the screen
-        # Get_new_range_value scales y position to a 0-255 RGB range
 
         if self.colour == RED:
             self.size += 1
@@ -361,9 +398,16 @@ class Display(Thread):
             if len(self.row_queue.queue) > self.num_pixels_y:
                 self.row_queue.get()
 
+            main_timer =+1
+
             screen.fill(BLACK)
 
-            # mouse_x, mouse_y = pygame.mouse.get_pos()  TODO: this line wasn't doing anything
+            #render grid
+            the_grid.render(screen)
+
+            # mouse_x, mouse_y = pygame.mouse.get_pos()
+            # the_grid.start_x = mouse_x
+            # the_grid.start_y = mouse_y
 
             if self.timer >= 1:
                 self.timer -= 1
