@@ -16,8 +16,6 @@ import random
 import math
 import messaging
 
-from pygame.locals import *
-
 logging.basicConfig()
 
 logger = logging.getLogger(__name__)
@@ -87,7 +85,7 @@ class Flash():
 
 # Grid class draws a "3D" grid as a background
 
-class Grid():
+class Grid(object):
     def __init__(self, start_x, start_y, start_size, end_center, end_size, gap):
         self.start_x = start_x
         self.start_y = start_y
@@ -119,7 +117,7 @@ class Grid():
             self.segment_list[i].render(this_surface)
 
 
-class GridSegment():
+class GridSegment(object):
     def __init__(self, xpos, ypos, zpos, size):
         self.xpos = xpos
         self.ypos = ypos
@@ -133,7 +131,8 @@ class GridSegment():
         blue = 240
 
         if self.size < 1600:
-            self.size = self.size * 1.15  # Increase size over time
+            # TODO: you can use this shorthand instead of self.size = 1.15 * self.size
+            self.size *= 1.15  # Increase size over time
 
         # draw rect boundary line
         pygame.draw.rect(this_surface, (red, green, blue),
@@ -169,7 +168,7 @@ the_grid = Grid(info.current_w / 2, info.current_h / 2, 20, info.current_w / 2, 
 
 
 # notice class handles messages displayed to screen using fonts
-class Notice():
+class Notice(object):
     def __init__(self, words, colour, size, this_font):
         self.words = words
         self.char_list = []  # Character list - to store Letter instances
@@ -199,7 +198,7 @@ class Notice():
 
 
 # Letter class stores individual characters in strings in Notices
-class Letter:
+class Letter(object):
     def __init__(self, char, colour, size, this_font):
         self.colour = colour
         self.size = size
@@ -395,9 +394,6 @@ class Display(Thread):
                       i))
         return row
 
-
-        # + (self.grid_size_y * j)
-
     def run(self):
         """
         Runs the game loop
@@ -422,8 +418,6 @@ class Display(Thread):
             if len(self.row_queue.queue) > self.num_pixels_y:
                 self.row_queue.get()
 
-            main_timer = +1
-
             screen.fill(BLACK)
 
             # render grid
@@ -434,10 +428,6 @@ class Display(Thread):
                 self.flashing_now = self.flash.is_flashing()
 
             self.flash.render(screen)
-
-            # mouse_x, mouse_y = pygame.mouse.get_pos()
-            # the_grid.start_x = mouse_x
-            # the_grid.start_y = mouse_y
 
             if self.timer >= 1:
                 self.timer -= 1
