@@ -50,6 +50,8 @@ def listener(status_dict):
     last_on_buttons = on_buttons
 
     for button in new_on_buttons:
+        track.mid.ticks_per_beat += 1
+        print track.mid.ticks_per_beat
         messaging.write(messaging.ButtonMessage(button))
 
     if len(new_on_buttons) > 0 and track is not None:
