@@ -50,6 +50,10 @@ class Combinator(object):
     def dict(self):
         return map(Combo.dict, self.combos)
 
+    def stop(self):
+        for combo in self.combos:
+            combo.stop()
+
 
 class Combo(object):
     """Maps a set of buttons to a set of effects"""
@@ -84,6 +88,10 @@ class Combo(object):
     def start(self):
         for effect in self.effects:
             effect.start()
+
+    def stop(self):
+        for effect in self.effects:
+            effect.stop()
 
     def play(self):
         for effect in self.effects:
@@ -148,7 +156,10 @@ class Effect(Thread):
         raise AssertionError("{}.default not overridden".format(self.name))
 
     def play(self):
-        self.queue.put("start")
+        self.queue.put("play")
+
+    def stop(self):
+        self.queue.put("stop")
 
     def run(self):
         is_applied = False
@@ -156,11 +167,13 @@ class Effect(Thread):
         while True:
             if not self.queue.empty():
                 message = self.queue.get()
-                if message == "start":
+                if message == "play":
                     time = 0.
                     if not is_applied:
                         is_applied = True
                         self.apply()
+                elif message == "stop":
+                    break
             if time >= self.length and is_applied:
                 is_applied = False
                 self.remove()

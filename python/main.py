@@ -84,6 +84,7 @@ def start_track_with_name(track_name):
     def stop(*args):
         global play
         track.stop()
+        combinator.stop()
         play = False
 
     signal.signal(signal.SIGINT, stop)
