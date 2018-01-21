@@ -156,16 +156,15 @@ class Effect(Thread):
         while True:
             if not self.queue.empty():
                 message = self.queue.get()
-                print message
                 if message == "start":
                     time = 0.
                     if not is_applied:
                         is_applied = True
                         self.apply()
-            if time > self.length and is_applied:
+            if time >= self.length and is_applied:
                 is_applied = False
                 self.remove()
-            if time > self.length:
+            if time <= self.length:
                 time += INTERVAL
             sleep(INTERVAL)
 
