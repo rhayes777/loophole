@@ -7,6 +7,7 @@ from time import sleep
 from Queue import Queue
 
 INTERVAL = 0.1
+EFFECT_LENGTH = 2
 
 logging.basicConfig()
 
@@ -118,7 +119,7 @@ class Effect(Thread):
         super(Effect, self).__init__()
         self.name = effect_dict["name"]
         self.value = effect_dict["value"]
-        self.length = (effect_dict["length"] if "length" in effect_dict else 5)
+        self.length = (effect_dict["length"] if "length" in effect_dict else EFFECT_LENGTH)
         self.is_started = False
         self.queue = Queue()
 
@@ -323,11 +324,23 @@ class TempoShift(TrackEffect):
 
 
 class Modulation(ChannelEffect):
-    pass  # TODO
+    def apply(self):
+        for channel in self.channels:
+            channel.modulation = self.value
+
+    def remove(self):
+        for channel in self.channels:
+            channel.modulation = 0
 
 
 class Pan(ChannelEffect):
-    pass  # TODO
+    def apply(self):
+        for channel in self.channels:
+            channel.pan = self.value
+
+    def remove(self):
+        for channel in self.channels:
+            channel.pan = 63
 
 
 if __name__ == "__main__":

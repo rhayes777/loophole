@@ -106,4 +106,4 @@ mat.set_button_listener(listener)
 # Keep reading forever
 while play:
     mat.read()
-    clock.tick(5)
+    clock.tick(40)
