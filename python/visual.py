@@ -89,35 +89,96 @@ class Flash():
 # Grid class draws a "3D" grid as a background
 
 class Grid():
-    def __init__(self, start_x, start_y, start_size, end_center, end_size, gap):
+    def __init__(self, start_x, start_y, size, gap):
         self.start_x = start_x
         self.start_y = start_y
-        self.start_size = start_size
-        self.end_center = end_center
-        self.end_size = end_size
+        self.size = size
         self.gap = gap
         self.this_timer = 0
 
         self.segment_list = []
 
-        segment = GridSegment(self.start_x, self.start_y, 1, 20)
+        segment = GridSegment(self.start_x, self.start_y, 1, self.size)
 
         self.segment_list.append(segment)
 
-    def render(self, this_surface):
+    def render(self, this_surface, (x_center, y_center)):
+        self.xpos = x_center
+        self.ypos = y_center
 
-        if self.this_timer <= 10:
+        # draw lines to next segment
+
+        red = 230
+        green = 230
+        blue = 240
+
+        line_end = 1000
+
+        # pygame.draw.line(this_surface,
+        #                  (red, green, blue),
+        #                  (self.xpos, self.ypos),
+        #                  (self.xpos - line_end , self.ypos - line_end))
+        #
+        # pygame.draw.line(this_surface,
+        #                  (red, green, blue),
+        #                  (self.xpos, self.ypos),
+        #                  (self.xpos - line_end, self.ypos + line_end))
+        #
+        # pygame.draw.line(this_surface,
+        #                  (red, green, blue),
+        #                  (self.xpos, self.ypos),
+        #                  (self.xpos + line_end, self.ypos + line_end))
+        #
+        # pygame.draw.line(this_surface,
+        #                  (red, green, blue),
+        #                  (self.xpos, self.ypos),
+        #                  (self.xpos + line_end, self.ypos - line_end))
+
+        if self.this_timer <= 5:
             self.this_timer += 1
         else:
             self.this_timer = 0
 
         if self.this_timer is 5:
-            segment = GridSegment(self.start_x, self.start_y, 1, 20)
+            segment = GridSegment(self.start_x, self.start_y, 1, self.size)
 
             self.segment_list.append(segment)
 
         for i in range(len(self.segment_list)):
             self.segment_list[i].render(this_surface)
+
+            start_pos_x = self.segment_list[i].xpos - (self.segment_list[i].size / 2)
+            start_pos_y = self.segment_list[i].ypos - (self.segment_list[i].size / 2)
+
+            end_pos_x = self.segment_list[i].xpos + (self.segment_list[i].size / 2)
+            end_pos_y = self.segment_list[i].ypos + (self.segment_list[i].size / 2)
+
+            next_start_pos_x = self.segment_list[i-1].xpos - (self.segment_list[i-1].size / 2)
+            next_start_pos_y = self.segment_list[i-1].ypos - (self.segment_list[i-1].size / 2)
+
+            next_end_pos_x = self.segment_list[i-1].xpos + (self.segment_list[i-1].size / 2)
+            next_end_pos_y = self.segment_list[i-1].ypos + (self.segment_list[i-1].size / 2)
+
+            for j in range(0, 6):
+
+                gap = (self.segment_list[i].size / self.segment_list[i].count)
+                next_gap = (self.segment_list[i-1].size / self.segment_list[i-1].count)
+
+                pygame.draw.line(this_surface, (red, green, blue),
+                                 (start_pos_x + (gap * j), start_pos_y),
+                                 (next_start_pos_x + (next_gap * j), next_start_pos_y), 1)
+
+                pygame.draw.line(this_surface, (red, green, blue),
+                                 (start_pos_x + (gap * j), end_pos_y),
+                                 (next_start_pos_x + (next_gap * j), next_end_pos_y), 1)
+
+                pygame.draw.line(this_surface, (red, green, blue),
+                                 (start_pos_x, start_pos_y + (gap * j)),
+                                 (next_start_pos_x, next_start_pos_y  + (next_gap * j)), 1)
+
+                pygame.draw.line(this_surface, (red, green, blue),
+                                 (end_pos_x, start_pos_y + (gap * j)),
+                                 (next_end_pos_x, next_start_pos_y  + (next_gap * j)), 1)
 
 
 class GridSegment():
@@ -126,6 +187,7 @@ class GridSegment():
         self.ypos = ypos
         self.zpos = zpos  # zpos determines Z value ie. Segment's 'depth into the screen'
         self.size = size
+        self.count = 5
 
     def render(self, this_surface):
 
@@ -133,40 +195,39 @@ class GridSegment():
         green = 230
         blue = 240
 
-        if self.size < 1600:
+        if self.size < 4500:
             self.size = self.size * 1.15  # Increase size over time
 
-        # draw rect boundary line
-        pygame.draw.rect(this_surface, (red, green, blue),
-                         (self.xpos - (self.size / 2), self.ypos - (self.size / 2), self.size, self.size), 3)
+            # draw rect boundary line
+            pygame.draw.rect(this_surface, (red, green, blue),
+                             (self.xpos - (self.size / 2), self.ypos - (self.size / 2), self.size, self.size), 3)
 
-        # count = 10
-        #
-        # for i in range(0, count):
-        #     start_pos_x = self.xpos - (self.size / 2)
-        #     end_pos_x = self.xpos + (self.size / 2)
-        #     start_pos_y = self.ypos - (self.size / 2)
-        #     end_pos_y = self.ypos + (self.size / 2)
-        #     gap = (self.size / count)
-        #     pygame.draw.line(this_surface, (red, green, blue),
-        #                      (start_pos_x + gap * i, start_pos_y),(end_pos_x + gap * i, start_pos_y + gap * i), 1)
-        #     pygame.draw.line(this_surface, (red, green, blue),
-        #                      (start_pos_y + gap * i, start_pos_x + gap * i),(end_pos_y + gap * i, start_pos_x + gap * i), 1)
+            # draw a grid of lines to size self.size centered around (self.xpos, self.ypos)
+            # self.count determines the number of lines
+            for i in range(0, self.count):
+                start_pos_x = self.xpos - (self.size / 2)
+                end_pos_x = self.xpos + (self.size / 2)
+                start_pos_y = self.ypos - (self.size / 2)
+                end_pos_y = self.ypos + (self.size / 2)
+                gap = (self.size / self.count)
+                pygame.draw.line(this_surface, (red, green, blue),
+                                 (start_pos_x + (gap * i), start_pos_y), (start_pos_x + (gap * i), end_pos_y), 1)
+                pygame.draw.line(this_surface, (red, green, blue),
+                                 (start_pos_x, start_pos_y + (gap * i)), (end_pos_x, start_pos_y + (gap * i)), 1)
 
 
-        # # draw lines to next rect
-        # pygame.draw.line(this_surface,
-        #                  (red, green, blue),
-        #                  ((self.xpos - (self.size/2)),(self.ypos - (self.size/2)),
-        #                   ))
+
+
+
+
+
 
         # if xpos is outside os screen, delete instance
         if self.xpos - (self.size / 2) < 0 or self.size > 1590:
             del self
 
-
 # Create an instance of Grid
-the_grid = Grid(info.current_w / 2, info.current_h / 2, 20, info.current_w / 2, info.current_h / 2, 40)
+the_grid = Grid(info.current_w / 2, info.current_h / 2, 10, 5)
 
 
 # notice class handles messages displayed to screen using fonts
@@ -385,6 +446,8 @@ class Display(Thread):
         self.flash = Flash(15)
         self.flashing_now = False
 
+        self.draw_foreground = True
+
     def new_row(self):
         """
         Created a new row
@@ -426,10 +489,13 @@ class Display(Thread):
 
             main_timer = +1
 
+            check_input()
+
             screen.fill(BLACK)
 
             # render grid
-            the_grid.render(screen)
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            the_grid.render(screen, (screen.get_width() / 2, screen.get_height() / 2))
 
             if self.flashing_now is False:
                 self.flash.make_flash()
@@ -437,18 +503,14 @@ class Display(Thread):
 
             self.flash.render(screen)
 
-            # mouse_x, mouse_y = pygame.mouse.get_pos()
-            # the_grid.start_x = mouse_x
-            # the_grid.start_y = mouse_y
-
             if self.timer >= 1:
                 self.timer -= 1
             else:
                 self.timer = 6
 
-
             # Draw all those objects
-            self.draw_objects()
+            if self.draw_foreground is True:
+                self.draw_objects()
 
             # Actually update the display
             pygame.display.update()
@@ -496,6 +558,10 @@ def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, 
     return (old_value - old_range_min) * (new_range_max - new_range_min) / (
         old_range_max - old_range_min) + new_range_min
 
+def check_input():
+    pressed = pygame.key.get_pressed()
+    if pressed[pygame.K_1]:
+        display.draw_foreground = not display.draw_foreground
 
 done = False
 display = Display()
