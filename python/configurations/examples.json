@@ -29,11 +29,9 @@
     ],
     "effects": [
       {
-        "name": "intervals",
-        "value": [
-          -5
-        ],
-        "instrument_group": "melodic"
+        "name": "pan",
+        "value": 0,
+        "instrument_group": "all"
       }
     ]
   },
@@ -43,11 +41,9 @@
     ],
     "effects": [
       {
-        "name": "intervals",
-        "value": [
-          5
-        ],
-        "instrument_group": "melodic"
+        "name": "pan",
+        "value": 127,
+        "instrument_group": "all"
       }
     ]
   },
@@ -69,8 +65,9 @@
     ],
     "effects": [
       {
-        "name": "tempo_shift",
-        "value": 1.5
+        "name": "modulation",
+        "value": 127,
+        "instrument_group": "melodic"
       }
     ]
   },

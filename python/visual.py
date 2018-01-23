@@ -16,8 +16,6 @@ import random
 import math
 import messaging
 
-from pygame.locals import *
-
 logging.basicConfig()
 
 logger = logging.getLogger(__name__)
@@ -55,19 +53,18 @@ all_sprites = pygame.sprite.Group()
 
 main_timer = 0
 
+
 # Fullscreen 'flash' effect
 
 class Flash():
     def __init__(self, time):
-
         self.time = time
         self.blit_surface = pygame.Surface((info.current_w, info.current_h))
 
-        self.blit_surface.fill((255,255,255))
+        self.blit_surface.fill((255, 255, 255))
         self.timer = -2
 
     def make_flash(self):
-
         self.timer = self.time
 
     def render(self, render_to):
@@ -81,15 +78,16 @@ class Flash():
             self.render_to.blit(self.blit_surface, (0, 0))
 
     def is_flashing(self):
-        return self.timer > 1 # if timer is greater than 1, is_flashing is true
+        return self.timer > 1  # if timer is greater than 1, is_flashing is true
 
 
 # Background stuff
 
 # Grid class draws a "3D" grid as a background
-
 class Grid():
     def __init__(self, start_x, start_y, size, gap):
+
+
         self.start_x = start_x
         self.start_y = start_y
         self.size = size
@@ -181,7 +179,7 @@ class Grid():
                                  (next_end_pos_x, next_start_pos_y  + (next_gap * j)), 1)
 
 
-class GridSegment():
+class GridSegment(object):
     def __init__(self, xpos, ypos, zpos, size):
         self.xpos = xpos
         self.ypos = ypos
@@ -196,7 +194,7 @@ class GridSegment():
         blue = 240
 
         if self.size < 4500:
-            self.size = self.size * 1.15  # Increase size over time
+            self.size *= 1.15  # Increase size over time
 
             # draw rect boundary line
             pygame.draw.rect(this_surface, (red, green, blue),
@@ -231,7 +229,7 @@ the_grid = Grid(info.current_w / 2, info.current_h / 2, 10, 5)
 
 
 # notice class handles messages displayed to screen using fonts
-class Notice():
+class Notice(object):
     def __init__(self, words, colour, size, this_font):
         self.words = words
         self.char_list = []  # Character list - to store Letter instances
@@ -261,7 +259,7 @@ class Notice():
 
 
 # Letter class stores individual characters in strings in Notices
-class Letter:
+class Letter(object):
     def __init__(self, char, colour, size, this_font):
         self.colour = colour
         self.size = size
@@ -346,7 +344,6 @@ class Shrink(Notice):
                 this_surface.blit(self.char_list[i].anim_list[j].img,
                                   (xpos - start_x) - (j * (char_size_x * 2)) + (i * char_size_x),
                                   ypos - (j * 15))
-
 
             print(display.timer)
 
@@ -460,9 +457,6 @@ class Display(Thread):
                       i))
         return row
 
-
-        # + (self.grid_size_y * j)
-
     def run(self):
         """
         Runs the game loop
@@ -545,11 +539,6 @@ class Display(Thread):
         my_message.blit_text(screen, screen.get_width() / 2, screen.get_height() / 2)
 
 
-
-
-
-
-
 def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
     if old_value > old_range_max:
         old_value = old_range_max
@@ -598,7 +587,8 @@ def run_for_stdin():
             if isinstance(message, messaging.MidiMessage):
                 display.queue.put(message.mido_message)
             elif isinstance(message, messaging.ButtonMessage):
-                print message.button
+                display.flash.make_flash()
+                display.flashing_now = display.flash.is_flashing()
 
     pygame.quit()
 

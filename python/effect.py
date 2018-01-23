@@ -2,6 +2,12 @@ import json
 import player
 import logging
 import os
+from threading import Thread
+from time import sleep
+from Queue import Queue
+
+INTERVAL = 0.1
+EFFECT_LENGTH = 2
 
 logging.basicConfig()
 
@@ -25,10 +31,12 @@ class Combinator(object):
         if filename is not None and track is not None:
             self.__current_combos = []
             with open("{}/{}".format(dir_path, filename)) as f:
-                self.combos = Combinator.CurrentCombos(map(lambda d: Combo(track, d), json.loads(f.read())))
+                self.combos = map(lambda d: Combo(track, d), json.loads(f.read()))
+                for combo in self.combos:
+                    combo.start()
                 self.button_map = {sum(map(hash, combo.buttons)): combo for combo in self.combos}
         else:
-            self.combos = Combinator.CurrentCombos()
+            self.combos = []
 
     def apply_for_buttons(self, buttons):
         """
@@ -37,51 +45,15 @@ class Combinator(object):
         :param buttons: A list of buttons
         """
         buttons_hash = sum(map(hash, buttons))
-        new_combos = []
         if buttons_hash in self.button_map:
-            new_combos.append(self.button_map[buttons_hash])
-        else:
-            for button in buttons:
-                if hash(button) in self.button_map:
-                    new_combos.append(self.button_map[hash(button)])
-        self.combos.replace(new_combos)
+            self.button_map[buttons_hash].play()
 
     def dict(self):
         return map(Combo.dict, self.combos)
 
-    class CurrentCombos(list):
-        """Modified list to track the combos currently in effect"""
-
-        def append(self, p_object):
-            """
-            Append a combo and apply its effects
-            :param p_object: A Combo
-            """
-            p_object.apply()
-            super(Combinator.CurrentCombos, self).append(p_object)
-
-        def remove(self, value):
-            """
-            Remove a combo and remove its effects
-            :param value: A Combo
-            """
-            if value in self:
-                value.remove()
-                super(Combinator.CurrentCombos, self).remove(value)
-
-        def replace(self, new_combos):
-            """
-            Replaces current combos with a new set. If any combos already in effect will be unchanged. Combos that are
-            in effect but not present in new_combos will have their effects removed. Combos that are in new combos and
-            not currently in effect will be applied.
-            :param new_combos: A list of Combos
-            """
-            for combo in self:
-                if combo not in new_combos:
-                    self.remove(combo)
-            for combo in new_combos:
-                if combo not in self:
-                    self.append(combo)
+    def stop(self):
+        for combo in self.combos:
+            combo.stop()
 
 
 class Combo(object):
@@ -114,6 +86,18 @@ class Combo(object):
         for effect in self.effects:
             effect.remove()
 
+    def start(self):
+        for effect in self.effects:
+            effect.start()
+
+    def stop(self):
+        for effect in self.effects:
+            effect.stop()
+
+    def play(self):
+        for effect in self.effects:
+            effect.play()
+
     def dict(self):
         return {"buttons": self.buttons, "effects": map(Effect.dict, self.effects)}
 
@@ -124,7 +108,7 @@ class Combo(object):
         return self.__repr__()
 
 
-class Effect(object):
+class Effect(Thread):
     """An individual effect that can be applied to change the music"""
 
     def __init__(self, effect_dict):
@@ -132,8 +116,12 @@ class Effect(object):
 
         :param effect_dict: A dictionary describing this effect.
         """
+        super(Effect, self).__init__()
         self.name = effect_dict["name"]
         self.value = effect_dict["value"]
+        self.length = (effect_dict["length"] if "length" in effect_dict else EFFECT_LENGTH)
+        self.is_started = False
+        self.queue = Queue()
 
     @classmethod
     def from_dict(cls, track, effect_dict):
@@ -156,9 +144,9 @@ class Effect(object):
         elif name == "tempo_shift":
             return TempoShift(track, effect_dict)
         elif name == "modulation":
-            pass
+            return Modulation(track, effect_dict)
         elif name == "pan":
-            pass
+            return Pan(track, effect_dict)
 
         raise AssertionError("No effect named {}".format(name))
 
@@ -167,6 +155,32 @@ class Effect(object):
 
     def remove(self):
         raise AssertionError("{}.default not overridden".format(self.name))
+
+    def play(self):
+        self.queue.put("play")
+
+    def stop(self):
+        self.queue.put("stop")
+
+    def run(self):
+        is_applied = False
+        time = 0.
+        while True:
+            if not self.queue.empty():
+                message = self.queue.get()
+                if message == "play":
+                    time = 0.
+                    if not is_applied:
+                        is_applied = True
+                        self.apply()
+                elif message == "stop":
+                    break
+            if time >= self.length and is_applied:
+                is_applied = False
+                self.remove()
+            if time <= self.length:
+                time += INTERVAL
+            sleep(INTERVAL)
 
     def dict(self):
         return {"name": self.name, "value": self.value}
@@ -307,6 +321,26 @@ class TempoShift(TrackEffect):
 
     def remove(self):
         self.track.tempo_shift = player.TEMPO_SHIFT_DEFAULT
+
+
+class Modulation(ChannelEffect):
+    def apply(self):
+        for channel in self.channels:
+            channel.modulation = self.value
+
+    def remove(self):
+        for channel in self.channels:
+            channel.modulation = 0
+
+
+class Pan(ChannelEffect):
+    def apply(self):
+        for channel in self.channels:
+            channel.pan = self.value
+
+    def remove(self):
+        for channel in self.channels:
+            channel.pan = 63
 
 
 if __name__ == "__main__":
