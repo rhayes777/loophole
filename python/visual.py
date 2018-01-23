@@ -100,9 +100,9 @@ class Grid():
 
         self.segment_list.append(segment)
 
-    def render(self, this_surface, (x_center, y_center)):
-        self.xpos = x_center
-        self.ypos = y_center
+    def render(self, this_surface, (start_x, start_y)):
+        self.start_x = start_x
+        self.start_y = start_y
 
         # draw lines to next segment
 
@@ -143,37 +143,55 @@ class Grid():
             self.segment_list.append(segment)
 
         for i in range(len(self.segment_list)):
+            # render grid segment
             self.segment_list[i].render(this_surface)
 
+            # get values for drawing lines between segments (3D effect bit):
+
+            # first four are for the current instance in list...
+
+            # start pos x = furthest left x value; start pos y = furthest up y value
             start_pos_x = self.segment_list[i].xpos - (self.segment_list[i].size / 2)
             start_pos_y = self.segment_list[i].ypos - (self.segment_list[i].size / 2)
 
+            # end pos x = furthest right x value; end pos y = furthest down y value
             end_pos_x = self.segment_list[i].xpos + (self.segment_list[i].size / 2)
             end_pos_y = self.segment_list[i].ypos + (self.segment_list[i].size / 2)
 
+            # second four access the previous instance in list...
+
+            # next start pos x = furthest left x value; next start pos y = furthest up y value
             next_start_pos_x = self.segment_list[i-1].xpos - (self.segment_list[i-1].size / 2)
             next_start_pos_y = self.segment_list[i-1].ypos - (self.segment_list[i-1].size / 2)
 
+            # end pos x = furthest right x value; next end pos y = furthest down y value
             next_end_pos_x = self.segment_list[i-1].xpos + (self.segment_list[i-1].size / 2)
             next_end_pos_y = self.segment_list[i-1].ypos + (self.segment_list[i-1].size / 2)
 
             for j in range(0, 6):
 
+                # find gap in px
                 gap = (self.segment_list[i].size / self.segment_list[i].count)
+
+                # find gap in px from previous instance in list
                 next_gap = (self.segment_list[i-1].size / self.segment_list[i-1].count)
 
+                # draw lines from top of current instance to the previous one...
                 pygame.draw.line(this_surface, (red, green, blue),
                                  (start_pos_x + (gap * j), start_pos_y),
                                  (next_start_pos_x + (next_gap * j), next_start_pos_y), 1)
 
+                # then from the bottom...
                 pygame.draw.line(this_surface, (red, green, blue),
                                  (start_pos_x + (gap * j), end_pos_y),
                                  (next_start_pos_x + (next_gap * j), next_end_pos_y), 1)
 
+                # ...from right to left...
                 pygame.draw.line(this_surface, (red, green, blue),
                                  (start_pos_x, start_pos_y + (gap * j)),
                                  (next_start_pos_x, next_start_pos_y  + (next_gap * j)), 1)
 
+                # and left to right.
                 pygame.draw.line(this_surface, (red, green, blue),
                                  (end_pos_x, start_pos_y + (gap * j)),
                                  (next_end_pos_x, next_start_pos_y  + (next_gap * j)), 1)
@@ -189,9 +207,9 @@ class GridSegment(object):
 
     def render(self, this_surface):
 
-        red = 230
-        green = 230
-        blue = 240
+        red = get_new_range_value(0, 4500, self.size, 0, 230)
+        green = get_new_range_value(0, 4500, self.size, 0, 230)
+        blue = get_new_range_value(0, 4500, self.size, 0, 230)
 
         if self.size < 4500:
             self.size *= 1.15  # Increase size over time
@@ -212,12 +230,6 @@ class GridSegment(object):
                                  (start_pos_x + (gap * i), start_pos_y), (start_pos_x + (gap * i), end_pos_y), 1)
                 pygame.draw.line(this_surface, (red, green, blue),
                                  (start_pos_x, start_pos_y + (gap * i)), (end_pos_x, start_pos_y + (gap * i)), 1)
-
-
-
-
-
-
 
 
         # if xpos is outside os screen, delete instance
@@ -489,7 +501,7 @@ class Display(Thread):
 
             # render grid
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            the_grid.render(screen, (screen.get_width() / 2, screen.get_height() / 2))
+            the_grid.render(screen, (mouse_x, mouse_y))
 
             if self.flashing_now is False:
                 self.flash.make_flash()
