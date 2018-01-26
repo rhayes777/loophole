@@ -104,34 +104,19 @@ class Grid():
         self.start_x = start_x
         self.start_y = start_y
 
-        # draw lines to next segment
+        offsetmax = 200
+        y_offset = 0
 
-        red = 230
-        green = 230
-        blue = 240
+        for messaging.message in messaging.read():
+
+            if messaging.ButtonMessage() == "Up":
+
+                if y_offset < -offsetmax :
+
+                    y_offset -= 1
+
 
         line_end = 1000
-
-        # pygame.draw.line(this_surface,
-        #                  (red, green, blue),
-        #                  (self.xpos, self.ypos),
-        #                  (self.xpos - line_end , self.ypos - line_end))
-        #
-        # pygame.draw.line(this_surface,
-        #                  (red, green, blue),
-        #                  (self.xpos, self.ypos),
-        #                  (self.xpos - line_end, self.ypos + line_end))
-        #
-        # pygame.draw.line(this_surface,
-        #                  (red, green, blue),
-        #                  (self.xpos, self.ypos),
-        #                  (self.xpos + line_end, self.ypos + line_end))
-        #
-        # pygame.draw.line(this_surface,
-        #                  (red, green, blue),
-        #                  (self.xpos, self.ypos),
-        #                  (self.xpos + line_end, self.ypos - line_end))
-
         if self.this_timer <= 5:
             self.this_timer += 1
         else:
@@ -170,6 +155,10 @@ class Grid():
 
             for j in range(0, 6):
 
+                red = get_new_range_value(0, 4500, self.segment_list[i].size, 20, 230)
+                green = get_new_range_value(0, 4500, self.segment_list[i].size, 20, 230)
+                blue = get_new_range_value(0, 4500, self.segment_list[i].size, 50, 230)
+
                 # find gap in px
                 gap = (self.segment_list[i].size / self.segment_list[i].count)
 
@@ -207,12 +196,14 @@ class GridSegment(object):
 
     def render(self, this_surface):
 
-        red = get_new_range_value(0, 4500, self.size, 0, 230)
-        green = get_new_range_value(0, 4500, self.size, 0, 230)
-        blue = get_new_range_value(0, 4500, self.size, 0, 230)
-
         if self.size < 4500:
             self.size *= 1.15  # Increase size over time
+
+            mult = 2
+
+            red = get_new_range_value(0, 4500, self.size * mult, 20, 230)
+            green = get_new_range_value(0, 4500, self.size * mult, 20, 230)
+            blue = get_new_range_value(0, 4500, self.size * mult, 50, 230)
 
             # draw rect boundary line
             pygame.draw.rect(this_surface, (red, green, blue),
@@ -456,6 +447,7 @@ class Display(Thread):
         self.flashing_now = False
 
         self.draw_foreground = True
+        self.draw_text = True
 
     def new_row(self):
         """
@@ -548,7 +540,8 @@ class Display(Thread):
         all_sprites.draw(screen)
 
         # Draw text
-        my_message.blit_text(screen, screen.get_width() / 2, screen.get_height() / 2)
+        if self.draw_text is True:
+            my_message.blit_text(screen, screen.get_width() / 2, screen.get_height() / 2)
 
 
 def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
@@ -563,6 +556,8 @@ def check_input():
     pressed = pygame.key.get_pressed()
     if pressed[pygame.K_1]:
         display.draw_foreground = not display.draw_foreground
+    if pressed[pygame.K_2]:
+        display.draw_text = not display.draw_text
 
 done = False
 display = Display()
