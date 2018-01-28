@@ -30,6 +30,7 @@ class Mode(object):
         self.track_path = None
         self.track = None
         self.combinator = None
+        self.no_button_presses = 0
 
         self.last_on_buttons = []
 
@@ -64,6 +65,7 @@ class Mode(object):
     def did_receive_new_on_buttons(self, buttons):
         for button in buttons:
             messaging.write(messaging.ButtonMessage(button))
+            self.no_button_presses += 1
 
 
 class Normal(Mode):
@@ -108,4 +110,4 @@ class Accelerate(Normal):
 
     def did_receive_new_on_buttons(self, buttons):
         super(Accelerate, self).did_receive_new_on_buttons(buttons)
-        self.track.tempo_shift += self.rate
+        self.track.tempo_shift = 1 + self.rate * self.no_button_presses
