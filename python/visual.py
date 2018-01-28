@@ -491,6 +491,13 @@ class Display(Thread):
                     display.flash.make_flash()
                     display.flashing_now = display.flash.is_flashing()
 
+                    if message.button == "up":
+                        # up buttons pressed
+                        pass
+                    elif message.button == "circle":
+                        # circle pressed
+                        pass
+
             # Add the newly created row to the queue
             self.row_queue.put(row)
 
