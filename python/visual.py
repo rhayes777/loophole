@@ -106,13 +106,9 @@ class Grid():
         offsetmax = 200
         y_offset = 0
 
-        for messaging.message in messaging.read():
+        messaging.read()
 
-            if messaging.ButtonMessage() == "Up":
 
-                if y_offset < -offsetmax :
-
-                    y_offset -= 1
 
 
         line_end = 1000
@@ -122,7 +118,7 @@ class Grid():
             self.this_timer = 0
 
         if self.this_timer is 5:
-            segment = GridSegment(self.start_x, self.start_y, 1, self.size)
+            segment = GridSegment(self.start_x, self.start_y + y_offset, 1, self.size)
 
             self.segment_list.append(segment)
 
@@ -390,6 +386,38 @@ class FontFrame(object):
 
 my_message = Wave("Welcome to the MidiZone", RED, 30, font_arcade, True)
 
+class Input:
+    def __init__(self):
+        self.pressed_up = False
+        self.pressed_down = False
+        self.pressed_left = False
+        self.pressed_right = False
+
+    def check_input(self):
+        pressed = pygame.key.get_pressed()
+        if pressed[pygame.K_1]:
+            display.draw_foreground = not display.draw_foreground
+        if pressed[pygame.K_2]:
+            display.draw_text = not display.draw_text
+        if pressed[pygame.K_UP]:
+            self.pressed_up = True
+        if pressed[pygame.K_DOWN]:
+            self.pressed_down = True
+        elif -pressed[pygame.K_DOWN]:
+            self.pressed_down = False
+        if pressed[pygame.K_LEFT]:
+            self.pressed_left = True
+        elif -pressed[pygame.K_LEFT]:
+            self.pressed_left = False
+        if pressed[pygame.K_RIGHT]:
+            self.pressed_right = True
+        elif -pressed[pygame.K_RIGHT]:
+            self.pressed_right = False
+
+the_input = Input()
+
+
+
 
 class Pixel:
     def __init__(self, pos_x, pos_y, is_on, size, ref, colour=BLUE):
@@ -500,7 +528,7 @@ class Display(Thread):
 
             main_timer = +1
 
-            check_input()
+            the_input.check_input()
 
             screen.fill(BLACK)
 
@@ -566,12 +594,9 @@ def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, 
             old_range_max - old_range_min) + new_range_min
 
 
-def check_input():
-    pressed = pygame.key.get_pressed()
-    if pressed[pygame.K_1]:
-        display.draw_foreground = not display.draw_foreground
-    if pressed[pygame.K_2]:
-        display.draw_text = not display.draw_text
+
+
+
 
 
 done = False
