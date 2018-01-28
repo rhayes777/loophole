@@ -2,6 +2,10 @@ import unittest
 import sys
 import mido
 import json
+import logging
+
+logging.basicConfig()
+logger = logging.getLogger(__name__)
 
 
 def read():
@@ -13,7 +17,10 @@ def read():
         line = sys.stdin.readline()
         if line is None:
             break
-        yield Message.from_string(line)
+        try:
+            yield Message.from_string(line)
+        except KeyError as e:
+            logger.exception(e)
 
 
 def write(message):
@@ -27,6 +34,7 @@ def write(message):
 
 class Message(object):
     """A message to be passed from stdout to stdin"""
+
     def __repr__(self):
         return self.__str__()
 
@@ -43,6 +51,7 @@ class Message(object):
 
 class MidiMessage(Message, object):
     """A message wrapping a mido_message"""
+
     def __init__(self, mido_message):
         if isinstance(mido_message, str) or isinstance(mido_message, unicode):
             self.mido_message = mido.Message.from_str(mido_message)
@@ -55,6 +64,7 @@ class MidiMessage(Message, object):
 
 class ButtonMessage(Message, object):
     """A message wrapping a button message"""
+
     def __init__(self, button):
         self.button = button
 

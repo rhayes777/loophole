@@ -31,7 +31,7 @@ for arg in sys.argv:
 
 mat = dancemat.DanceMat(pygame)
 
-current_mode = mode.Normal(configuration_path=configuration_path, track_names=track_names)
+current_mode = mode.Accelerate(configuration_path=configuration_path, track_names=track_names)
 current_mode.change_to_track_with_name(track_names[track_number])
 mat.set_button_listener(current_mode.did_receive_status_dict)
 current_mode.start()
