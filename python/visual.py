@@ -87,7 +87,6 @@ class Flash():
 class Grid():
     def __init__(self, start_x, start_y, size, gap):
 
-
         self.start_x = start_x
         self.start_y = start_y
         self.size = size
@@ -161,20 +160,19 @@ class Grid():
             # second four access the previous instance in list...
 
             # next start pos x = furthest left x value; next start pos y = furthest up y value
-            next_start_pos_x = self.segment_list[i-1].xpos - (self.segment_list[i-1].size / 2)
-            next_start_pos_y = self.segment_list[i-1].ypos - (self.segment_list[i-1].size / 2)
+            next_start_pos_x = self.segment_list[i - 1].xpos - (self.segment_list[i - 1].size / 2)
+            next_start_pos_y = self.segment_list[i - 1].ypos - (self.segment_list[i - 1].size / 2)
 
             # end pos x = furthest right x value; next end pos y = furthest down y value
-            next_end_pos_x = self.segment_list[i-1].xpos + (self.segment_list[i-1].size / 2)
-            next_end_pos_y = self.segment_list[i-1].ypos + (self.segment_list[i-1].size / 2)
+            next_end_pos_x = self.segment_list[i - 1].xpos + (self.segment_list[i - 1].size / 2)
+            next_end_pos_y = self.segment_list[i - 1].ypos + (self.segment_list[i - 1].size / 2)
 
             for j in range(0, 6):
-
                 # find gap in px
                 gap = (self.segment_list[i].size / self.segment_list[i].count)
 
                 # find gap in px from previous instance in list
-                next_gap = (self.segment_list[i-1].size / self.segment_list[i-1].count)
+                next_gap = (self.segment_list[i - 1].size / self.segment_list[i - 1].count)
 
                 # draw lines from top of current instance to the previous one...
                 pygame.draw.line(this_surface, (red, green, blue),
@@ -189,12 +187,12 @@ class Grid():
                 # ...from right to left...
                 pygame.draw.line(this_surface, (red, green, blue),
                                  (start_pos_x, start_pos_y + (gap * j)),
-                                 (next_start_pos_x, next_start_pos_y  + (next_gap * j)), 1)
+                                 (next_start_pos_x, next_start_pos_y + (next_gap * j)), 1)
 
                 # and left to right.
                 pygame.draw.line(this_surface, (red, green, blue),
                                  (end_pos_x, start_pos_y + (gap * j)),
-                                 (next_end_pos_x, next_start_pos_y  + (next_gap * j)), 1)
+                                 (next_end_pos_x, next_start_pos_y + (next_gap * j)), 1)
 
 
 class GridSegment(object):
@@ -231,10 +229,10 @@ class GridSegment(object):
                 pygame.draw.line(this_surface, (red, green, blue),
                                  (start_pos_x, start_pos_y + (gap * i)), (end_pos_x, start_pos_y + (gap * i)), 1)
 
-
         # if xpos is outside os screen, delete instance
         if self.xpos - (self.size / 2) < 0 or self.size > 1590:
             del self
+
 
 # Create an instance of Grid
 the_grid = Grid(info.current_w / 2, info.current_h / 2, 10, 5)
@@ -479,12 +477,19 @@ class Display(Thread):
             row = self.new_row()
             # Keep grabbing messages from the incoming message queue until it's empty
             while not self.queue.empty():
-                msg = self.queue.get()
-                if msg.type == 'note_on':
-                    # Use your function to convert to screen cooordinates
-                    x_position = get_new_range_value(1, 128, msg.note, 1, self.num_pixels_x)
-                    # Set the "pixel" at that position in this row to red
-                    row[x_position].colour = RED
+                message = self.queue.get()
+
+                if isinstance(message, messaging.MidiMessage):
+                    mido_message = message.mido_message
+                    if mido_message.type == 'note_on':
+                        # Use your function to convert to screen cooordinates
+                        x_position = get_new_range_value(1, 128, mido_message.note, 1, self.num_pixels_x)
+                        # Set the "pixel" at that position in this row to red
+                        row[x_position].colour = RED
+
+                elif isinstance(message, messaging.ButtonMessage):
+                    display.flash.make_flash()
+                    display.flashing_now = display.flash.is_flashing()
 
             # Add the newly created row to the queue
             self.row_queue.put(row)
@@ -557,12 +562,14 @@ def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, 
     if old_value < old_range_min:
         old_value = old_range_min
     return (old_value - old_range_min) * (new_range_max - new_range_min) / (
-        old_range_max - old_range_min) + new_range_min
+            old_range_max - old_range_min) + new_range_min
+
 
 def check_input():
     pressed = pygame.key.get_pressed()
     if pressed[pygame.K_1]:
         display.draw_foreground = not display.draw_foreground
+
 
 done = False
 display = Display()
@@ -593,14 +600,9 @@ def run_for_stdin():
                 done = True  # Flag that we are done so we exit this loop
 
         for message in messaging.read():
-
             pygame.event.get()
 
-            if isinstance(message, messaging.MidiMessage):
-                display.queue.put(message.mido_message)
-            elif isinstance(message, messaging.ButtonMessage):
-                display.flash.make_flash()
-                display.flashing_now = display.flash.is_flashing()
+            display.queue.put(message)
 
     pygame.quit()
 
