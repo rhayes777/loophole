@@ -18,7 +18,7 @@ info = pygame.display.Info()
 # Background stuff
 
 # Grid class draws a "3D" grid as a background
-class Grid():
+class Grid(object):
     def __init__(self, start_x, start_y, size, gap):
 
         self.start_x = start_x

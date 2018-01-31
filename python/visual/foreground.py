@@ -17,7 +17,8 @@ info = pygame.display.Info()
 # Create pygame group for sprites
 all_sprites = pygame.sprite.Group()
 
-class Flash():
+
+class Flash(object):
     def __init__(self, time):
         self.time = time
         self.blit_surface = pygame.Surface((info.current_w, info.current_h))
@@ -41,7 +42,8 @@ class Flash():
     def is_flashing(self):
         return self.timer > 1  # if timer is greater than 1, is_flashing is true
 
-class Pixel:
+
+class Pixel(object):
     def __init__(self, pos_x, pos_y, is_on, size, ref, colour=BLUE):
         self.pos_x = pos_x
         self.pos_y = pos_y
@@ -72,4 +74,3 @@ class Pixel:
                                     util.get_new_range_value(0, info.current_h, self.pos_y, 20, 140)  # Blue
                                 ],
                                 [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 4)
-
