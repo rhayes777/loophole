@@ -1,13 +1,14 @@
 import pygame
-import visual_math
-import random
 import math
+from os import path
 
 # Init pygame font module
 pygame.font.init()
 
+dirname = path.dirname(path.realpath(__file__))
+
 # Loading font
-font_arcade = pygame.font.Font("media/arcadeclassic.ttf", 46)
+font_arcade = pygame.font.Font("{}/fonts/arcadeclassic.ttf".format(dirname), 46)
 
 # Colour Constants
 

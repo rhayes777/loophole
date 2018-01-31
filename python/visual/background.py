@@ -1,5 +1,5 @@
 import pygame
-import visual_math
+import util
 
 # Colour Constants
 
@@ -14,10 +14,11 @@ PINK_MASK = (255, 0, 255)
 
 info = pygame.display.Info()
 
+
 # Background stuff
 
 # Grid class draws a "3D" grid as a background
-class Grid():
+class Grid(object):
     def __init__(self, start_x, start_y, size, gap):
 
         self.start_x = start_x
@@ -77,10 +78,9 @@ class Grid():
             next_end_pos_y = self.segment_list[i - 1].ypos + (self.segment_list[i - 1].size / 2)
 
             for j in range(0, 6):
-
-                red = visual_math.get_new_range_value(0, 4500, self.segment_list[i].size, 20, 230)
-                green = visual_math.get_new_range_value(0, 4500, self.segment_list[i].size, 20, 230)
-                blue = visual_math.get_new_range_value(0, 4500, self.segment_list[i].size, 50, 230)
+                red = util.get_new_range_value(0, 4500, self.segment_list[i].size, 20, 230)
+                green = util.get_new_range_value(0, 4500, self.segment_list[i].size, 20, 230)
+                blue = util.get_new_range_value(0, 4500, self.segment_list[i].size, 50, 230)
 
                 # find gap in px
                 gap = (self.segment_list[i].size / self.segment_list[i].count)
@@ -124,9 +124,9 @@ class GridSegment(object):
 
             mult = 2
 
-            red = visual_math.get_new_range_value(0, 4500, self.size * mult, 20, 230)
-            green = visual_math.get_new_range_value(0, 4500, self.size * mult, 20, 230)
-            blue = visual_math.get_new_range_value(0, 4500, self.size * mult, 50, 230)
+            red = util.get_new_range_value(0, 4500, self.size * mult, 20, 230)
+            green = util.get_new_range_value(0, 4500, self.size * mult, 20, 230)
+            blue = util.get_new_range_value(0, 4500, self.size * mult, 50, 230)
 
             # draw rect boundary line
             pygame.draw.rect(this_surface, (red, green, blue),
@@ -148,7 +148,3 @@ class GridSegment(object):
         # if xpos is outside os screen, delete instance
         if self.xpos - (self.size / 2) < 0 or self.size > 1590:
             del self
-
-
-
-

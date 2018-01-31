@@ -1,5 +1,5 @@
 import pygame
-import visual_math
+import util
 
 # Colour Constants
 
@@ -17,7 +17,8 @@ info = pygame.display.Info()
 # Create pygame group for sprites
 all_sprites = pygame.sprite.Group()
 
-class Flash():
+
+class Flash(object):
     def __init__(self, time):
         self.time = time
         self.blit_surface = pygame.Surface((info.current_w, info.current_h))
@@ -32,7 +33,7 @@ class Flash():
         self.this_screen = this_screen
 
         if self.timer >= 0:
-            alpha = visual_math.get_new_range_value(1, self.time, self.timer, 0, 255)
+            alpha = util.get_new_range_value(1, self.time, self.timer, 0, 255)
             print(alpha)
             self.timer -= 1
             self.blit_surface.set_alpha(alpha)
@@ -41,7 +42,8 @@ class Flash():
     def is_flashing(self):
         return self.timer > 1  # if timer is greater than 1, is_flashing is true
 
-class Pixel:
+
+class Pixel(object):
     def __init__(self, pos_x, pos_y, is_on, size, ref, colour=BLUE):
         self.pos_x = pos_x
         self.pos_y = pos_y
@@ -57,9 +59,9 @@ class Pixel:
 
             # determine colour based on position
             color = [
-                visual_math.get_new_range_value(0, info.current_w, self.pos_x, 30, 255),  # Red
-                visual_math.get_new_range_value(0, info.current_h, self.pos_y, 20, 140),  # Green
-                visual_math.get_new_range_value(0, info.current_h, self.pos_y, 120, 255)  # Blue
+                util.get_new_range_value(0, info.current_w, self.pos_x, 30, 255),  # Red
+                util.get_new_range_value(0, info.current_h, self.pos_y, 20, 140),  # Green
+                util.get_new_range_value(0, info.current_h, self.pos_y, 120, 255)  # Blue
             ]
 
             pygame.draw.ellipse(this_screen, color,
@@ -67,9 +69,8 @@ class Pixel:
 
             pygame.draw.ellipse(this_screen,
                                 [
-                                    visual_math.get_new_range_value(0, info.current_w, self.pos_x, 120, 255),  # Red
-                                    visual_math.get_new_range_value(0, info.current_h, self.pos_y, 30, 255),  # Green
-                                    visual_math.get_new_range_value(0, info.current_h, self.pos_y, 20, 140)  # Blue
+                                    util.get_new_range_value(0, info.current_w, self.pos_x, 120, 255),  # Red
+                                    util.get_new_range_value(0, info.current_h, self.pos_y, 30, 255),  # Green
+                                    util.get_new_range_value(0, info.current_h, self.pos_y, 20, 140)  # Blue
                                 ],
                                 [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 4)
-

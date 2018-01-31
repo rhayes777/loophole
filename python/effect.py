@@ -30,7 +30,7 @@ class Combinator(object):
         """
         if filename is not None and track is not None:
             self.__current_combos = []
-            with open("{}/{}".format(dir_path, filename)) as f:
+            with open(filename) as f:
                 self.combos = map(lambda d: Combo(track, d), json.loads(f.read()))
                 for combo in self.combos:
                     combo.start()
