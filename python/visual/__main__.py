@@ -5,11 +5,7 @@ import logging
 import sys
 import pygame
 import signal
-import messaging
-import background
-import foreground
-import font
-import util
+from .. import messaging
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -31,6 +27,11 @@ pygame.display.init()
 # pygame setup
 # (6,0) = all good
 print(pygame.init())
+
+import background
+import foreground
+import font
+import util
 
 # create screen for pygame to draw to
 info = pygame.display.Info()
@@ -220,7 +221,7 @@ def run_for_mido():
     import os
     global done
     dirname = os.path.dirname(os.path.realpath(__file__))
-    filename = 'media/mute-city.mid'
+    filename = '../media/mute-city.mid'
     mid = mido.MidiFile("{}/{}".format(dirname, filename))
     while not done:
 

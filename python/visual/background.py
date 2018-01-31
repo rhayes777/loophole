@@ -14,6 +14,7 @@ PINK_MASK = (255, 0, 255)
 
 info = pygame.display.Info()
 
+
 # Background stuff
 
 # Grid class draws a "3D" grid as a background
@@ -77,7 +78,6 @@ class Grid():
             next_end_pos_y = self.segment_list[i - 1].ypos + (self.segment_list[i - 1].size / 2)
 
             for j in range(0, 6):
-
                 red = util.get_new_range_value(0, 4500, self.segment_list[i].size, 20, 230)
                 green = util.get_new_range_value(0, 4500, self.segment_list[i].size, 20, 230)
                 blue = util.get_new_range_value(0, 4500, self.segment_list[i].size, 50, 230)
@@ -148,7 +148,3 @@ class GridSegment(object):
         # if xpos is outside os screen, delete instance
         if self.xpos - (self.size / 2) < 0 or self.size > 1590:
             del self
-
-
-
-
