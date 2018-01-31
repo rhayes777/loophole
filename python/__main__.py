@@ -15,13 +15,13 @@ pygame.display.init()
 # screen = pygame.display.set_mode((1000, 700))
 clock = pygame.time.Clock()
 
-track_names = filter(lambda s: ".mid" in s, os.listdir("media"))
+track_names = filter(lambda s: ".mid" in s, os.listdir("{}/media".format(dirname)))
 
 track_number = randint(0, len(track_names) - 1)
 
-track_path = "media/song_pc.mid"
+track_path = "{}/media/song_pc.mid".format(dirname)
 
-configuration_path = 'configurations/examples.json'
+configuration_path = '{}/configurations/examples.json'.format(dirname)
 
 for arg in sys.argv:
     if '.mid' in arg:
