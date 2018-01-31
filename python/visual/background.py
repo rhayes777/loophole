@@ -1,5 +1,5 @@
 import pygame
-import visual_math
+import util
 
 # Colour Constants
 
@@ -78,9 +78,9 @@ class Grid():
 
             for j in range(0, 6):
 
-                red = visual_math.get_new_range_value(0, 4500, self.segment_list[i].size, 20, 230)
-                green = visual_math.get_new_range_value(0, 4500, self.segment_list[i].size, 20, 230)
-                blue = visual_math.get_new_range_value(0, 4500, self.segment_list[i].size, 50, 230)
+                red = util.get_new_range_value(0, 4500, self.segment_list[i].size, 20, 230)
+                green = util.get_new_range_value(0, 4500, self.segment_list[i].size, 20, 230)
+                blue = util.get_new_range_value(0, 4500, self.segment_list[i].size, 50, 230)
 
                 # find gap in px
                 gap = (self.segment_list[i].size / self.segment_list[i].count)
@@ -124,9 +124,9 @@ class GridSegment(object):
 
             mult = 2
 
-            red = visual_math.get_new_range_value(0, 4500, self.size * mult, 20, 230)
-            green = visual_math.get_new_range_value(0, 4500, self.size * mult, 20, 230)
-            blue = visual_math.get_new_range_value(0, 4500, self.size * mult, 50, 230)
+            red = util.get_new_range_value(0, 4500, self.size * mult, 20, 230)
+            green = util.get_new_range_value(0, 4500, self.size * mult, 20, 230)
+            blue = util.get_new_range_value(0, 4500, self.size * mult, 50, 230)
 
             # draw rect boundary line
             pygame.draw.rect(this_surface, (red, green, blue),

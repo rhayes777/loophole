@@ -1,5 +1,5 @@
 import pygame
-import visual_math
+import util
 
 # Colour Constants
 
@@ -32,7 +32,7 @@ class Flash():
         self.this_screen = this_screen
 
         if self.timer >= 0:
-            alpha = visual_math.get_new_range_value(1, self.time, self.timer, 0, 255)
+            alpha = util.get_new_range_value(1, self.time, self.timer, 0, 255)
             print(alpha)
             self.timer -= 1
             self.blit_surface.set_alpha(alpha)
@@ -57,9 +57,9 @@ class Pixel:
 
             # determine colour based on position
             color = [
-                visual_math.get_new_range_value(0, info.current_w, self.pos_x, 30, 255),  # Red
-                visual_math.get_new_range_value(0, info.current_h, self.pos_y, 20, 140),  # Green
-                visual_math.get_new_range_value(0, info.current_h, self.pos_y, 120, 255)  # Blue
+                util.get_new_range_value(0, info.current_w, self.pos_x, 30, 255),  # Red
+                util.get_new_range_value(0, info.current_h, self.pos_y, 20, 140),  # Green
+                util.get_new_range_value(0, info.current_h, self.pos_y, 120, 255)  # Blue
             ]
 
             pygame.draw.ellipse(this_screen, color,
@@ -67,9 +67,9 @@ class Pixel:
 
             pygame.draw.ellipse(this_screen,
                                 [
-                                    visual_math.get_new_range_value(0, info.current_w, self.pos_x, 120, 255),  # Red
-                                    visual_math.get_new_range_value(0, info.current_h, self.pos_y, 30, 255),  # Green
-                                    visual_math.get_new_range_value(0, info.current_h, self.pos_y, 20, 140)  # Blue
+                                    util.get_new_range_value(0, info.current_w, self.pos_x, 120, 255),  # Red
+                                    util.get_new_range_value(0, info.current_h, self.pos_y, 30, 255),  # Green
+                                    util.get_new_range_value(0, info.current_h, self.pos_y, 20, 140)  # Blue
                                 ],
                                 [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 4)
 

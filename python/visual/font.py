@@ -1,5 +1,5 @@
 import pygame
-import visual_math
+import util
 import random
 import math
 

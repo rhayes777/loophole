@@ -6,6 +6,10 @@ import sys
 import pygame
 import signal
 import messaging
+import background
+import foreground
+import font
+import util
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -32,19 +36,15 @@ print(pygame.init())
 info = pygame.display.Info()
 screen = pygame.display.set_mode((info.current_w, info.current_h))
 
-import visual_bg
-import visual_fg
-import visual_font
-import visual_math
-
 all_dots = []
 
 # Create an instance of Grid
-the_grid = visual_bg.Grid(info.current_w / 2, info.current_h / 2, 10, 5)
+the_grid = background.Grid(info.current_w / 2, info.current_h / 2, 10, 5)
 
-my_message = visual_font.Wave("Welcome to the MidiZone", RED, 30, visual_font.font_arcade, True)
+my_message = font.Wave("Welcome to the MidiZone", RED, 30, font.font_arcade, True)
 
-test_pixel = visual_fg.Pixel(5, 5, True, 20, 1)
+test_pixel = foreground.Pixel(5, 5, True, 20, 1)
+
 
 class Display(Thread):
     def __init__(self):
@@ -65,7 +65,7 @@ class Display(Thread):
 
         self.timer = 0
 
-        self.flash = visual_fg.Flash(15)
+        self.flash = foreground.Flash(15)
         self.flashing_now = False
 
         self.draw_foreground = True
@@ -79,8 +79,8 @@ class Display(Thread):
         row = []
         for i in range(self.num_pixels_x):
             row.append(
-                visual_fg.Pixel((self.grid_size_x / 2) + self.grid_size_x * i, (self.grid_size_y / 2),
-                                False, self.grid_size_x, i))
+                foreground.Pixel((self.grid_size_x / 2) + self.grid_size_x * i, (self.grid_size_y / 2),
+                                 False, self.grid_size_x, i))
         return row
 
     def run(self):
@@ -99,7 +99,7 @@ class Display(Thread):
                     mido_message = message.mido_message
                     if mido_message.type == 'note_on':
                         # Use your function to convert to screen cooordinates
-                        x_position = visual_math.get_new_range_value(1, 128, mido_message.note, 1, self.num_pixels_x)
+                        x_position = util.get_new_range_value(1, 128, mido_message.note, 1, self.num_pixels_x)
                         # Set the "pixel" at that position in this row to red
                         row[x_position].colour = RED
 
@@ -171,7 +171,7 @@ class Display(Thread):
                 pixel.pos_y = y_position
                 pixel.show(screen)
 
-        visual_fg.all_sprites.draw(screen)
+        foreground.all_sprites.draw(screen)
 
         test_pixel.show(screen)
 
@@ -179,8 +179,10 @@ class Display(Thread):
         if self.draw_text is True:
             my_message.blit_text(screen, screen.get_width() / 2, screen.get_height() / 2, self.timer)
 
+
 done = False
 display = Display()
+
 
 # noinspection PyUnusedLocal
 def stop(*args):
