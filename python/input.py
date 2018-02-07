@@ -19,7 +19,7 @@ class Button:
 
 
 # Object representing dancemat
-class DanceMat:
+class Controller:
     def __init__(self, pygame, number=0):
         try:
             self.pygame = pygame
