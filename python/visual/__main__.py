@@ -199,6 +199,9 @@ display.start()
 
 def run_for_stdin():
     global done
+
+    logger.addHandler(logging.FileHandler('visual.log'))
+
     while not done:
 
         # This limits the while loop to a max of 10 times per second.
@@ -238,7 +241,10 @@ def run_for_mido():
 
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1 and sys.argv[1] == "-i":
-        run_for_stdin()
-    else:
-        run_for_mido()
+    try:
+        if len(sys.argv) > 1 and sys.argv[1] == "-i":
+            run_for_stdin()
+        else:
+            run_for_mido()
+    except Exception as e:
+        logger.exception(e)
