@@ -1,9 +1,9 @@
-import dancemat
+import input
 import pygame
 import sys
 import os
 from random import randint
-import mode
+import state
 import signal
 
 dirname = os.path.dirname(os.path.realpath(__file__))
@@ -29,11 +29,11 @@ for arg in sys.argv:
     elif '.json' in arg:
         configuration_path = arg
 
-mat = dancemat.DanceMat(pygame)
+controller = input.Controller(pygame)
 
-current_mode = mode.Accelerate(configuration_path=configuration_path, track_names=track_names)
+current_mode = state.Accelerate(configuration_path=configuration_path, track_names=track_names)
 current_mode.change_to_track_with_name(track_names[track_number])
-mat.set_button_listener(current_mode.did_receive_status_dict)
+controller.set_button_listener(current_mode.did_receive_status_dict)
 current_mode.start()
 
 play = True
@@ -49,5 +49,5 @@ signal.signal(signal.SIGINT, stop)
 
 # Keep reading forever
 while play:
-    mat.read()
+    controller.read()
     clock.tick(40)

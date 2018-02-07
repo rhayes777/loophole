@@ -194,6 +194,9 @@ display.start()
 
 def run_for_stdin():
     global done
+
+    logger.addHandler(logging.FileHandler('visual.log'))
+
     while not done:
 
         # This limits the while loop to a max of 10 times per second.
@@ -220,17 +223,23 @@ def run_for_mido():
     mid = mido.MidiFile("{}/{}".format(dirname, filename))
     while not done:
 
+        clock.tick(10)
+
         for message in mid.play():
             for event in pygame.event.get():  # User did something
                 if event.type == pygame.QUIT:  # If user clicked close
                     done = True  # Flag that we are done so we exit this loop
-            display.queue.put(message)
+
+            display.queue.put(messaging.MidiMessage(message))
 
     pygame.quit()
 
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1 and sys.argv[1] == "-i":
-        run_for_stdin()
-    else:
-        run_for_mido()
+    try:
+        if len(sys.argv) > 1 and sys.argv[1] == "-i":
+            run_for_stdin()
+        else:
+            run_for_mido()
+    except Exception as e:
+        logger.exception(e)

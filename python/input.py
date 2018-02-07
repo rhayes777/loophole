@@ -18,15 +18,15 @@ class Button:
     all = ['left', 'down', 'up', 'right', 'triangle', 'square', 'x', 'circle', 'select', 'start']
 
 
-# Object representing dancemat
-class DanceMat:
+# Object representing a midi controller input (e.g. a dancemat)
+class Controller:
     def __init__(self, pygame, number=0):
         try:
             self.pygame = pygame
             self.joystick = pygame.joystick.Joystick(number)
             self.joystick.init()
         except pygame.error:
-            logging.warn("Dancemat not found")
+            logging.warn("Controller {} not found".format(number))
         self.button_listener = None
 
     # Read data and alert listeners

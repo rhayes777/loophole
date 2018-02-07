@@ -13,13 +13,20 @@ def read():
     Read messages. Messages will be returned until readline returns None.
     :return: Message
     """
+
+    count = 0
+
     while True:
         line = sys.stdin.readline()
         if line is None:
             break
         try:
             yield Message.from_string(line)
+            count = 0
         except KeyError as e:
+            count += 1
+            if count > 10:
+                raise e
             logger.exception(e)
 
 

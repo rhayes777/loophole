@@ -2,7 +2,7 @@ import effect
 import player
 import messaging
 import signal
-import dancemat
+import input
 import logging
 
 logging.basicConfig()
@@ -22,7 +22,7 @@ def create_track_and_combinator(track_path, configuration_path):
     return track, combinator
 
 
-class Mode(object):
+class State(object):
     def __init__(self, configuration_path):
         signal.signal(signal.SIGINT, self.stop)
 
@@ -68,7 +68,7 @@ class Mode(object):
             self.no_button_presses += 1
 
 
-class Normal(Mode):
+class Normal(State):
     def __init__(self, configuration_path, track_names):
         super(Normal, self).__init__(configuration_path)
 
@@ -81,13 +81,13 @@ class Normal(Mode):
 
     def did_receive_on_buttons(self, buttons):
         super(Normal, self).did_receive_on_buttons(buttons)
-        if dancemat.Button.start in buttons:
+        if input.Button.start in buttons:
             self.track_number += 1
             if self.track is not None:
                 self.track.stop()
             self.change_to_track_with_name(self.selected_track_name)
             self.track.start()
-        elif dancemat.Button.select in buttons:
+        elif input.Button.select in buttons:
             self.track_number -= 1
             if self.track is not None:
                 self.track.stop()
