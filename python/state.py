@@ -22,7 +22,7 @@ def create_track_and_combinator(track_path, configuration_path):
     return track, combinator
 
 
-class Mode(object):
+class State(object):
     def __init__(self, configuration_path):
         signal.signal(signal.SIGINT, self.stop)
 
@@ -68,7 +68,7 @@ class Mode(object):
             self.no_button_presses += 1
 
 
-class Normal(Mode):
+class Normal(State):
     def __init__(self, configuration_path, track_names):
         super(Normal, self).__init__(configuration_path)
 
