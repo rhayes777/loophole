@@ -2,8 +2,7 @@ import unittest
 from Queue import Queue
 
 
-# noinspection PyClassHasNoInit
-class Key:
+class Key(object):
     C = 0
     C_Sharp = 1
     D = 2
@@ -23,8 +22,7 @@ class Key:
 
 
 # Represents a chord
-# noinspection PyClassHasNoInit
-class Chord:
+class Chord(object):
     # These lists are positions within a scale. [0, 2, 4] is first, third and fifth which is a regular triad
     triad = [0, 2, 4]
     triad_octave = [0, 2, 4, 7]
@@ -38,7 +36,7 @@ class Chord:
 
 
 # Represents a scale
-class Scale:
+class Scale(object):
     major = [0, 2, 4, 5, 7, 9, 11]
     minor = [0, 2, 3, 5, 7, 8, 10]
     minor_pentatonic = [0, 3, 5, 7, 10]
@@ -101,10 +99,11 @@ def possible_keys(positions):
     return key_set
 
 
-class KeyTracker:
+class KeyTracker(object):
     """
     Decides possible keys given the last few midi note positions passed
     """
+
     def __init__(self, capacity=16):
         """
 
