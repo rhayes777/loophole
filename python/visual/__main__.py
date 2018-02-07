@@ -37,15 +37,10 @@ import util
 info = pygame.display.Info()
 screen = pygame.display.set_mode((info.current_w, info.current_h))
 
-all_dots = []
-
 # Create an instance of Grid
 the_grid = background.Grid(info.current_w / 2, info.current_h / 2, 10, 5)
 
 my_message = font.Wave("Welcome to the MidiZone", RED, 30, font.font_arcade, True)
-
-test_pixel = foreground.Pixel(5, 5, True, 20, 1)
-
 
 class Display(Thread):
     def __init__(self):
@@ -55,12 +50,12 @@ class Display(Thread):
         self.grid_size_x = 20
         self.grid_size_y = self.grid_size_x  # self.screen.get_width()
 
-        # This is a queue to keep rows of "pixels" in. You put things in one end and get them out the other which is
+        # This is a queue to keep rows of "NoteSprites" in. You put things in one end and get them out the other which is
         # what we need to make scrolling notes.
         self.row_queue = Queue()
 
-        self.num_pixels_x = screen.get_width() / self.grid_size_x
-        self.num_pixels_y = screen.get_height() / self.grid_size_y
+        self.num_NoteSprites_x = screen.get_width() / self.grid_size_x
+        self.num_NoteSprites_y = screen.get_height() / self.grid_size_y
 
         self.is_stopping = False
 
@@ -75,12 +70,12 @@ class Display(Thread):
     def new_row(self):
         """
         Created a new row
-        :return: A list of blue pixels at the top of the screen of length num_pixels_x
+        :return: A list of blue NoteSprites at the top of the screen of length num_NoteSprites_x
         """
         row = []
-        for i in range(self.num_pixels_x):
+        for i in range(self.num_NoteSprites_x):
             row.append(
-                foreground.Pixel((self.grid_size_x / 2) + self.grid_size_x * i, (self.grid_size_y / 2),
+                foreground.NoteSprite((self.grid_size_x / 2) + self.grid_size_x * i, (self.grid_size_y / 2),
                                  False, self.grid_size_x, i))
         return row
 
@@ -100,9 +95,11 @@ class Display(Thread):
                     mido_message = message.mido_message
                     if mido_message.type == 'note_on':
                         # Use your function to convert to screen cooordinates
-                        x_position = util.get_new_range_value(1, 128, mido_message.note, 1, self.num_pixels_x)
-                        # Set the "pixel" at that position in this row to red
-                        row[x_position].colour = RED
+                        x_position = util.get_new_range_value(1, 128, mido_message.note, 1, self.num_NoteSprites_x)
+                        # Set the "NoteSprite" at that position in this row to on
+                        row[x_position].is_on = True
+
+                        print(mido_message)
 
                 elif isinstance(message, messaging.ButtonMessage):
                     display.flash.make_flash()
@@ -110,6 +107,7 @@ class Display(Thread):
 
                     if message.button == "up":
                         # up buttons pressed
+                        print("UP")
                         pass
                     elif message.button == "circle":
                         # circle pressed
@@ -119,7 +117,7 @@ class Display(Thread):
             self.row_queue.put(row)
 
             # If there are so many rows that it's going off screen, remove the row that was added first
-            if len(self.row_queue.queue) > self.num_pixels_y:
+            if len(self.row_queue.queue) > self.num_NoteSprites_y:
                 self.row_queue.get()
 
             screen.fill(BLACK)
@@ -143,7 +141,6 @@ class Display(Thread):
             if self.draw_foreground is True:
                 self.draw_objects()
 
-            test_pixel.show(screen)
 
             # Actually update the display
             pygame.display.update()
@@ -161,24 +158,22 @@ class Display(Thread):
         """
         Draws all the objects in the queue
         """
-        # This function goes through each line in the queue. It gets that row of pixels (row) and also what number it is
+        # This function goes through each line in the queue. It gets that row of NoteSprites (row) and also what number it is
         # is in queue (j)
         for j, row in enumerate(self.row_queue.queue):
             # We can work out what the y position should be from the position in the list
             y_position = j * self.grid_size_y
-            # Now we individually draw each pixel
-            for pixel in row:
-                # We have to update the y position of the pixels here.
-                pixel.pos_y = y_position
-                pixel.show(screen)
+            # Now we individually draw each NoteSprite
+            for NoteSprite in row:
+                # We have to update the y position of the NoteSprites here.
+                NoteSprite.pos_y = y_position
+                NoteSprite.show(screen)
 
         foreground.all_sprites.draw(screen)
 
-        test_pixel.show(screen)
-
         # Draw text
         if self.draw_text is True:
-            my_message.blit_text(screen, screen.get_width() / 2, screen.get_height() / 2, self.timer)
+            my_message.blit_text(screen, screen.get_width() / 2, screen.get_height() / 2)
 
 
 done = False
