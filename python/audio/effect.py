@@ -133,10 +133,10 @@ class Effect(Thread):
 
     classes = {convert(name): obj for name, obj in inspect.getmembers(sys.modules[__name__])}
 
-    def __new__(cls, *args, **kwargs):
-        name = kwargs["name"]
-        del kwargs["name"]
-        return Effect.classes[name](**kwargs)
+    # def __new__(cls, *args, **kwargs):
+    #     name = kwargs["name"]
+    #     del kwargs["name"]
+    #     return Effect.classes[name](**kwargs)
 
     @classmethod
     def from_dict(cls, track, effect_dict):
