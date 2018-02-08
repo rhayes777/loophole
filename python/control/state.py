@@ -1,5 +1,4 @@
-import effect
-import player
+from audio import player, effect
 import messaging
 import signal
 import input
@@ -23,7 +22,7 @@ def create_track_and_combinator(track_path, configuration_path):
 
 
 class State(object):
-    def __init__(self, configuration_path):
+    def __init__(self, configuration_path, media_path):
         signal.signal(signal.SIGINT, self.stop)
 
         self.configuration_path = configuration_path
@@ -31,11 +30,12 @@ class State(object):
         self.track = None
         self.combinator = None
         self.no_button_presses = 0
+        self.media_path = media_path
 
         self.last_on_buttons = []
 
     def change_to_track_with_name(self, track_name):
-        self.track_path = "media/{}".format(track_name)
+        self.track_path = "{}/{}".format(self.media_path, track_name)
         self.track, self.combinator = create_track_and_combinator(self.track_path, self.configuration_path)
 
     def stop(self):
@@ -69,8 +69,8 @@ class State(object):
 
 
 class Normal(State):
-    def __init__(self, configuration_path, track_names):
-        super(Normal, self).__init__(configuration_path)
+    def __init__(self, configuration_path, media_path, track_names):
+        super(Normal, self).__init__(configuration_path, media_path)
 
         self.track_number = 0
         self.track_names = track_names
@@ -104,8 +104,8 @@ class Normal(State):
 
 
 class Accelerate(Normal):
-    def __init__(self, configuration_path, track_names, rate=0.1):
-        super(Accelerate, self).__init__(configuration_path, track_names)
+    def __init__(self, configuration_path, media_path, track_names, rate=0.1):
+        super(Accelerate, self).__init__(configuration_path, media_path, track_names)
         self.rate = rate
 
     def did_receive_new_on_buttons(self, buttons):

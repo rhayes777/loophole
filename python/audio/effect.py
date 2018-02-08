@@ -1,10 +1,13 @@
 import json
-import player
+from audio import player
 import logging
 import os
 from threading import Thread
 from time import sleep
 from Queue import Queue
+import sys
+import inspect
+import re
 
 INTERVAL = 0.1
 EFFECT_LENGTH = 2
@@ -15,6 +18,11 @@ logger = logging.getLogger(__name__)
 
 path = os.path.realpath(__file__)
 dir_path = os.path.dirname(os.path.realpath(__file__))
+
+
+def convert(name):
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
 
 class Combinator(object):
@@ -122,6 +130,13 @@ class Effect(Thread):
         self.length = (effect_dict["length"] if "length" in effect_dict else EFFECT_LENGTH)
         self.is_started = False
         self.queue = Queue()
+
+    classes = {convert(name): obj for name, obj in inspect.getmembers(sys.modules[__name__])}
+
+    def __new__(cls, *args, **kwargs):
+        name = kwargs["name"]
+        del kwargs["name"]
+        return Effect.classes[name](**kwargs)
 
     @classmethod
     def from_dict(cls, track, effect_dict):
@@ -344,8 +359,6 @@ class Pan(ChannelEffect):
 
 
 if __name__ == "__main__":
-    import sys
-
     """This code generates a template with every single buttons and double buttom combination"""
 
     combinator = Combinator()

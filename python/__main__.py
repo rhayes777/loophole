@@ -1,10 +1,13 @@
-import input
+from control import input, state
 import pygame
 import sys
 import os
 from random import randint
-import state
 import signal
+import logging
+
+logging.basicConfig()
+logger = logging.getLogger(__name__)
 
 dirname = os.path.dirname(os.path.realpath(__file__))
 
@@ -17,21 +20,21 @@ clock = pygame.time.Clock()
 
 track_names = filter(lambda s: ".mid" in s, os.listdir("{}/media".format(dirname)))
 
+logger.info(track_names)
+
 track_number = randint(0, len(track_names) - 1)
 
-track_path = "{}/media/song_pc.mid".format(dirname)
+media_path = "{}/media".format(dirname)
 
 configuration_path = '{}/configurations/examples.json'.format(dirname)
 
 for arg in sys.argv:
-    if '.mid' in arg:
-        track_path = arg
-    elif '.json' in arg:
+    if '.json' in arg:
         configuration_path = arg
 
 controller = input.Controller(pygame)
 
-current_mode = state.Accelerate(configuration_path=configuration_path, track_names=track_names)
+current_mode = state.Accelerate(configuration_path=configuration_path, media_path=media_path, track_names=track_names)
 current_mode.change_to_track_with_name(track_names[track_number])
 controller.set_button_listener(current_mode.did_receive_status_dict)
 current_mode.start()

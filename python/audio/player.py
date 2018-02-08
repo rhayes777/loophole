@@ -364,12 +364,12 @@ class Channel(object):
 class Track(Thread):
     """Represents a midi song loaded from a file"""
 
-    def __init__(self, filename="media/channels_test.mid", is_looping=False):
+    def __init__(self, file_path="../media/channels_test.mid", is_looping=False):
         super(Track, self).__init__()
-        self.filename = filename
+        self.filename = file_path
         self.is_stopping = False
         self.is_looping = is_looping
-        self.mid = mido.MidiFile("{}/{}".format(dir_path, self.filename))
+        self.mid = mido.MidiFile(file_path)
         self.original_tempo = self.mid.ticks_per_beat
         self.channels = map(Channel, range(0, 16))
         for track in self.mid.tracks:
