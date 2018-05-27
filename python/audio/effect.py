@@ -358,6 +358,18 @@ class Pan(ChannelEffect):
             channel.pan = 63
 
 
+class ChannelSwitch(ChannelEffect):
+    def __init__(self, track, effect_dict):
+        super(ChannelSwitch, self).__init__(track, effect_dict)
+        self.position = 0
+
+    def apply(self):
+        self.position = (self.position + 1) % len(self.channels)
+        for channel in self.channels:
+            channel.volume = 0
+        self.channels[self.position].volume = 1
+
+
 if __name__ == "__main__":
     """This code generates a template with every single buttons and double buttom combination"""
 
