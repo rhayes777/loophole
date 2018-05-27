@@ -131,8 +131,6 @@ class Effect(Thread):
         self.is_started = False
         self.queue = Queue()
 
-    classes = {convert(name): obj for name, obj in inspect.getmembers(sys.modules[__name__])}
-
     @classmethod
     def from_dict(cls, track, effect_dict):
         """
@@ -142,6 +140,7 @@ class Effect(Thread):
         """
         name = effect_dict["name"]
         print Effect.classes
+
         try:
             Effect.classes[name](track, effect_dict)
         except KeyError:
@@ -352,6 +351,9 @@ class ChannelSwitch(ChannelEffect):
         self.channels[self.position].volume = 1
 
 
+Effect.classes = {convert(key): cls for key, cls in inspect.getmembers(sys.modules[__name__], inspect.isclass)}
+
+
 if __name__ == "__main__":
     """This code generates a template with every single buttons and double buttom combination"""
 
@@ -369,3 +371,13 @@ if __name__ == "__main__":
                 combinator.combos.append(c)
     with open(sys.argv[1], 'w+') as f:
         f.write(json.dumps(combinator.dict()))
+
+
+class TestEffect(object):
+    def test_class_names(self):
+
+        print Effect.classes.keys()
+        assert "channel_switch" in Effect.classes
+
+    def test_convert(self):
+        assert convert("ChannelSwitch") == "channel_switch"
