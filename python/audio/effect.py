@@ -133,11 +133,6 @@ class Effect(Thread):
 
     classes = {convert(name): obj for name, obj in inspect.getmembers(sys.modules[__name__])}
 
-    # def __new__(cls, *args, **kwargs):
-    #     name = kwargs["name"]
-    #     del kwargs["name"]
-    #     return Effect.classes[name](**kwargs)
-
     @classmethod
     def from_dict(cls, track, effect_dict):
         """
@@ -146,24 +141,11 @@ class Effect(Thread):
         :param effect_dict: A dictionary describing an effect.
         """
         name = effect_dict["name"]
-        if name == "pitch_bend":
-            return PitchBend(track, effect_dict)
-        elif name == "volume_change":
-            return VolumeChange(track, effect_dict)
-        elif name == "intervals":
-            return Intervals(track, effect_dict)
-        elif name == "instrument_type":
-            return InstrumentType(track, effect_dict)
-        elif name == "instrument_version":
-            return InstrumentVersion(track, effect_dict)
-        elif name == "tempo_shift":
-            return TempoShift(track, effect_dict)
-        elif name == "modulation":
-            return Modulation(track, effect_dict)
-        elif name == "pan":
-            return Pan(track, effect_dict)
-
-        raise AssertionError("No effect named {}".format(name))
+        print Effect.classes
+        try:
+            Effect.classes[name](track, effect_dict)
+        except KeyError:
+            raise AssertionError("No effect named {}".format(name))
 
     def apply(self):
         raise AssertionError("{}.apply not overridden".format(self.name))
