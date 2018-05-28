@@ -40,6 +40,7 @@ class Combinator(object):
             self.__current_combos = []
             with open(filename) as f:
                 self.combos = map(lambda d: Combo(track, d), json.loads(f.read()))
+
                 for combo in self.combos:
                     combo.start()
                 self.button_map = {sum(map(hash, combo.buttons)): combo for combo in self.combos}
@@ -69,7 +70,6 @@ class Combo(object):
 
     def __init__(self, track=None, combo_dict=None):
         """
-
         :param track: The midi track
         :param combo_dict: A dictionary describing
         """
@@ -142,7 +142,7 @@ class Effect(Thread):
         print Effect.classes
 
         try:
-            Effect.classes[name](track, effect_dict)
+            return Effect.classes[name](track, effect_dict)
         except KeyError:
             raise AssertionError("No effect named {}".format(name))
 
