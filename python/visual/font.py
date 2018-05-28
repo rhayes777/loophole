@@ -80,7 +80,7 @@ class Wave(Notice, object):
 
     def blit_text(self, this_surface, xpos, ypos, drop=False):
 
-        self.wave_timer = + 1  # timer
+        self.wave_timer += 1  # timer
 
         if self.wave_timer > 10:
             self.wave_timer = 0  # max is 10 so go back to 0
