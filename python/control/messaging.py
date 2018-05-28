@@ -26,8 +26,8 @@ def read():
         except KeyError as e:
             count += 1
             if count > 10:
+                logger.exception(e)
                 raise e
-            logger.exception(e)
 
 
 def write(message):
