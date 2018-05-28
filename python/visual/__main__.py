@@ -198,19 +198,21 @@ def run_for_stdin():
     logger.addHandler(logging.FileHandler('visual.log'))
 
     while not done:
+        try:
+            # This limits the while loop to a max of 10 times per second.
+            # Leave this out and we will use all CPU we can.
+            clock.tick(10)
 
-        # This limits the while loop to a max of 10 times per second.
-        # Leave this out and we will use all CPU we can.
-        clock.tick(10)
+            for event in pygame.event.get():  # User did something
+                if event.type == pygame.QUIT:  # If user clicked close
+                    done = True  # Flag that we are done so we exit this loop
 
-        for event in pygame.event.get():  # User did something
-            if event.type == pygame.QUIT:  # If user clicked close
-                done = True  # Flag that we are done so we exit this loop
+            for message in messaging.read():
+                pygame.event.get()
 
-        for message in messaging.read():
-            pygame.event.get()
-
-            display.queue.put(message)
+                display.queue.put(message)
+        except KeyError:
+            done = True
 
     pygame.quit()
 
