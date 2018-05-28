@@ -375,8 +375,6 @@ if __name__ == "__main__":
 
 class TestEffect(object):
     def test_class_names(self):
-
-        print Effect.classes.keys()
         assert "channel_switch" in Effect.classes
 
     def test_convert(self):
