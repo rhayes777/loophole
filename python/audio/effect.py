@@ -355,7 +355,7 @@ Effect.classes = {convert(key): cls for key, cls in inspect.getmembers(sys.modul
 
 
 if __name__ == "__main__":
-    """This code generates a template with every single buttons and double buttom combination"""
+    """This code generates a template with every single buttons and double button combination"""
 
     combinator = Combinator()
     all_buttons = ['up', 'down', 'left', 'right', 'triangle', 'circle', 'square', 'x']
