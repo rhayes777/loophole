@@ -78,10 +78,9 @@ class Wave(Notice, object):
                 self.char_list.append(
                     ShrinkLetter(self.words[i], self.colour, self.size, self.this_font))  # Use ShrinkLetters
 
-    def blit_text(self, this_surface, xpos, ypos, timer, drop=False):
+    def blit_text(self, this_surface, xpos, ypos, drop=False):
 
         self.wave_timer = + 1  # timer
-        self.timer = timer
 
         if self.wave_timer > 10:
             self.wave_timer = 0  # max is 10 so go back to 0
@@ -92,7 +91,7 @@ class Wave(Notice, object):
             text_width, text_height = self.this_font.size(self.words)
             start_x = text_width / 2
 
-            wave_add = 10 * (math.sin((i * 10) + self.timer))  # multiply by sin to get wavy variable
+            wave_add = 10 * (math.sin((i * 10) + self.wave_timer))  # multiply by sin to get wavy variable
 
             if self.shrink is False:  # if shrink effect is off just do the wavy effect
 
@@ -102,7 +101,7 @@ class Wave(Notice, object):
 
             elif self.shrink is True:  # if shrink effect is on do the wavy effect and the shrink effect
 
-                less = self.timer
+                less = self.wave_timer
 
                 for j in range(len(self.char_list[i].anim_list) - less):
                     this_surface.blit(self.char_list[i].anim_list[j].img,
@@ -116,22 +115,21 @@ class Shrink(Notice):
         self.drop_colour = drop_colour
         self.is_shrinking = is_shrinking
         self.char_list = []
+        self.timer = 0
 
         for i in range(len(self.words)):
             self.char_list.append(ShrinkLetter(self.words[i], self.colour, self.size, self.this_font))
 
-    def blit_text(self, this_surface, xpos, ypos, timer, drop=False):
+    def blit_text(self, this_surface, xpos, ypos, drop=False):
 
-        self.timer = timer
+        self.timer += 1
 
         for i in range(len(self.char_list)):
 
             text_width, text_height = self.this_font.size(self.words)
             start_x = text_width / 2
 
-            less = self.timer
-
-            for j in range(len(self.char_list[i].anim_list) - less):
+            for j in range(len(self.char_list[i].anim_list) - self.timer):
                 char_size_x = self.char_list[i].anim_list[j].img.get_width
 
                 this_surface.blit(self.char_list[i].anim_list[j].img,
@@ -140,7 +138,7 @@ class Shrink(Notice):
 
             print(self.timer)
 
-            for j in range(len(self.char_list[i].anim_list) - less):
+            for j in range(len(self.char_list[i].anim_list) - self.timer):
                 char_size_x = self.char_list[i].anim_list[j].img.get_width
 
                 this_surface.blit(self.char_list[i].anim_list[j].img,
