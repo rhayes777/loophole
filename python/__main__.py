@@ -18,15 +18,15 @@ pygame.display.init()
 # screen = pygame.display.set_mode((1000, 700))
 clock = pygame.time.Clock()
 
-track_names = filter(lambda s: ".mid" in s, os.listdir("{}/media".format(dirname)))
+# track_names = filter(lambda s: ".mid" in s, os.listdir("{}/media".format(dirname)))
 
-logger.info(track_names)
-
-track_number = randint(0, len(track_names) - 1)
+# logger.info(track_names)
+#
+# track_number = randint(0, len(track_names) - 1)
 
 media_path = "{}/media".format(dirname)
 
-configuration_path = '{}/configurations/examples.json'.format(dirname)
+configuration_path = '{}/configurations/switch_examples.json'.format(dirname)
 
 for arg in sys.argv:
     if '.json' in arg:
@@ -34,8 +34,8 @@ for arg in sys.argv:
 
 controller = input.Controller(pygame)
 
-current_mode = state.Accelerate(configuration_path=configuration_path, media_path=media_path, track_names=track_names)
-current_mode.change_to_track_with_name(track_names[track_number])
+current_mode = state.Accelerate(configuration_path=configuration_path, media_path=media_path, track_names=['lull.mid'])
+current_mode.change_to_track_with_name('lull.mid')
 controller.set_button_listener(current_mode.did_receive_status_dict)
 current_mode.start()
 

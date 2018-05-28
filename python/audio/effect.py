@@ -126,7 +126,7 @@ class Effect(Thread):
         """
         super(Effect, self).__init__()
         self.name = effect_dict["name"]
-        self.value = effect_dict["value"]
+        self.value = effect_dict["value"] if "value" in effect_dict else 0
         self.length = (effect_dict["length"] if "length" in effect_dict else EFFECT_LENGTH)
         self.is_started = False
         self.queue = Queue()
@@ -142,9 +142,10 @@ class Effect(Thread):
         print Effect.classes
 
         try:
-            return Effect.classes[name](track, effect_dict)
+            effect_class = Effect.classes[name]
         except KeyError:
             raise AssertionError("No effect named {}".format(name))
+        return effect_class(track, effect_dict)
 
     def apply(self):
         raise AssertionError("{}.apply not overridden".format(self.name))

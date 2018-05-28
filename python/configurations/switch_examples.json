@@ -1,0 +1,98 @@
+[
+  {
+    "buttons": [
+      "up"
+    ],
+    "effects": [
+      {
+        "name": "channel_switch",
+        "instrument_types": "piano"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "down"
+    ],
+    "effects": [
+      {
+        "name": "channel_switch",
+        "instrument_types": "guitar"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "left"
+    ],
+    "effects": [
+      {
+        "name": "channel_switch",
+        "instrument_types": "bass"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "right"
+    ],
+    "effects": [
+      {
+        "name": "channel_switch",
+        "instrument_types": "percussive"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "triangle"
+    ],
+    "effects": [
+      {
+        "name": "instrument_version",
+        "value": 4,
+        "instrument_group": "melodic"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "circle"
+    ],
+    "effects": [
+      {
+        "name": "modulation",
+        "value": 127,
+        "instrument_group": "melodic"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "square"
+    ],
+    "effects": [
+      {
+        "name": "instrument_type",
+        "value": "ensemble",
+        "instrument_group": "melodic"
+      }
+    ]
+  },
+  {
+    "buttons": [
+      "x"
+    ],
+    "effects": [
+      {
+        "name": "intervals",
+        "value": [
+          0,
+          2,
+          4
+        ],
+        "instrument_group": "melodic"
+      }
+    ]
+  }
+]
