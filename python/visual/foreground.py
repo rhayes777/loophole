@@ -43,7 +43,7 @@ class Flash(object):
         return self.timer > 1  # if timer is greater than 1, is_flashing is true
 
 
-class Pixel(object):
+class NoteSprite(object):
     def __init__(self, pos_x, pos_y, is_on, size, ref, colour=BLUE):
         self.pos_x = pos_x
         self.pos_y = pos_y
@@ -53,6 +53,7 @@ class Pixel(object):
         self.colour = colour
 
     def show(self, this_screen):
+        0
         self.this_screen = this_screen
         if self.colour == RED:
             self.size += 1

@@ -4,19 +4,6 @@ from threading import Thread
 import logging
 import sys
 import pygame
-import signal
-from ..control import messaging
-
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-RED = (180, 60, 30)
-GREEN = (46, 190, 60)
-BLUE = (30, 48, 180)
-PINK_MASK = (255, 0, 255)
-
-logging.basicConfig()
-
-logger = logging.getLogger(__name__)
 
 # pygame clock init
 clock = pygame.time.Clock()
@@ -33,6 +20,20 @@ import foreground
 import font
 import util
 
+import signal
+from ..control import messaging
+
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (180, 60, 30)
+GREEN = (46, 190, 60)
+BLUE = (30, 48, 180)
+PINK_MASK = (255, 0, 255)
+
+logging.basicConfig()
+
+logger = logging.getLogger(__name__)
+
 # create screen for pygame to draw to
 info = pygame.display.Info()
 screen = pygame.display.set_mode((info.current_w, info.current_h))
@@ -42,6 +43,7 @@ the_grid = background.Grid(info.current_w / 2, info.current_h / 2, 10, 5)
 
 my_message = font.Wave("Welcome to the MidiZone", RED, 30, font.font_arcade, True)
 
+
 class Display(Thread):
     def __init__(self):
         super(Display, self).__init__()
@@ -50,8 +52,8 @@ class Display(Thread):
         self.grid_size_x = 20
         self.grid_size_y = self.grid_size_x  # self.screen.get_width()
 
-        # This is a queue to keep rows of "NoteSprites" in. You put things in one end and get them out the other which is
-        # what we need to make scrolling notes.
+        # This is a queue to keep rows of "NoteSprites" in. You put things in one end and get them out the other
+        # which is what we need to make scrolling notes.
         self.row_queue = Queue()
 
         self.num_NoteSprites_x = screen.get_width() / self.grid_size_x
@@ -75,8 +77,8 @@ class Display(Thread):
         row = []
         for i in range(self.num_NoteSprites_x):
             row.append(
-                foreground.Pixel((self.grid_size_x / 2) + self.grid_size_x * i, (self.grid_size_y / 2),
-                                 False, self.grid_size_x, i))
+                foreground.NoteSprite((self.grid_size_x / 2) + self.grid_size_x * i, (self.grid_size_y / 2),
+                                      False, self.grid_size_x, i))
         return row
 
     def run(self):
@@ -141,7 +143,6 @@ class Display(Thread):
             if self.draw_foreground is True:
                 self.draw_objects()
 
-
             # Actually update the display
             pygame.display.update()
 
@@ -158,16 +159,16 @@ class Display(Thread):
         """
         Draws all the objects in the queue
         """
-        # This function goes through each line in the queue. It gets that row of NoteSprites (row) and also what number it is
-        # is in queue (j)
+        # This function goes through each line in the queue. It gets that row of NoteSprites (row) and also what
+        # number it is is in queue (j)
         for j, row in enumerate(self.row_queue.queue):
             # We can work out what the y position should be from the position in the list
             y_position = j * self.grid_size_y
             # Now we individually draw each NoteSprite
-            for NoteSprite in row:
-                # We have to update the y position of the NoteSprites here.
-                NoteSprite.pos_y = y_position
-                NoteSprite.show(screen)
+            for note_sprite in row:
+                # We have to update the y position of the note_sprite here.
+                note_sprite.pos_y = y_position
+                note_sprite.show(screen)
 
         foreground.all_sprites.draw(screen)
 
