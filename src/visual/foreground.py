@@ -53,7 +53,7 @@ class NoteSprite(object):
         self.colour = colour
 
     def show(self, this_screen):
-        0
+
         self.this_screen = this_screen
         if self.colour == RED:
             self.size += 1
