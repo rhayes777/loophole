@@ -78,7 +78,7 @@ class Display(Thread):
         for i in range(self.num_NoteSprites_x):
             row.append(
                 foreground.NoteSprite((self.grid_size_x / 2) + self.grid_size_x * i, (self.grid_size_y / 2),
-                                      False, self.grid_size_x, i))
+                                      self.grid_size_x, i))
         return row
 
     def run(self):
