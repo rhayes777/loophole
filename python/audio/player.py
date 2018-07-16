@@ -327,6 +327,8 @@ class Channel(object):
             for msg in msgs:
                 if self.listening_queue is not None and msg.type == "note_on":
                     self.listening_queue.put(msg)
+                if self.is_percussive():
+                    msg.channel = 10
                 # Actually send the midi message
                 self.port.send(msg)
             if hasattr(msg, 'type'):
@@ -359,6 +361,10 @@ class Channel(object):
     def stop_all_notes(self):
         for i in range(128):
             self.port.send(mido.Message(type="note_off", velocity=0, channel=self.number, note=i))
+
+    @property
+    def is_percussive(self):
+        return self.instrument_type == InstrumentType.percussive
 
 
 class Track(Thread):

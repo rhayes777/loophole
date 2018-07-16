@@ -77,6 +77,8 @@ new_file = MidiFile()
 new_file.ticks_per_beat = original_files[0].ticks_per_beat
 
 for n, (original_file, original_track_name) in enumerate(zip(original_files, original_track_names)):
+    if n >= 10:
+        n += 1
     try:
         instrument = int(original_track_name.replace("\\", "/").split("/")[-1].split("_")[0]) - 1
         print "{} set to {}".format(original_track_name, instrument_map[instrument + 1])
