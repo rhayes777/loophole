@@ -76,8 +76,11 @@ original_files = map(lambda tn: MidiFile(tn), original_track_names)
 new_file = MidiFile()
 new_file.ticks_per_beat = original_files[0].ticks_per_beat
 
-for n, (original_file, original_track_name) in enumerate(zip(original_files, original_track_names)):
-    if n >= 10:
+n = 0
+percussion_set = False
+
+for (original_file, original_track_name) in zip(original_files, original_track_names):
+    if n == 10:
         n += 1
     try:
         instrument = int(original_track_name.replace("\\", "/").split("/")[-1].split("_")[0]) - 1
@@ -85,13 +88,19 @@ for n, (original_file, original_track_name) in enumerate(zip(original_files, ori
     except ValueError as e:
         print "Track does not have instrument indicator"
         instrument = n
+    if instrument in percussive and not percussion_set:
+        channel = 10
+        percussion_set = True
+    else:
+        channel = n
+        n += 1
     track = original_file.tracks[0]
     for message in track:
         try:
-            message.channel = n
+            message.channel = channel
         except AttributeError:
             pass
 
-    new_file.tracks.append([Message('program_change', program=instrument, time=0, channel=n)] + track)
+    new_file.tracks.append([Message('program_change', program=instrument, time=0, channel=channel)] + track)
 
 new_file.save(new_track_name)

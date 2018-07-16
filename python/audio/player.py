@@ -327,7 +327,7 @@ class Channel(object):
             for msg in msgs:
                 if self.listening_queue is not None and msg.type == "note_on":
                     self.listening_queue.put(msg)
-                if self.is_percussive():
+                if self.is_percussive:
                     msg.channel = 10
                 # Actually send the midi message
                 self.port.send(msg)
