@@ -34,7 +34,7 @@ for arg in sys.argv:
 
 controller = input.Controller(pygame)
 
-current_mode = state.Accelerate(configuration_path=configuration_path, media_path=media_path, track_names=['lull.mid'])
+current_mode = state.Normal(configuration_path=configuration_path, media_path=media_path, track_names=['lull.mid'])
 current_mode.change_to_track_with_name('lull.mid')
 controller.set_button_listener(current_mode.did_receive_status_dict)
 current_mode.start()
