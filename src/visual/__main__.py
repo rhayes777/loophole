@@ -21,7 +21,7 @@ import font
 import util
 
 import signal
-from ..control import messaging
+from control import messaging
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
