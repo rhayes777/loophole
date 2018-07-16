@@ -80,7 +80,7 @@ n = 0
 percussion_set = False
 
 for (original_file, original_track_name) in zip(original_files, original_track_names):
-    if n == 10:
+    if n == 9:
         n += 1
     try:
         instrument = int(original_track_name.replace("\\", "/").split("/")[-1].split("_")[0]) - 1
@@ -89,7 +89,7 @@ for (original_file, original_track_name) in zip(original_files, original_track_n
         print "Track does not have instrument indicator"
         instrument = n
     if instrument in percussive and not percussion_set:
-        channel = 10
+        channel = 9
         percussion_set = True
     else:
         channel = n
