@@ -346,7 +346,11 @@ class ChannelSwitch(ChannelEffect):
         self.position = 0
 
     def apply(self):
+        if len(self.channels) == 0:
+            logger.warning("No channels in ChannelSwitch")
+            return
         self.position = (self.position + 1) % len(self.channels)
+        print("switching to channel {}".format(self.position))
         for channel in self.channels:
             channel.volume = 0
         self.channels[self.position].volume = 1
