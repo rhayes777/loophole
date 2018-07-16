@@ -6,7 +6,7 @@
     "effects": [
       {
         "name": "channel_switch",
-        "instrument_types": "piano"
+        "instrument_types": "bass"
       }
     ]
   },
@@ -17,7 +17,7 @@
     "effects": [
       {
         "name": "channel_switch",
-        "instrument_types": "guitar"
+        "instrument_types": "keys"
       }
     ]
   },
@@ -28,7 +28,7 @@
     "effects": [
       {
         "name": "channel_switch",
-        "instrument_types": "bass"
+        "instrument_types": "ensemble"
       }
     ]
   },
