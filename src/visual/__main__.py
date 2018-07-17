@@ -82,7 +82,7 @@ class Display(Thread):
         for i in range(self.num_NoteSprites_x):
             row.append(
                 foreground.NoteSprite(mouse_x, mouse_y,
-                                      self.grid_size_x, i, random.randint(1, 10), random.randint(1, 360)))
+                                      self.grid_size_x, i, random.randint(1, 10), random.randint(1, 360), 1.5))
         return row
 
     def run(self):

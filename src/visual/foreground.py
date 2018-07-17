@@ -45,10 +45,11 @@ class Flash(object):
 
 
 class NoteSprite(object):
-    def __init__(self, pos_x, pos_y, size, ref, velocity=0, angle=0, is_on=False, colour=RED):
+    def __init__(self, pos_x, pos_y, size, ref, velocity=0, angle=0, growth_rate=1, is_on=False, colour=RED):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.size = size
+        self.growth_rate = growth_rate
         self.ref = ref
         self.velocity = velocity
         self.angle = angle
@@ -68,7 +69,7 @@ class NoteSprite(object):
 
         self.this_screen = this_screen
         if self.is_on:
-            self.size += 1
+            self.size += self.growth_rate
 
             # determine colour based on position
             color = [
