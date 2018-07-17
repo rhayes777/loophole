@@ -67,7 +67,7 @@ class Display(Thread):
         self.flashing_now = False
 
         self.draw_foreground = True
-        self.draw_text = True
+        self.draw_text = False
 
     def new_row(self):
         """
@@ -78,7 +78,7 @@ class Display(Thread):
         for i in range(self.num_NoteSprites_x):
             row.append(
                 foreground.NoteSprite((self.grid_size_x / 2) + self.grid_size_x * i, (self.grid_size_y / 2),
-                                      self.grid_size_x, i))
+                                      self.grid_size_x, i,))
         return row
 
     def run(self):
@@ -163,7 +163,7 @@ class Display(Thread):
         # number it is is in queue (j)
         for j, row in enumerate(self.row_queue.queue):
             # We can work out what the y position should be from the position in the list
-            y_position = j * self.grid_size_y
+            y_position = screen.get_height() - j * self.grid_size_y
             # Now we individually draw each NoteSprite
             for note_sprite in row:
                 # We have to update the y position of the note_sprite here.

@@ -44,11 +44,13 @@ class Flash(object):
 
 
 class NoteSprite(object):
-    def __init__(self, pos_x, pos_y, size, ref, is_on=False, colour=RED):
+    def __init__(self, pos_x, pos_y, size, ref, velocity=0, angle=0, is_on=False, colour=RED):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.size = size
         self.ref = ref
+        self.velocity = velocity
+        self.angle = angle
         self.is_on = is_on
         self.colour = colour
 
