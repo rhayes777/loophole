@@ -1,5 +1,6 @@
 import pygame
 import util
+import math
 
 # Colour Constants
 
@@ -53,6 +54,15 @@ class NoteSprite(object):
         self.angle = angle
         self.is_on = is_on
         self.colour = colour
+
+    def update(self):
+
+        """ Do movement calculations """
+        x_add = self.velocity * math.sin(self.angle)
+        y_add = self.velocity * math.cos(self.angle)
+
+        self.pos_x = self.pos_x + x_add
+        self.pos_y = self.pos_y + y_add
 
     def show(self, this_screen):
 

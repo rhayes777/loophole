@@ -4,6 +4,7 @@ from threading import Thread
 import logging
 import sys
 import pygame
+import random
 
 # pygame clock init
 clock = pygame.time.Clock()
@@ -74,11 +75,14 @@ class Display(Thread):
         Created a new row
         :return: A list of blue NoteSprites at the top of the screen of length num_NoteSprites_x
         """
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
         row = []
         for i in range(self.num_NoteSprites_x):
             row.append(
-                foreground.NoteSprite((self.grid_size_x / 2) + self.grid_size_x * i, (self.grid_size_y / 2),
-                                      self.grid_size_x, i,))
+                foreground.NoteSprite(mouse_x, mouse_y,
+                                      self.grid_size_x, i, random.randint(1, 10), random.randint(1, 360)))
         return row
 
     def run(self):
@@ -162,12 +166,12 @@ class Display(Thread):
         # This function goes through each line in the queue. It gets that row of NoteSprites (row) and also what
         # number it is is in queue (j)
         for j, row in enumerate(self.row_queue.queue):
-            # We can work out what the y position should be from the position in the list
-            y_position = screen.get_height() - j * self.grid_size_y
-            # Now we individually draw each NoteSprite
+
+            """ Iterate through NoteSprites in row """
             for note_sprite in row:
-                # We have to update the y position of the note_sprite here.
-                note_sprite.pos_y = y_position
+                """ Update NoteSprites """
+                note_sprite.update()
+                """ Render NoteSprite """
                 note_sprite.show(screen)
 
         foreground.all_sprites.draw(screen)
