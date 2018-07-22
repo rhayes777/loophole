@@ -49,10 +49,10 @@ class NoteSprite(object):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.size = size
-        self.growth_rate = growth_rate
         self.ref = ref
         self.velocity = velocity
         self.angle = angle
+        self.growth_rate = 5 / self.velocity
         self.is_on = is_on
         self.colour = colour
 
