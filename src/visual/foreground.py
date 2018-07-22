@@ -52,7 +52,7 @@ class NoteSprite(object):
         self.ref = ref
         self.velocity = velocity
         self.angle = angle
-        self.growth_rate = 5 / self.velocity
+        self.growth_rate = growth_rate / self.velocity
         self.is_on = is_on
         self.colour = colour
 
@@ -64,6 +64,8 @@ class NoteSprite(object):
 
         self.pos_x = self.pos_x + x_add
         self.pos_y = self.pos_y + y_add
+
+        self.growth_rate = self.growth_rate * 1.05
 
     def show(self, this_screen):
 
