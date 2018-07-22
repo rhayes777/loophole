@@ -48,30 +48,55 @@ class NoteSprite(object):
     def __init__(self, pos_x, pos_y, size, ref, velocity=0, angle=0, growth_rate=1, is_on=False, colour=RED):
         self.pos_x = pos_x
         self.pos_y = pos_y
+        self.pos_z = 0
+        self.origin_x, self.origin_y = 0, 0
         self.size = size
         self.ref = ref
         self.velocity = velocity
+        self.velocity_z = 3
         self.angle = angle
+        self.angle_zx = 0
+        self.angle_zy = 0
         self.growth_rate = growth_rate / self.velocity
         self.is_on = is_on
         self.colour = colour
 
     def update(self):
-
         """ Do movement calculations """
+
+        """ Find Origin x, y """
+        self.origin_x, self.origin_y = pygame.mouse.get_pos()
+
+        """ Get distance from object's x and y to origin's x and y's """
+        x_distance_to_origin = (self.pos_x - self.origin_x)
+        y_distance_to_origin = (self.pos_y - self.origin_y)
+
+        """ Get angles between z -> x and z -> y """
+        self.angle_zx = math.sin(x_distance_to_origin)
+        self.angle_zy = math.cos(y_distance_to_origin)
+
+        """ Calculate how much to move each frame """
         x_add = self.velocity * math.sin(self.angle)
         y_add = self.velocity * math.cos(self.angle)
+        z_add = self.velocity_z
 
+        """ Update position """
         self.pos_x = self.pos_x + x_add
         self.pos_y = self.pos_y + y_add
+        self.pos_z = self.pos_z + z_add
 
-        self.growth_rate = self.growth_rate * 1.05
+        print("Pos_z = ", self.pos_z)
 
     def show(self, this_screen):
+        """ Find Origin x, y """
+        self.origin_x, self.origin_y = pygame.mouse.get_pos()
+        size_multiplier = util.get_new_range_value(1, 50, self.pos_z, 1, 1.3)
+
+        if self.size <= 250:
+            self.size = self.size * size_multiplier
 
         self.this_screen = this_screen
-        if self.is_on:
-            self.size += self.growth_rate
+        if self.size < 250 and self.is_on:
 
             # determine colour based on position
             color = [
