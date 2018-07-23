@@ -76,7 +76,7 @@ class Display(Thread):
         self.flash = foreground.Flash(15)
         self.flashing_now = False
 
-        self.draw_grid = False
+        self.draw_grid = True
         self.draw_foreground = True
         self.draw_text = False
         self.draw_NoteSprites = True
@@ -92,9 +92,13 @@ class Display(Thread):
         row = []
         for i in range(self.num_NoteSprites_x):
             row.append(
-                foreground.NoteSprite(mouse_x, mouse_y, 0,
+                foreground.NoteSprite(CAM_x, CAM_y, 500,
                                       self.grid_size_x,
-                                      i))
+                                      i,
+                                      random.randint(0, 360),
+                                      random.randint(70, 110),
+                                      random.randint(8, 18))
+            )
         return row
 
     def run(self):
@@ -117,7 +121,7 @@ class Display(Thread):
                         # Set the "NoteSprite" at that position in this row to on
                         row[x_position].is_on = True
 
-                        print(mido_message)
+                        # print(mido_message)
 
                 elif isinstance(message, messaging.ButtonMessage):
                     display.flash.make_flash()
@@ -143,7 +147,7 @@ class Display(Thread):
             # render grid
             mouse_x, mouse_y = pygame.mouse.get_pos()
             if self.draw_grid:
-                the_grid.render(screen, (mouse_x, mouse_y))
+                the_grid.render(screen, (CAM_x, CAM_y))
 
             if self.flashing_now is False:
                 self.flash.make_flash()
