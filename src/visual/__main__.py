@@ -60,14 +60,14 @@ class Display(Thread):
         super(Display, self).__init__()
         self.queue = Queue()
 
-        self.grid_size_x = 40
+        self.grid_size_x = 10
         self.grid_size_y = self.grid_size_x  # self.screen.get_width()
 
         # This is a queue to keep rows of "NoteSprites" in. You put things in one end and get them out the other
         # which is what we need to make scrolling notes.
         self.row_queue = Queue()
 
-        self.num_NoteSprites_x = screen.get_width() / self.grid_size_x
+        self.num_NoteSprites_x = 20
         self.num_NoteSprites_y = screen.get_height() / self.grid_size_y
 
         self.is_stopping = False
@@ -91,10 +91,10 @@ class Display(Thread):
         mouse_x, mouse_y = pygame.mouse.get_pos()
         angle_to_mouse = math.degrees(math.atan2(mouse_x - CAM_x, mouse_y - CAM_y))
 
-        Origin_z = mouse_x
-
+        Origin_z = util.get_new_range_value(1, screen.get_width(), mouse_x, -75, 75)
 
         row = []
+
         for i in range(self.num_NoteSprites_x):
             row.append(
                 foreground.NoteSprite(CAM_x, CAM_y, Origin_z,
@@ -102,7 +102,7 @@ class Display(Thread):
                                       i,
                                       random.randint(0, 360),
                                       random.randint(20, 160),
-                                      random.randint(5, 20))
+                                      7)
             )
         return row
 

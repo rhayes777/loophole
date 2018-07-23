@@ -143,8 +143,8 @@ class NoteSprite(object):
         """ Create scaling factors based on maximum scale, and distance of object from the camera along Z and X axes"""
 
         z_scale = util.get_new_range_value(0, CAM_z, z_distance_to_cam, max_scale/10, 1)
-        x_scale = util.get_new_range_value(0, screen.get_width() / 2, x_distance_to_cam, max_scale/10, 1)
-        y_scale = util.get_new_range_value(0, screen.get_height() / 2, y_distance_to_cam, max_scale / 10, 1)
+        x_scale = util.get_new_range_value(0, screen.get_width() / 2, x_distance_to_cam, max_scale, 1)
+        y_scale = util.get_new_range_value(0, screen.get_height() / 2, y_distance_to_cam, max_scale, 1)
 
         """ Combine scales """
 
