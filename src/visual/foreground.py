@@ -18,6 +18,9 @@ info = pygame.display.Info()
 # Create pygame group for sprites
 all_sprites = pygame.sprite.Group()
 
+# 3D constants
+Z_DIST = 500
+
 
 class Flash(object):
     def __init__(self, time):
@@ -45,7 +48,7 @@ class Flash(object):
 
 
 class Sprite3D(object):
-    def __init__(self, pos_x, pos_y, pos_z, angle_zx=90, velocity=1):
+    def __init__(self, pos_x, pos_y, pos_z, angle_zx=180, velocity=-0.5):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.pos_z = pos_z
@@ -57,12 +60,20 @@ class Sprite3D(object):
     def update(self):
         """ Do movement calculations """
 
-        z_add = self.velocity * math.cos(self.angle_zx)
+        z_add = self.velocity * math.sin(self.angle_zx)
 
         self.pos_z = self.pos_z + z_add
 
         print("3D Obj pos_z: ", self.pos_z)
         print("3D Obj pos_x: ", self.pos_x)
+
+        scale = util.get_new_range_value(0, Z_DIST, self.pos_z, 1, 15)
+        if scale <= 1 : scale = 1
+        if scale >= 60 : scale = 60
+
+        print("3D Obj scale: ", scale)
+
+        self.size = self.size * scale
 
     def show(self, this_screen):
 
@@ -71,7 +82,7 @@ class Sprite3D(object):
         color = [200, 100, 130]
 
         pygame.draw.ellipse(this_screen, color,
-                            [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 0)
+                            [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 1)
 
 
 
