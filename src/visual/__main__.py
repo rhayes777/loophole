@@ -91,18 +91,18 @@ class Display(Thread):
         mouse_x, mouse_y = pygame.mouse.get_pos()
         angle_to_mouse = math.degrees(math.atan2(mouse_x - CAM_x, mouse_y - CAM_y))
 
-        Origin_z = util.get_new_range_value(1, screen.get_width(), mouse_x, -75, 75)
+        Origin_z = util.get_new_range_value(1, screen.get_height(), mouse_y, -75, 15)
 
         row = []
 
         for i in range(self.num_NoteSprites_x):
             row.append(
-                foreground.NoteSprite(CAM_x, CAM_y, Origin_z,
+                foreground.NoteSprite(mouse_x, CAM_y, Origin_z,
                                       10,
                                       i,
                                       random.randint(0, 360),
                                       random.randint(20, 160),
-                                      7)
+                                      12)
             )
         return row
 
@@ -156,7 +156,7 @@ class Display(Thread):
             # render grid
             mouse_x, mouse_y = pygame.mouse.get_pos()
             if self.draw_grid:
-                the_grid.render(screen, (CAM_x, CAM_y))
+                the_grid.render(screen, (mouse_x, CAM_y))
 
             if self.flashing_now is False:
                 self.flash.make_flash()

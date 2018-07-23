@@ -124,9 +124,12 @@ class NoteSprite(object):
 
         """ Parallax stuff """
 
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        para_x = util.get_new_range_value(1, screen.get_width(), mouse_x, 0.25, -0.25)
+
         """ Update position """
 
-        self.pos_x = self.pos_x + x_add
+        self.pos_x = self.pos_x + x_add + para_x*self.pos_z
         self.pos_y = self.pos_y + y_add
         self.pos_z = self.pos_z + z_add
 
