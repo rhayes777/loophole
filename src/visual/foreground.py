@@ -44,41 +44,68 @@ class Flash(object):
         return self.timer > 1  # if timer is greater than 1, is_flashing is true
 
 
+class Sprite3D(object):
+    def __init__(self, pos_x, pos_y, pos_z, angle_zx=90, velocity=1):
+        self.pos_x = pos_x
+        self.pos_y = pos_y
+        self.pos_z = pos_z
+        self.angle_zx = angle_zx
+        self.velocity = velocity
+        self.size = 10
+        self.this_screen = None
+
+    def update(self):
+        """ Do movement calculations """
+
+        z_add = self.velocity * math.cos(self.angle_zx)
+
+        self.pos_z = self.pos_z + z_add
+
+        print("3D Obj pos_z: ", self.pos_z)
+        print("3D Obj pos_x: ", self.pos_x)
+
+    def show(self, this_screen):
+
+        self.this_screen = this_screen
+
+        color = [200, 100, 130]
+
+        pygame.draw.ellipse(this_screen, color,
+                            [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 0)
+
+
+
 class NoteSprite(object):
-    def __init__(self, pos_x, pos_y, size, ref, velocity=0, angle=0, growth_rate=1, is_on=False, colour=RED):
+    def __init__(self, pos_x, pos_y, size, ref, velocity=0, angle_pitch=0, growth_rate=1, is_on=False, colour=RED):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.pos_z = 0
-        self.origin_x, self.origin_y = 0, 0
+        self.origin_x, self.origin_y = pygame.mouse.get_pos()
         self.size = size
         self.ref = ref
         self.velocity = velocity
-        self.velocity_z = 3
-        self.angle = angle
-        self.angle_zx = 0
-        self.angle_zy = 0
+        self.angle_pitch = angle_pitch
+        self.angle_yaw = 1
         self.growth_rate = growth_rate / self.velocity
         self.is_on = is_on
         self.colour = colour
+        self.size_multiplier = 1
 
     def update(self):
         """ Do movement calculations """
 
         """ Find Origin x, y """
-        self.origin_x, self.origin_y = pygame.mouse.get_pos()
+        self.origin_x, self.origin_y = 650, 500
 
-        """ Get distance from object's x and y to origin's x and y's """
-        x_distance_to_origin = (self.pos_x - self.origin_x)
-        y_distance_to_origin = (self.pos_y - self.origin_y)
-
-        """ Get angles between z -> x and z -> y """
-        self.angle_zx = math.sin(x_distance_to_origin)
-        self.angle_zy = math.cos(y_distance_to_origin)
+        dist_scale_x = util.get_new_range_value(self.pos_x, 500, self.origin_x, 2, 300)
+        dist_scale_y = util.get_new_range_value(self.pos_y, 500, self.origin_y, 2, 300)
+        self.size_multiplier = util.get_new_range_value(2, 90000, dist_scale_x * dist_scale_y, 1, 1.7)
 
         """ Calculate how much to move each frame """
-        x_add = self.velocity * math.sin(self.angle)
-        y_add = self.velocity * math.cos(self.angle)
-        z_add = self.velocity_z
+        x_add = self.velocity * math.sin(self.angle_pitch)
+        y_add = self.velocity * math.cos(self.angle_pitch)
+
+        z_add = self.velocity * math.cos(self.angle_yaw)
 
         """ Update position """
         self.pos_x = self.pos_x + x_add
@@ -88,16 +115,12 @@ class NoteSprite(object):
         print("Pos_z = ", self.pos_z)
 
     def show(self, this_screen):
-        """ Find Origin x, y """
-        self.origin_x, self.origin_y = pygame.mouse.get_pos()
-        size_multiplier = util.get_new_range_value(1, 50, self.pos_z, 1, 1.3)
 
         if self.size <= 250:
-            self.size = self.size * size_multiplier
+            self.size = self.size * self.size_multiplier
 
         self.this_screen = this_screen
         if self.size < 250 and self.is_on:
-
             # determine colour based on position
             color = [
                 util.get_new_range_value(0, info.current_w, self.pos_x, 30, 255),  # Red

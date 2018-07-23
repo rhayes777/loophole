@@ -44,6 +44,8 @@ the_grid = background.Grid(info.current_w / 2, info.current_h / 2, 10, 5)
 
 my_message = font.Wave("Welcome to the MidiZone", RED, 30, font.font_arcade, True)
 
+my_Sprite3D = foreground.Sprite3D(300, 300, 0)
+
 
 class Display(Thread):
     def __init__(self):
@@ -67,8 +69,10 @@ class Display(Thread):
         self.flash = foreground.Flash(15)
         self.flashing_now = False
 
+        self.draw_grid = False
         self.draw_foreground = True
         self.draw_text = False
+        self.draw_NoteSprites = False
 
     def new_row(self):
         """
@@ -82,7 +86,7 @@ class Display(Thread):
         for i in range(self.num_NoteSprites_x):
             row.append(
                 foreground.NoteSprite(mouse_x, mouse_y,
-                                      self.grid_size_x, i, random.randint(4, 10), random.randint(1, 360), 1.5))
+                                      self.grid_size_x, i, random.randint(4, 20), random.randint(1, 360), 1.5))
         return row
 
     def run(self):
@@ -130,7 +134,10 @@ class Display(Thread):
 
             # render grid
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            the_grid.render(screen, (mouse_x, mouse_y))
+            if self.draw_grid:
+                the_grid.render(screen, (mouse_x, mouse_y))
+
+            foreground.Sprite3D.show(my_Sprite3D, screen)
 
             if self.flashing_now is False:
                 self.flash.make_flash()
@@ -144,8 +151,11 @@ class Display(Thread):
                 self.timer = 6
 
             # Draw all those objects
-            if self.draw_foreground is True:
+            if self.draw_foreground is True and self.draw_NoteSprites is True:
                 self.draw_objects()
+
+            """ Update 3d sprite """
+            foreground.Sprite3D.update(my_Sprite3D)
 
             # Actually update the display
             pygame.display.update()
@@ -175,6 +185,7 @@ class Display(Thread):
                 note_sprite.show(screen)
 
         foreground.all_sprites.draw(screen)
+
 
         # Draw text
         if self.draw_text is True:
