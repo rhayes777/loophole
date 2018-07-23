@@ -1,6 +1,7 @@
 import pygame
 import util
 import math
+import random
 
 # Colour Constants
 
@@ -14,13 +15,25 @@ PINK_MASK = (255, 0, 255)
 # Get display info
 
 info = pygame.display.Info()
+screen = pygame.display.set_mode((info.current_w, info.current_h))
 
 # Create pygame group for sprites
 all_sprites = pygame.sprite.Group()
 
-# 3D constants
-Z_DIST = 500
+# Camera - this is the (abstract) point from which we are viewing the scene
+#
+# Z = 0 is the furthest away from the camera/viewer we will render
+# as an object's Z value becomes larger, the object is closer to the viewer
+# and will be rendered larger, giving a sense of perspective and scale
 
+# For now, camera is fixed at dead centre of screen...
+
+CAM_x = screen.get_width() / 2
+CAM_y = screen.get_height() / 2
+
+# ...and is placed 500px back from the scene
+
+CAM_z = 500
 
 class Flash(object):
     def __init__(self, time):
@@ -48,32 +61,76 @@ class Flash(object):
 
 
 class Sprite3D(object):
-    def __init__(self, pos_x, pos_y, pos_z, angle_zx=180, velocity=-0.5):
+    def __init__(self, pos_x, pos_y, pos_z, angle_xy=math.radians(random.randint(0, 360)),
+                 angle_zx=math.radians(random.randint(0, 180)), velocity=2.5):
+        """ x, y, z co-ordinates """
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.pos_z = pos_z
+
+        """ angle_zx is the angle at which the object is moving along the Z-X axis... """
+        """ So it's the 'bird's eye view' angle of movement of the object """
+        """ 0 will be fully "left" as you're looking at it, with object not moving towards viewer at all """
+        """ 180 would be fully "right" so the opposite direction, still no Z axis movement - """
+        """ 90 is exactly towards the viewer (so no x-axis movement) """
+
         self.angle_zx = angle_zx
+
+        """ angle_xy is along the 'normal' 2D plane ie. x and y """
+        """ so 0 is directly up the screen, 180 is directly down etc """
+
+        self.angle_xy = angle_xy
         self.velocity = velocity
+
+        """ This is the 'original' size of the object: The size it has when rendered at Z = 0 """
+
         self.size = 10
+        self.size_render = self.size
         self.this_screen = None
 
     def update(self):
         """ Do movement calculations """
 
+        x_add = self.velocity * math.cos(self.angle_xy)
+        y_add = self.velocity * math.sin(self.angle_xy)
         z_add = self.velocity * math.sin(self.angle_zx)
 
+        """ Update position """
+
+        self.pos_x = self.pos_x + x_add
+        self.pos_y = self.pos_y + y_add
         self.pos_z = self.pos_z + z_add
 
         print("3D Obj pos_z: ", self.pos_z)
         print("3D Obj pos_x: ", self.pos_x)
 
-        scale = util.get_new_range_value(0, Z_DIST, self.pos_z, 1, 15)
-        if scale <= 1 : scale = 1
-        if scale >= 60 : scale = 60
+        """ Figuring out scale """
+
+        max_scale = screen.get_width() / self.size
+        z_scale = util.get_new_range_value(0, CAM_z, self.pos_z, 1, max_scale)
+
+        x_distance_to_cam = self.pos_x - CAM_x
+        y_distance_to_cam = self.pos_y - CAM_y
+
+        xtimesy = x_distance_to_cam * y_distance_to_cam
+        max_xtimesy = screen.get_width() * screen.get_height()
+
+        print("x_distance_to_cam: ", x_distance_to_cam)
+        print("y_distance_to_cam: ", y_distance_to_cam)
+        print("x times y: ", xtimesy)
+
+        xy_scale = util.get_new_range_value(0, max_xtimesy, xtimesy, 1, max_scale)
+
+        scale = z_scale + xy_scale / 2
+
+        if scale <= 1:
+            scale = 1
+        if scale >= 100:
+            scale = 100
 
         print("3D Obj scale: ", scale)
 
-        self.size = self.size * scale
+        self.size_render = self.size * scale
 
     def show(self, this_screen):
 
@@ -82,7 +139,8 @@ class Sprite3D(object):
         color = [200, 100, 130]
 
         pygame.draw.ellipse(this_screen, color,
-                            [self.pos_x - (self.size / 2), self.pos_y - (self.size / 2), self.size, self.size], 1)
+                            [self.pos_x - (self.size_render / 2), self.pos_y - (self.size_render / 2),
+                             self.size_render, self.size_render], 1)
 
 
 

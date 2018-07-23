@@ -44,7 +44,7 @@ the_grid = background.Grid(info.current_w / 2, info.current_h / 2, 10, 5)
 
 my_message = font.Wave("Welcome to the MidiZone", RED, 30, font.font_arcade, True)
 
-my_Sprite3D = foreground.Sprite3D(300, 300, 0)
+my_Sprite3D = foreground.Sprite3D(screen.get_width() / 2, screen.get_height() / 2, 0)
 
 
 class Display(Thread):
