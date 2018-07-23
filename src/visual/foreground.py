@@ -62,11 +62,18 @@ class Flash(object):
 
 
 class NoteSprite(object):
+    """ NoteSprite object is a visual representation of a Midi note
+    It's now a 3D object with the usual x and y co ordinates as well as a Z co ord
+    so it can move towards the camera """
+
+    """ Initialize with defaults for angle_xy ('2D' angle on flat plane of screen), angle_zx (Left-Right in direction
+    of the camera), and Velocity"""
+
     def __init__(self, pos_x, pos_y, pos_z, size, ref,
                  angle_xy=math.radians(random.randint(0, 360)),
                  angle_zx=math.radians(random.randint(0, 180)),
                  velocity=random.randint(1, 6)):
-        """ x, y, z co-ordinates """
+
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.pos_z = pos_z
@@ -77,19 +84,26 @@ class NoteSprite(object):
 
         self.ref = ref
 
-        """ angle_zx is the angle at which the object is moving along the Z-X axis... """
-        """ So it's the 'bird's eye view' angle of movement of the object """
-        """ 0 will be fully "left" as you're looking at it, with object not moving towards viewer at all """
-        """ 180 would be fully "right" so the opposite direction, still no Z axis movement - """
-        """ 90 is exactly towards the viewer (so no x-axis movement) """
+        """ angle_zx is the angle at which the object is moving along the Z-X axis...
+        So it's the 'bird's eye view' angle of movement of the object 
+        0 will be fully "left" as you're looking at it, with object not moving towards viewer at all
+        180 would be fully "right" so the opposite direction, still no Z axis movement -
+        90 is exactly towards the viewer (so no x-axis movement) """
 
         self.angle_zx = math.radians(angle_zx)
 
-        """ angle_xy is along the 'normal' 2D plane ie. x and y """
-        """ so 0 is directly up the screen, 180 is directly down etc """
+        """ angle_xy is along the 'normal' 2D plane ie. x and y
+        so 0 is directly up the screen, 180 is directly down etc.
+        angle is put into radians at this stage so that Python can do trig functions on it """
 
         self.angle_xy = math.radians(angle_xy)
+
+        """ General velocity of object that is applied to all axes """
+
         self.velocity = velocity
+
+        """ Start off with render size at a 1:1 ratio to its actual size 
+        This will later be modified as the object moves in the z-axis (towards the camera/viewer)"""
 
         self.size_render = self.size
         self.this_screen = None
@@ -97,11 +111,18 @@ class NoteSprite(object):
         self.is_on = False
 
     def update(self):
-        """ Do movement calculations """
+
+        """ Calculate and update movement """
+
+        """ Calculate how much to move in each axis each frame
+        Sin and cosine functions used on pre-radian'd angle variables to get correct unit to add to position
+        each turn """
 
         x_add = self.velocity * math.sin(self.angle_xy)
         y_add = self.velocity * math.cos(self.angle_xy)
         z_add = self.velocity * math.sin(self.angle_zx)
+
+        """ Parallax stuff """
 
         """ Update position """
 
@@ -109,34 +130,40 @@ class NoteSprite(object):
         self.pos_y = self.pos_y + y_add
         self.pos_z = self.pos_z + z_add
 
-        print(self.pos_z)
-
-        """ Figuring out scale """
+        """ Figuring out maximum scale factor based on screen size """
 
         max_scale = screen.get_width() / self.size
+
+        """ Get absolute values of x-dist to Cam's x, and z-dist to Cam's z"""
 
         x_distance_to_cam = abs(self.pos_x - CAM_x)
         z_distance_to_cam = abs(CAM_z - self.pos_z)
 
+        """ Create scaling factors based on maximum scale, and distance of object from the camera along Z and X axes"""
+
         z_scale = util.get_new_range_value(0, CAM_z, z_distance_to_cam, 1, max_scale/10)
         x_scale = util.get_new_range_value(0, screen.get_width() / 2, x_distance_to_cam, max_scale/10, 1)
 
-        # print("x_distance_to_cam: ", x_distance_to_cam)
+        """ Combine scales """
 
         combined_scale = z_scale - x_scale / z_scale + x_scale
 
         scale = combined_scale
 
+        """ Limit scaling factor """
+
         if scale <= 1:
             scale = 1
-        if scale >= 250:
-            scale = 250
+        if scale >= 650:
+            scale = 650
 
-        # print("3D Obj scale: ", scale)
+        """ Set size to actually render at based on scale """
 
         self.size_render = self.size * scale
 
     def show(self, this_screen):
+
+        """ Render object to screen """
 
         self.this_screen = this_screen
         if self.is_on:
