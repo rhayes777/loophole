@@ -4,6 +4,7 @@ from threading import Thread
 import logging
 import sys
 import pygame
+import math
 import random
 
 # pygame clock init
@@ -88,16 +89,20 @@ class Display(Thread):
         """
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
+        angle_to_mouse = math.degrees(math.atan2(mouse_x - CAM_x, mouse_y - CAM_y))
+
+        Origin_z = mouse_x
+
 
         row = []
         for i in range(self.num_NoteSprites_x):
             row.append(
-                foreground.NoteSprite(CAM_x, CAM_y, 500,
-                                      self.grid_size_x,
+                foreground.NoteSprite(CAM_x, CAM_y, Origin_z,
+                                      10,
                                       i,
                                       random.randint(0, 360),
-                                      random.randint(70, 110),
-                                      random.randint(8, 18))
+                                      random.randint(20, 160),
+                                      random.randint(5, 20))
             )
         return row
 
@@ -108,6 +113,10 @@ class Display(Thread):
         self.is_stopping = False
         while True:
             # Make a new row each time the loop runs
+
+            #
+
+
             row = self.new_row()
             # Keep grabbing messages from the incoming message queue until it's empty
             while not self.queue.empty():
