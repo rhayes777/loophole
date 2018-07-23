@@ -103,7 +103,7 @@ class Display(Thread):
                                       10,
                                       i,
                                       random.randint(0, 360),
-                                      random.randint(20, 160),
+                                      90,
                                       9,
                                       140,
                                       random.randint(15, 20))

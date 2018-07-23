@@ -162,7 +162,7 @@ class NoteSprite(object):
         z_distance_to_cam = abs(Origin_z - self.pos_z)
 
         """ Parallax stuff """
-        amount = 30
+        amount = 60
 
         amount_x = math.cos(util.get_new_range_value(1, Origin_z, z_distance_to_cam, 0, 1))*amount
         amount_y = math.sin(util.get_new_range_value(1, Origin_z, z_distance_to_cam, 0, 1))*amount
@@ -171,11 +171,6 @@ class NoteSprite(object):
         para_y = util.get_new_range_value(1, screen.get_height(), camera_y, amount_y, -amount_y)
 
         print("Para x", para_x)
-
-        """ Spin function """
-
-        x_spin = self.spin_velocity*math.sin(self.spin_angle)
-        y_spin = self.spin_velocity*math.cos(self.spin_angle)
 
         """ Update position """
 
