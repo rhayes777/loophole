@@ -39,12 +39,19 @@ logger = logging.getLogger(__name__)
 info = pygame.display.Info()
 screen = pygame.display.set_mode((info.current_w, info.current_h))
 
+# For now, camera is fixed at dead centre of screen...
+
+CAM_x = screen.get_width() / 2
+CAM_y = screen.get_height() / 2
+
+# ...and is placed 500px back from the scene
+
+CAM_z = 500
+
 # Create an instance of Grid
 the_grid = background.Grid(info.current_w / 2, info.current_h / 2, 10, 5)
 
 my_message = font.Wave("Welcome to the MidiZone", RED, 30, font.font_arcade, True)
-
-my_Sprite3D = foreground.Sprite3D(screen.get_width() / 2, screen.get_height() / 2, 0)
 
 
 class Display(Thread):
@@ -52,7 +59,7 @@ class Display(Thread):
         super(Display, self).__init__()
         self.queue = Queue()
 
-        self.grid_size_x = 20
+        self.grid_size_x = 40
         self.grid_size_y = self.grid_size_x  # self.screen.get_width()
 
         # This is a queue to keep rows of "NoteSprites" in. You put things in one end and get them out the other
@@ -72,7 +79,7 @@ class Display(Thread):
         self.draw_grid = False
         self.draw_foreground = True
         self.draw_text = False
-        self.draw_NoteSprites = False
+        self.draw_NoteSprites = True
 
     def new_row(self):
         """
@@ -85,8 +92,9 @@ class Display(Thread):
         row = []
         for i in range(self.num_NoteSprites_x):
             row.append(
-                foreground.NoteSprite(mouse_x, mouse_y,
-                                      self.grid_size_x, i, random.randint(4, 20), random.randint(1, 360), 1.5))
+                foreground.NoteSprite(mouse_x, mouse_y, 0,
+                                      self.grid_size_x,
+                                      i))
         return row
 
     def run(self):
@@ -137,8 +145,6 @@ class Display(Thread):
             if self.draw_grid:
                 the_grid.render(screen, (mouse_x, mouse_y))
 
-            foreground.Sprite3D.show(my_Sprite3D, screen)
-
             if self.flashing_now is False:
                 self.flash.make_flash()
                 self.flashing_now = self.flash.is_flashing()
@@ -153,9 +159,6 @@ class Display(Thread):
             # Draw all those objects
             if self.draw_foreground is True and self.draw_NoteSprites is True:
                 self.draw_objects()
-
-            """ Update 3d sprite """
-            foreground.Sprite3D.update(my_Sprite3D)
 
             # Actually update the display
             pygame.display.update()
