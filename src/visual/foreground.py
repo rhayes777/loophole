@@ -31,9 +31,9 @@ all_sprites = pygame.sprite.Group()
 CAM_x = screen.get_width() / 2
 CAM_y = screen.get_height() / 2
 
-# ...and is placed 500px back from the scene
+# ...and is placed 300px back from the scene
 
-CAM_z = 500
+CAM_z = 300
 
 
 class Flash(object):
@@ -72,7 +72,11 @@ class NoteSprite(object):
     def __init__(self, pos_x, pos_y, pos_z, size, ref,
                  angle_xy=math.radians(random.randint(0, 360)),
                  angle_zx=math.radians(random.randint(0, 180)),
-                 velocity=random.randint(1, 6)):
+                 velocity=random.randint(1, 6), spin_angle=90, spin_velocity=2):
+
+
+
+
 
         self.pos_x = pos_x
         self.pos_y = pos_y
@@ -102,10 +106,18 @@ class NoteSprite(object):
 
         self.velocity = velocity
 
+        """ Creates spinning movement """
+
+        self.spin_angle = spin_angle
+        self.spin_velocity = spin_velocity
+
         """ Start off with render size at a 1:1 ratio to its actual size 
         This will later be modified as the object moves in the z-axis (towards the camera/viewer)"""
 
         self.size_render = self.size
+
+        """ Screen to draw to """
+
         self.this_screen = None
 
         self.is_on = False
@@ -113,6 +125,12 @@ class NoteSprite(object):
     def update(self):
 
         """ Calculate and update movement """
+
+        if self.pos_z >= CAM_z:
+
+            self.pos_z = CAM_z
+
+            self.is_on = False
 
         """ Calculate how much to move in each axis each frame
         Sin and cosine functions used on pre-radian'd angle variables to get correct unit to add to position
@@ -122,30 +140,62 @@ class NoteSprite(object):
         y_add = self.velocity * math.cos(self.angle_xy)
         z_add = self.velocity * math.sin(self.angle_zx)
 
-        """ Parallax stuff """
+        """ Get absolute values of x-dist to Cam's x, and z-dist to Cam's z"""
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        para_x = util.get_new_range_value(1, screen.get_width(), mouse_x, 0.25, -0.25)
+
+        camera_x = mouse_x
+        if camera_x <= 2:
+            camera_x = 2
+        camera_y = mouse_y
+
+        origin_x = screen.get_width()/2
+        origin_y = screen.get_height()/2
+
+        x_distance_to_origin = abs(self.pos_x - origin_x)
+
+        Origin_z = CAM_z
+        Origin_y = CAM_y
+
+        x_distance_to_cam = abs(camera_x - self.pos_x)
+        y_distance_to_cam = abs(camera_y - self.pos_y)
+        z_distance_to_cam = abs(Origin_z - self.pos_z)
+
+        """ Parallax stuff """
+        amount = 30
+
+        amount_x = math.cos(util.get_new_range_value(1, Origin_z, z_distance_to_cam, 0, 1))*amount
+        amount_y = math.sin(util.get_new_range_value(1, Origin_z, z_distance_to_cam, 0, 1))*amount
+
+        para_x = util.get_new_range_value(1, screen.get_width(), camera_x, amount_x, -amount_x)
+        para_y = util.get_new_range_value(1, screen.get_height(), camera_y, amount_y, -amount_y)
+
+        print("Para x", para_x)
+
+        """ Spin function """
+
+        x_spin = self.spin_velocity*math.sin(self.spin_angle)
+        y_spin = self.spin_velocity*math.cos(self.spin_angle)
 
         """ Update position """
 
-        self.pos_x = self.pos_x + x_add + para_x*self.pos_z
-        self.pos_y = self.pos_y + y_add
+        self.pos_x = self.pos_x + x_add + para_x
+        self.pos_y = self.pos_y + y_add + para_y
         self.pos_z = self.pos_z + z_add
 
         """ Figuring out maximum scale factor based on screen size """
 
         max_scale = screen.get_width() / self.size
 
-        """ Get absolute values of x-dist to Cam's x, and z-dist to Cam's z"""
 
-        x_distance_to_cam = abs(self.pos_x - CAM_x)
-        y_distance_to_cam = abs(self.pos_y - CAM_y)
-        z_distance_to_cam = abs(CAM_z - self.pos_z)
+
+
+
+
 
         """ Create scaling factors based on maximum scale, and distance of object from the camera along Z and X axes"""
 
-        z_scale = util.get_new_range_value(0, CAM_z, z_distance_to_cam, max_scale/10, 1)
+        z_scale = util.get_new_range_value(0, CAM_z, z_distance_to_cam, max_scale/12, 1)
         x_scale = util.get_new_range_value(0, screen.get_width() / 2, x_distance_to_cam, max_scale, 1)
         y_scale = util.get_new_range_value(0, screen.get_height() / 2, y_distance_to_cam, max_scale, 1)
 
@@ -159,8 +209,8 @@ class NoteSprite(object):
 
         if scale <= 1:
             scale = 1
-        if scale >= 650:
-            scale = 650
+        if scale >= 2650:
+            scale = 2650
 
         """ Set size to actually render at based on scale """
 
@@ -174,14 +224,25 @@ class NoteSprite(object):
         if self.is_on:
             # determine colour based on position
             color = [
-                util.get_new_range_value(0, info.current_w, self.pos_x, 30, 255),  # Red
+                util.get_new_range_value(0, info.current_w, self.pos_x, 30, 255,),  # Red
                 util.get_new_range_value(0, info.current_h, self.pos_y, 20, 140),  # Green
-                util.get_new_range_value(0, info.current_h, self.pos_y, 120, 255)  # Blue
+                util.get_new_range_value(0, info.current_h, self.pos_y, 120, 255),  # Blue
             ]
 
             pygame.draw.ellipse(this_screen, color,
                                 [self.pos_x - (self.size_render / 2),
                                  self.pos_y - (self.size_render / 2),
                                  self.size_render,
-                                 self.size_render], 0)
+                                 self.size_render])
+            color2 = [
+                util.get_new_range_value(0, info.current_h, self.pos_y, 160, 155,),  # Red
+                util.get_new_range_value(0, info.current_w, self.pos_x, 140, 110),  # Green
+                util.get_new_range_value(0, info.current_w, self.pos_x, 120, 55),  # Blue
+            ]
+
+            pygame.draw.ellipse(this_screen, color2,
+                                [self.pos_x - (self.size_render / 2),
+                                 self.pos_y - (self.size_render / 2),
+                                 self.size_render,
+                                 self.size_render], 5)
 

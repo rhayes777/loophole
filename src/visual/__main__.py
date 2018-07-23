@@ -47,7 +47,7 @@ CAM_y = screen.get_height() / 2
 
 # ...and is placed 500px back from the scene
 
-CAM_z = 500
+CAM_z = 600
 
 # Create an instance of Grid
 the_grid = background.Grid(info.current_w / 2, info.current_h / 2, 10, 5)
@@ -67,7 +67,7 @@ class Display(Thread):
         # which is what we need to make scrolling notes.
         self.row_queue = Queue()
 
-        self.num_NoteSprites_x = 20
+        self.num_NoteSprites_x = 5
         self.num_NoteSprites_y = screen.get_height() / self.grid_size_y
 
         self.is_stopping = False
@@ -91,18 +91,22 @@ class Display(Thread):
         mouse_x, mouse_y = pygame.mouse.get_pos()
         angle_to_mouse = math.degrees(math.atan2(mouse_x - CAM_x, mouse_y - CAM_y))
 
-        Origin_z = util.get_new_range_value(1, screen.get_height(), mouse_y, -75, 15)
+        Origin_z = 0
+
+        self.num_NoteSprites_x = 6
 
         row = []
 
         for i in range(self.num_NoteSprites_x):
             row.append(
-                foreground.NoteSprite(mouse_x, CAM_y, Origin_z,
+                foreground.NoteSprite(mouse_x, mouse_y, Origin_z,
                                       10,
                                       i,
                                       random.randint(0, 360),
                                       random.randint(20, 160),
-                                      12)
+                                      9,
+                                      140,
+                                      random.randint(15, 20))
             )
         return row
 
@@ -156,7 +160,7 @@ class Display(Thread):
             # render grid
             mouse_x, mouse_y = pygame.mouse.get_pos()
             if self.draw_grid:
-                the_grid.render(screen, (mouse_x, CAM_y))
+                the_grid.render(screen, (mouse_x, mouse_y))
 
             if self.flashing_now is False:
                 self.flash.make_flash()
