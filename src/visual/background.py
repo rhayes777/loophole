@@ -120,7 +120,7 @@ class GridSegment(object):
     def render(self, this_surface):
 
         if self.size < 4500:
-            self.size *= 1.15  # Increase size over time
+            self.size *= 1.13  # Increase size over time
 
             mult = 2
 

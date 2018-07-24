@@ -197,7 +197,10 @@ class Display(Thread):
         """
         # This function goes through each line in the queue. It gets that row of NoteSprites (row) and also what
         # number it is is in queue (j)
-        for j, row in enumerate(self.row_queue.queue):
+
+        reversed_queue = reversed(self.row_queue.queue)
+
+        for j, row in enumerate(reversed_queue):
 
             """ Iterate through NoteSprites in row """
             for note_sprite in row:
