@@ -164,8 +164,8 @@ class NoteSprite(object):
         """ Parallax stuff """
         amount = 60
 
-        amount_x = math.cos(util.get_new_range_value(1, Origin_z, z_distance_to_cam, 0, 1))*amount
-        amount_y = math.sin(util.get_new_range_value(1, Origin_z, z_distance_to_cam, 0, 1))*amount
+        amount_x = math.sin(util.get_new_range_value(1, Origin_z, z_distance_to_cam, 0, 1))*amount
+        amount_y = math.cos(util.get_new_range_value(1, Origin_z, z_distance_to_cam, 0, 1))*amount
 
         para_x = util.get_new_range_value(1, screen.get_width(), camera_x, amount_x, -amount_x)
         para_y = util.get_new_range_value(1, screen.get_height(), camera_y, amount_y, -amount_y)
