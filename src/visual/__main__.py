@@ -47,10 +47,10 @@ CAM_y = screen.get_height() / 2
 
 # ...and is placed 500px back from the scene
 
-CAM_z = 600
+CAM_z = 500
 
 # Create an instance of Grid
-the_grid = background.Grid(info.current_w / 2, info.current_h / 2, 10, 5)
+the_grid = background.Grid(info.current_w / 2, info.current_h / 2, 20, 1)
 
 my_message = font.Wave("Welcome to the MidiZone", RED, 30, font.font_arcade, True)
 
@@ -93,20 +93,22 @@ class Display(Thread):
 
         Origin_z = 0
 
-        self.num_NoteSprites_x = 6
+        self.num_NoteSprites_x = 10
+
+        spacing = 10
 
         row = []
 
         for i in range(self.num_NoteSprites_x):
             row.append(
-                foreground.NoteSprite(mouse_x, mouse_y, Origin_z,
+                foreground.NoteSprite(mouse_x - (i*spacing/2) + i*spacing, mouse_y, Origin_z,
                                       10,
                                       i,
                                       random.randint(0, 360),
                                       90,
                                       9,
                                       140,
-                                      random.randint(15, 20))
+                                      random.randint(5, 10))
             )
         return row
 
