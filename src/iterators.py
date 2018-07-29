@@ -1,4 +1,26 @@
 from Queue import Queue
+import pytest
+
+
+class Heartbeat(object):
+    __heartbeat = None
+
+    def __new__(cls, *args, **kwargs):
+        if Heartbeat.__heartbeat is None:
+            Heartbeat.__heartbeat = object.__new__(Heartbeat)
+        return Heartbeat.__heartbeat
+
+
+heartbeat = Heartbeat()
+
+
+def filter_heartbeats(source):
+    def next_not_heartbeat():
+        message = source.next()
+        if message is heartbeat:
+            return next_not_heartbeat()
+        return message
+    yield next_not_heartbeat()
 
 
 class AbstractIterator(object):
@@ -47,17 +69,25 @@ class FilterIterator(Iterator):
         message = self.source.next()
         if self.filter_function(message):
             return message
-        return self.next()
+        return heartbeat
+
+
+@pytest.fixture(name="iterator")
+def make_iterator():
+    return Iterator([1, 2, 3])
+
+
+@pytest.fixture(name="filter_iterator")
+def make_filter_iterator():
+    return FilterIterator([1, 2, 3], filter_function=lambda x: x == 2)
 
 
 class TestBasic(object):
-    def test_iter(self):
-        iterator = Iterator([1, 2, 3])
-
+    def test_iter(self, iterator):
         assert [1, 2, 3] == [n for n in iterator]
 
-    def test_double_iter(self):
-        iterator = Iterator(Iterator([1, 2, 3]))
+    def test_double_iter(self, iterator):
+        iterator = Iterator(iterator)
 
         assert [1, 2, 3] == [n for n in iterator]
 
@@ -71,10 +101,8 @@ class TestBasic(object):
 
         assert [1, 4, 3] == [n for n in iterator]
 
-    def test_message_filter(self):
-        iterator = FilterIterator([1, 2, 3], filter_function=lambda x: x == 2)
-
-        assert [2] == [n for n in iterator]
+    def test_message_filter(self, filter_iterator):
+        assert [2] == [n for n in filter_heartbeats(filter_iterator)]
 
 
 class Combiner(AbstractIterator):
@@ -112,17 +140,20 @@ class Splitter(Iterator):
             return self.splitter.next_for(self)
 
 
+@pytest.fixture(name="splitter")
+def make_splitter():
+    return Splitter([1, 2, 3])
+
+
 class TestJunctions(object):
     def test_combiner(self):
         combiner = Combiner([1, 2, 3], [4, 5, 6])
 
         assert [1, 4, 2, 5, 3, 6] == [n for n in combiner]
 
-    def test_splitter_simultaneous(self):
+    def test_splitter_simultaneous(self, splitter):
         list_one = []
         list_two = []
-
-        splitter = Splitter([1, 2, 3])
 
         iter1 = splitter.new_iterator()
         iter2 = splitter.new_iterator()
@@ -134,11 +165,14 @@ class TestJunctions(object):
         assert list_one == [1, 2, 3]
         assert list_two == [1, 2, 3]
 
-    def test_splitter_consecutive(self):
-        splitter = Splitter([1, 2, 3])
-
+    def test_splitter_consecutive(self, splitter):
         iter1 = splitter.new_iterator()
         iter2 = splitter.new_iterator()
 
         assert [1, 2, 3] == [n for n in iter1]
         assert [1, 2, 3] == [n for n in iter2]
+
+
+class TestHeartbeat(object):
+    def test_filter(self, filter_iterator):
+        assert [heartbeat, 2, heartbeat] == [n for n in filter_iterator]
