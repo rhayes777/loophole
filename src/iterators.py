@@ -2,12 +2,11 @@ from Queue import Queue
 
 
 class Iterator(object):
-    def __init__(self, source, operation=lambda message: [message]):
+    def __init__(self, source):
         if isinstance(source, list):
             self.source = iter(source).__iter__()
         else:
             self.source = source
-        self.operation = operation
         self.queue = Queue()
 
     def __iter__(self):
@@ -21,10 +20,20 @@ class Iterator(object):
 
 
 class OperationIterator(Iterator):
+    def __init__(self, source, operation=lambda message: [message], filter_func=lambda x: True):
+        super(OperationIterator, self).__init__(source)
+        self.operation = operation
+        self.filter_func = filter_func
+
     def next(self):
         if not self.queue.empty():
             return self.queue.get()
-        for message in self.operation(self.source.next()):
+        message = self.source.next()
+        if not self.filter_func(message):
+            print("returning message")
+            return message
+        print("applying operation")
+        for message in self.operation(message):
             self.queue.put(message)
         return self.next()
 
@@ -45,5 +54,7 @@ class TestCase(object):
 
         assert [2, 4, 6] == [n for n in iterator]
 
-    def test_filter(self):
-        pass
+    def test_effect_filter(self):
+        iterator = OperationIterator([1, 2, 3], operation=lambda x: [2 * x], filter_func=lambda x: x == 2)
+
+        assert [1, 4, 3] == [n for n in iterator]
