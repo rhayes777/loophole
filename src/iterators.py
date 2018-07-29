@@ -1,5 +1,6 @@
 from Queue import Queue
 import pytest
+from functools import wraps
 
 
 class Heartbeat(object):
@@ -20,6 +21,7 @@ def filter_heartbeats(source):
         if message is heartbeat:
             return next_not_heartbeat()
         return message
+
     yield next_not_heartbeat()
 
 
@@ -28,15 +30,35 @@ class AbstractIterator(object):
         return self
 
 
+def switch(func):
+    @wraps(func)
+    def wrapper(instance):
+        if instance.is_on:
+            return func(instance)
+        return super(instance.__class__, instance).next()
+
+    return wrapper
+
+
 class Iterator(AbstractIterator):
     def __init__(self, source):
+        super(Iterator, self).__init__()
         if isinstance(source, list):
             self.source = iter(source).__iter__()
         else:
             self.source = source
+        self.__is_on = True
+        self.__is_on_queue = Queue()
 
-    def __iter__(self):
-        return self
+    @property
+    def is_on(self):
+        if not self.__is_on_queue.empty():
+            self.__is_on = self.__is_on_queue.get()
+        return self.__is_on
+
+    @is_on.setter
+    def is_on(self, new_value):
+        self.__is_on_queue.put(new_value)
 
     def next(self):
         return self.source.next()
@@ -49,6 +71,7 @@ class OperationIterator(Iterator):
         self.operation_filter = operation_filter
         self.queue = Queue()
 
+    @switch
     def next(self):
         if not self.queue.empty():
             return self.queue.get()
@@ -65,6 +88,7 @@ class FilterIterator(Iterator):
         super(FilterIterator, self).__init__(source)
         self.filter_function = filter_function
 
+    @switch
     def next(self):
         message = self.source.next()
         if self.filter_function(message):
@@ -107,6 +131,7 @@ class TestBasic(object):
 
 class Combiner(AbstractIterator):
     def __init__(self, *sources):
+        super(Combiner, self).__init__()
         self.sources = map(Iterator, sources)
         self.next_source_number = -1
 
@@ -121,7 +146,7 @@ class Splitter(Iterator):
         self.queue_dict = {}
 
     def new_iterator(self):
-        splitter = Splitter.Splitterator(self)
+        splitter = Splitterator(self)
         self.queue_dict[splitter] = Queue()
         return splitter
 
@@ -132,12 +157,14 @@ class Splitter(Iterator):
                 queue.put(message)
         return self.queue_dict[splitterator].get()
 
-    class Splitterator(AbstractIterator):
-        def __init__(self, splitter):
-            self.splitter = splitter
 
-        def next(self):
-            return self.splitter.next_for(self)
+class Splitterator(AbstractIterator):
+    def __init__(self, splitter):
+        super(Splitterator, self).__init__()
+        self.splitter = splitter
+
+    def next(self):
+        return self.splitter.next_for(self)
 
 
 @pytest.fixture(name="splitter")
@@ -176,3 +203,9 @@ class TestJunctions(object):
 class TestHeartbeat(object):
     def test_filter(self, filter_iterator):
         assert [heartbeat, 2, heartbeat] == [n for n in filter_iterator]
+
+
+class TestIsOn(object):
+    def test_is_on(self, filter_iterator):
+        filter_iterator.is_on = False
+        assert [1, 2, 3] == [n for n in filter_iterator]
