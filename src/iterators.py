@@ -87,13 +87,57 @@ class Combiner(AbstractIterator):
         return self.sources[self.next_source_number].next()
 
 
-class TestJunctions(object):
-    # def test_splitter(self):
-    # splitter = Splitter([1, 2, 3])
-    # iter1 = splitter.new_iterator()
-    # iter2 = splitter.new_iterator()
+class Splitter(Iterator):
+    def __init__(self, source):
+        super(Splitter, self).__init__(source)
+        self.queue_dict = {}
 
+    def new_iterator(self):
+        splitter = Splitter.Splitterator(self)
+        self.queue_dict[splitter] = Queue()
+        return splitter
+
+    def next_for(self, splitterator):
+        if self.queue_dict[splitterator].empty():
+            for queue in self.queue_dict.values():
+                queue.put(self.next())
+        return self.queue_dict[splitterator].get()
+
+    class Splitterator(AbstractIterator):
+        def __init__(self, splitter):
+            self.splitter = splitter
+
+        def next(self):
+            return self.splitter.next_for(self)
+
+
+class TestJunctions(object):
     def test_combiner(self):
         combiner = Combiner([1, 2, 3], [4, 5, 6])
 
         assert [1, 4, 2, 5, 3, 6] == [n for n in combiner]
+
+    def test_splitter_simultaneous(self):
+        list_one = []
+        list_two = []
+
+        splitter = Splitter([1, 2, 3])
+
+        iter1 = splitter.new_iterator()
+        iter2 = splitter.new_iterator()
+
+        for _ in range(3):
+            list_one.append(iter1)
+            list_two.append(iter2)
+
+        assert list_one == [1, 2, 3]
+        assert list_two == [1, 2, 3]
+
+    def test_splitter_consecutive(self):
+        splitter = Splitter([1, 2, 3])
+
+        iter1 = splitter.new_iterator()
+        iter2 = splitter.new_iterator()
+
+        assert [1, 2, 3] == [n for n in iter1]
+        assert [1, 2, 3] == [n for n in iter2]
