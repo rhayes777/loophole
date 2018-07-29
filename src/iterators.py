@@ -124,7 +124,7 @@ class TestBasic(object):
         assert [2, 4, 6] == [n for n in operation_iterator]
 
     def test_effect_filter(self, operation_iterator):
-        operation_iterator.operation_filter=lambda x: x == 2
+        operation_iterator.operation_filter = lambda x: x == 2
 
         assert [1, 4, 3] == [n for n in operation_iterator]
 
@@ -213,5 +213,13 @@ class TestIsOn(object):
         filter_iterator.is_on = False
         assert [1, 2, 3] == [n for n in filter_iterator]
 
-    def test_operation(self):
-        pass
+    def test_operation(self, operation_iterator):
+        operation_iterator.is_on = False
+        assert [1, 2, 3] == [n for n in operation_iterator]
+
+    def test_switching(self, operation_iterator):
+        assert 2 == operation_iterator.next()
+        operation_iterator.is_on = False
+        assert 2 == operation_iterator.next()
+        operation_iterator.is_on = True
+        assert 6 == operation_iterator.next()
