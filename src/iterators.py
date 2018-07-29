@@ -70,15 +70,23 @@ class OperationIterator(Iterator):
         self.operation = operation
         self.operation_filter = operation_filter
         self.queue = Queue()
+        self.debt = 0
 
     @switch
     def next(self):
         if not self.queue.empty():
             return self.queue.get()
         message = self.source.next()
+        if message is heartbeat:
+            if self.debt > 0:
+                self.debt -= 1
+                return self.next()
+            return message
         if not self.operation_filter(message):
             return message
+        self.debt -=1
         for message in self.operation(message):
+            self.debt += 1
             self.queue.put(message)
         return self.next()
 
@@ -91,6 +99,8 @@ class FilterIterator(Iterator):
     @switch
     def next(self):
         message = self.source.next()
+        if message is heartbeat:
+            return message
         if self.filter_function(message):
             return message
         return heartbeat
@@ -206,6 +216,10 @@ class TestJunctions(object):
 class TestHeartbeat(object):
     def test_filter(self, filter_iterator):
         assert [heartbeat, 2, heartbeat] == [n for n in filter_iterator]
+
+    def test_operation(self):
+        doubling_iterator = OperationIterator([1, heartbeat, heartbeat], operation=lambda x: [x, x])
+        assert [1, 1, heartbeat] == [n for n in doubling_iterator]
 
 
 class TestIsOn(object):
