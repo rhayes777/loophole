@@ -106,6 +106,11 @@ def make_filter_iterator():
     return FilterIterator([1, 2, 3], filter_function=lambda x: x == 2)
 
 
+@pytest.fixture(name="operation_iterator")
+def make_operation_iterator():
+    return OperationIterator([1, 2, 3], operation=lambda x: [2 * x])
+
+
 class TestBasic(object):
     def test_iter(self, iterator):
         assert [1, 2, 3] == [n for n in iterator]
@@ -115,15 +120,13 @@ class TestBasic(object):
 
         assert [1, 2, 3] == [n for n in iterator]
 
-    def test_apply(self):
-        iterator = OperationIterator([1, 2, 3], operation=lambda x: [2 * x])
+    def test_apply(self, operation_iterator):
+        assert [2, 4, 6] == [n for n in operation_iterator]
 
-        assert [2, 4, 6] == [n for n in iterator]
+    def test_effect_filter(self, operation_iterator):
+        operation_iterator.operation_filter=lambda x: x == 2
 
-    def test_effect_filter(self):
-        iterator = OperationIterator([1, 2, 3], operation=lambda x: [2 * x], operation_filter=lambda x: x == 2)
-
-        assert [1, 4, 3] == [n for n in iterator]
+        assert [1, 4, 3] == [n for n in operation_iterator]
 
     def test_message_filter(self, filter_iterator):
         assert [2] == [n for n in filter_heartbeats(filter_iterator)]
@@ -206,6 +209,9 @@ class TestHeartbeat(object):
 
 
 class TestIsOn(object):
-    def test_is_on(self, filter_iterator):
+    def test_filter(self, filter_iterator):
         filter_iterator.is_on = False
         assert [1, 2, 3] == [n for n in filter_iterator]
+
+    def test_operation(self):
+        pass
