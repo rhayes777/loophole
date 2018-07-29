@@ -16,6 +16,14 @@ class Iterator(object):
     def next(self):
         if not self.queue.empty():
             return self.queue.get()
+        self.queue.put(self.source.next())
+        return self.next()
+
+
+class OperationIterator(Iterator):
+    def next(self):
+        if not self.queue.empty():
+            return self.queue.get()
         for message in self.operation(self.source.next()):
             self.queue.put(message)
         return self.next()
@@ -33,6 +41,9 @@ class TestCase(object):
         assert [1, 2, 3] == [n for n in iterator]
 
     def test_apply(self):
-        iterator = Iterator([1, 2, 3], operation=lambda x: [2 * x])
+        iterator = OperationIterator([1, 2, 3], operation=lambda x: [2 * x])
 
         assert [2, 4, 6] == [n for n in iterator]
+
+    def test_filter(self):
+        pass
