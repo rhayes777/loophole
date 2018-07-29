@@ -20,19 +20,17 @@ class Iterator(object):
 
 
 class OperationIterator(Iterator):
-    def __init__(self, source, operation=lambda message: [message], filter_func=lambda x: True):
+    def __init__(self, source, operation=lambda message: [message], operation_filter=lambda x: True):
         super(OperationIterator, self).__init__(source)
         self.operation = operation
-        self.filter_func = filter_func
+        self.operation_filter = operation_filter
 
     def next(self):
         if not self.queue.empty():
             return self.queue.get()
         message = self.source.next()
-        if not self.filter_func(message):
-            print("returning message")
+        if not self.operation_filter(message):
             return message
-        print("applying operation")
         for message in self.operation(message):
             self.queue.put(message)
         return self.next()
@@ -55,6 +53,6 @@ class TestCase(object):
         assert [2, 4, 6] == [n for n in iterator]
 
     def test_effect_filter(self):
-        iterator = OperationIterator([1, 2, 3], operation=lambda x: [2 * x], filter_func=lambda x: x == 2)
+        iterator = OperationIterator([1, 2, 3], operation=lambda x: [2 * x], operation_filter=lambda x: x == 2)
 
         assert [1, 4, 3] == [n for n in iterator]
