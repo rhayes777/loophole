@@ -15,6 +15,21 @@ class TrackThread(Thread):
             self.queue.put(item)
 
 
+class HeartbeatThread(Thread):
+    def __init__(self, queue, interval=0.05):
+        super(HeartbeatThread, self).__init__()
+        self.queue = queue
+        self.interval = interval
+
+    def run(self):
+        while True:
+            ls = self.queue.queue
+            if len(ls) > 0 and ls[-1] is stop:
+                break
+            self.queue.put(iterators.heartbeat)
+            sleep(self.interval)
+
+
 class Stop(object):
     __stop = None
 
@@ -29,22 +44,23 @@ stop = Stop()
 
 class MidiSource(object):
     def __init__(self, track, interval=0.05):
-        self.interval = interval
         self.queue = Queue()
+        self.heartbeat_thread = HeartbeatThread(self.queue, interval)
         self.track_thread = TrackThread(track, self.queue)
 
     def __iter__(self):
         self.track_thread.start()
+        self.heartbeat_thread.start()
         return self
 
     def next(self):
-        sleep(self.interval)
-        if self.queue.empty():
-            return iterators.heartbeat
-        message = self.queue.get()
-        if message is stop:
-            raise StopIteration()
-        return message
+        if not self.queue.empty():
+            message = self.queue.get()
+            if message is stop:
+                raise StopIteration()
+            return self.queue.get()
+        sleep(0.01)
+        return self.next()
 
 
 class TestCase(object):
