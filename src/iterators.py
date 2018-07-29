@@ -7,16 +7,12 @@ class Iterator(object):
             self.source = iter(source).__iter__()
         else:
             self.source = source
-        self.queue = Queue()
 
     def __iter__(self):
         return self
 
     def next(self):
-        if not self.queue.empty():
-            return self.queue.get()
-        self.queue.put(self.source.next())
-        return self.next()
+        return self.source.next()
 
 
 class OperationIterator(Iterator):
@@ -24,6 +20,7 @@ class OperationIterator(Iterator):
         super(OperationIterator, self).__init__(source)
         self.operation = operation
         self.operation_filter = operation_filter
+        self.queue = Queue()
 
     def next(self):
         if not self.queue.empty():
@@ -33,6 +30,18 @@ class OperationIterator(Iterator):
             return message
         for message in self.operation(message):
             self.queue.put(message)
+        return self.next()
+
+
+class FilterIterator(Iterator):
+    def __init__(self, source, filter_function=lambda x: True):
+        super(FilterIterator, self).__init__(source)
+        self.filter_function = filter_function
+
+    def next(self):
+        message = self.source.next()
+        if self.filter_function(message):
+            return message
         return self.next()
 
 
@@ -56,3 +65,8 @@ class TestCase(object):
         iterator = OperationIterator([1, 2, 3], operation=lambda x: [2 * x], operation_filter=lambda x: x == 2)
 
         assert [1, 4, 3] == [n for n in iterator]
+
+    def test_message_filter(self):
+        iterator = FilterIterator([1, 2, 3], filter_function=lambda x: x == 2)
+
+        assert [2] == [n for n in iterator]
