@@ -99,8 +99,9 @@ class Splitter(Iterator):
 
     def next_for(self, splitterator):
         if self.queue_dict[splitterator].empty():
+            message = self.next()
             for queue in self.queue_dict.values():
-                queue.put(self.next())
+                queue.put(message)
         return self.queue_dict[splitterator].get()
 
     class Splitterator(AbstractIterator):
@@ -127,8 +128,8 @@ class TestJunctions(object):
         iter2 = splitter.new_iterator()
 
         for _ in range(3):
-            list_one.append(iter1)
-            list_two.append(iter2)
+            list_one.append(iter1.next())
+            list_two.append(iter2.next())
 
         assert list_one == [1, 2, 3]
         assert list_two == [1, 2, 3]
