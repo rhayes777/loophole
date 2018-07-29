@@ -1,7 +1,12 @@
 from Queue import Queue
 
 
-class Iterator(object):
+class AbstractIterator(object):
+    def __iter__(self):
+        return self
+
+
+class Iterator(AbstractIterator):
     def __init__(self, source):
         if isinstance(source, list):
             self.source = iter(source).__iter__()
@@ -45,7 +50,7 @@ class FilterIterator(Iterator):
         return self.next()
 
 
-class TestCase(object):
+class TestBasic(object):
     def test_iter(self):
         iterator = Iterator([1, 2, 3])
 
@@ -70,3 +75,25 @@ class TestCase(object):
         iterator = FilterIterator([1, 2, 3], filter_function=lambda x: x == 2)
 
         assert [2] == [n for n in iterator]
+
+
+class Combiner(AbstractIterator):
+    def __init__(self, *sources):
+        self.sources = map(Iterator, sources)
+        self.next_source_number = -1
+
+    def next(self):
+        self.next_source_number = (self.next_source_number + 1) % len(self.sources)
+        return self.sources[self.next_source_number].next()
+
+
+class TestJunctions(object):
+    # def test_splitter(self):
+    # splitter = Splitter([1, 2, 3])
+    # iter1 = splitter.new_iterator()
+    # iter2 = splitter.new_iterator()
+
+    def test_combiner(self):
+        combiner = Combiner([1, 2, 3], [4, 5, 6])
+
+        assert [1, 4, 2, 5, 3, 6] == [n for n in combiner]
