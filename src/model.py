@@ -40,7 +40,10 @@ class MassiveObject(Object):
         return (distance[0] ** 2 + distance[1] ** 2) ** (1 / 2)
 
     def acceleration_from(self, position):
-        return tuple(self.mass / x ** 2 for x in self.distance_from(position))
+        absolute_distance = self.absolute_distance_from(position)
+        angle = self.angle_from(position)
+        force = self.mass / absolute_distance ** 2
+        return force * math.sin(angle), force * math.cos(angle)
 
 
 class TestMassiveObject(object):
@@ -66,22 +69,22 @@ class TestMassiveObject(object):
         assert massive_object.angle_from((0., 1.)) == math.pi / 2
         assert massive_object.angle_from((-1., 0.)) == 0
 
-    # def test_acceleration(self):
-    #     massive_object = MassiveObject(position=(0., 0.), mass=1.)
-    #     assert massive_object.acceleration_from((1, 1)) == (-1, -1)
-    #     assert massive_object.acceleration_from((0, 1)) == (0, -1)
-    #     assert massive_object.acceleration_from((1, 0)) == (-1, 0)
-    #     assert massive_object.acceleration_from((-1, -1)) == (1, 1)
-    #
-    # def test_bigger_acceleration(self):
-    #     massive_object = MassiveObject(position=(0., 0.), mass=2.)
-    #     assert massive_object.acceleration_from((1, 1)) == (-2, -2)
-    #     assert massive_object.acceleration_from((-1, -1)) == (2, 2)
-    #
-    # def test_bigger_distance(self):
-    #     massive_object = MassiveObject(position=(0., 0.), mass=4.)
-    #     assert massive_object.acceleration_from((2, 2)) == (-1, -1)
-    #     assert massive_object.acceleration_from((-2, -2)) == (1, 1)
+    def test_acceleration(self):
+        massive_object = MassiveObject(position=(0., 0.), mass=1.)
+        assert massive_object.acceleration_from((1, 1)) == (-1, -1)
+        assert massive_object.acceleration_from((0, 1)) == (0, -1)
+        assert massive_object.acceleration_from((1, 0)) == (-1, 0)
+        assert massive_object.acceleration_from((-1, -1)) == (1, 1)
+
+    def test_bigger_acceleration(self):
+        massive_object = MassiveObject(position=(0., 0.), mass=2.)
+        assert massive_object.acceleration_from((1, 1)) == (-2, -2)
+        assert massive_object.acceleration_from((-1, -1)) == (2, 2)
+
+    def test_bigger_distance(self):
+        massive_object = MassiveObject(position=(0., 0.), mass=4.)
+        assert massive_object.acceleration_from((2, 2)) == (-1, -1)
+        assert massive_object.acceleration_from((-2, -2)) == (1, 1)
 
 
 class TestNote(object):
