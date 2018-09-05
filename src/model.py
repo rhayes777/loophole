@@ -5,11 +5,8 @@ class Note(object):
         self.acceleration = acceleration
 
     def step_forward(self):
-        def tuple_sum(t1, t2):
-            return tuple(v1 + v2 for v1, v2 in zip(t1, t2))
-
-        self.velocity = tuple_sum(self.velocity, self.acceleration)
-        self.position = tuple_sum(self.position, self.velocity)
+        self.velocity = tuple(sum(pair) for pair in zip(self.velocity, self.acceleration))
+        self.position = tuple(sum(pair) for pair in zip(self.position, self.velocity))
 
 
 class TestNote(object):
