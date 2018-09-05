@@ -1,4 +1,10 @@
 import math
+import numpy as np
+
+
+def unit_vector(vector):
+    """ Returns the unit vector of the vector.  """
+    return np.array(vector) / np.linalg.norm(vector)
 
 
 class Object(object):
@@ -26,11 +32,8 @@ class MassiveObject(Object):
         return tuple(other - this for other, this in zip(self.position, position))
 
     def angle_from(self, position):
-        if position[0] == 0:
-            return math.pi / 2
-
-        distance = self.distance_from(position)
-        return math.atan(distance[1] / distance[0])
+        v1_u = unit_vector(self.distance_from(position))
+        return np.arccos(np.clip(np.dot(v1_u, (1, 0)), -1.0, 1.0))
 
     def absolute_distance_from(self, position):
         distance = self.distance_from(position)
@@ -59,9 +62,9 @@ class TestMassiveObject(object):
 
     def test_angle_from(self):
         massive_object = MassiveObject(position=(0., 0.))
-        assert massive_object.angle_from((1., 0.)) == 0
+        assert massive_object.angle_from((1., 0.)) == math.pi
         assert massive_object.angle_from((0., 1.)) == math.pi / 2
-        assert massive_object.angle_from((-1., 0.)) == math.pi
+        assert massive_object.angle_from((-1., 0.)) == 0
 
     # def test_acceleration(self):
     #     massive_object = MassiveObject(position=(0., 0.), mass=1.)
