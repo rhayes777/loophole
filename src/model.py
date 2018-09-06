@@ -49,6 +49,7 @@ class Model(object):
     def step_forward(self):
         for note in self.notes:
             note.step_forward()
+            note.acceleration = self.player.acceleration_from(note.position)
 
         self.player.step_forward()
 
@@ -80,6 +81,11 @@ class TestModel(object):
 
         assert model.notes[0].position == (1, 0)
         assert model.notes[1].position == (0, 1)
+
+        assert model.notes[0].acceleration == (-1, almost_zero)
+        assert model.notes[1].acceleration == (almost_zero, -1)
+
+        assert model.player.position == (0, 0)
 
 
 class TestMassiveObject(object):
