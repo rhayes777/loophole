@@ -33,10 +33,13 @@ class MassiveObject(Object):
         distance = self.distance_from(position)
         return (distance[0] ** 2 + distance[1] ** 2) ** (1 / 2)
 
-    def acceleration_from(self, position):
+    def force_from_position(self, position):
         absolute_distance = self.absolute_distance_from(position)
+        return self.mass / absolute_distance ** 2
+
+    def acceleration_from(self, position):
+        force = self.force_from_position(position)
         angle = self.angle_from(position)
-        force = self.mass / absolute_distance ** 2
         return force * math.sin(angle), force * math.cos(angle)
 
 
