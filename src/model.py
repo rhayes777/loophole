@@ -2,11 +2,6 @@ import math
 import numpy as np
 
 
-def unit_vector(vector):
-    """ Returns the unit vector of the vector.  """
-    return np.array(vector) / np.linalg.norm(vector)
-
-
 class Object(object):
     def __init__(self, position=(0., 0.)):
         self.position = position
@@ -32,8 +27,8 @@ class MassiveObject(Object):
         return tuple(other - this for other, this in zip(self.position, position))
 
     def angle_from(self, position):
-        v1_u = unit_vector(self.distance_from(position))
-        return np.arccos(np.clip(np.dot(v1_u, (1, 0)), -1.0, 1.0))
+        distance = self.distance_from(position)
+        return math.atan2(distance[1], distance[0])
 
     def absolute_distance_from(self, position):
         distance = self.distance_from(position)
