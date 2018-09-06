@@ -1,18 +1,12 @@
 import math
 import pytest
 
-
 almost_zero = pytest.approx(0, abs=0.0001)
 
 
 class Object(object):
-    def __init__(self, position=(0., 0.)):
-        self.position = position
-
-
-class Note(Object):
     def __init__(self, position=(0., 0.), velocity=(0., 0.), acceleration=(0., 0.)):
-        super(Note, self).__init__(position)
+        self.position = position
         self.velocity = velocity
         self.acceleration = acceleration
 
@@ -78,7 +72,6 @@ class TestMassiveObject(object):
         assert massive_object.angle_from((-1., 0.)) == 0
 
     def test_acceleration(self):
-
         massive_object = MassiveObject(position=(0., 0.), mass=1.)
         assert massive_object.acceleration_from((0, 1)) == (almost_zero, -1)
         assert massive_object.acceleration_from((1, 0)) == (-1, almost_zero)
@@ -96,38 +89,38 @@ class TestMassiveObject(object):
 
 class TestNote(object):
     def test_no_movement(self):
-        note = Note(position=(0., 0.), velocity=(0., 0.))
+        note = Object(position=(0., 0.), velocity=(0., 0.))
         note.step_forward()
 
         assert note.position == (0., 0.)
 
     def test_up_movement(self):
-        note = Note(position=(0., 0.), velocity=(1., 0.))
+        note = Object(position=(0., 0.), velocity=(1., 0.))
         note.step_forward()
 
         assert note.position == (1., 0.)
 
     def test_right_movement(self):
-        note = Note(position=(0., 0.), velocity=(0., 1.))
+        note = Object(position=(0., 0.), velocity=(0., 1.))
         note.step_forward()
 
         assert note.position == (0., 1.)
 
     def test_left_movement(self):
-        note = Note(position=(0., 0.), velocity=(0., -1.))
+        note = Object(position=(0., 0.), velocity=(0., -1.))
         note.step_forward()
 
         assert note.position == (0., -1.)
 
     def test_double_movement(self):
-        note = Note(position=(0., 0.), velocity=(1., 1.))
+        note = Object(position=(0., 0.), velocity=(1., 1.))
         note.step_forward()
         note.step_forward()
 
         assert note.position == (2, 2)
 
     def test_acceleration(self):
-        note = Note(position=(0., 0.), velocity=(0., 0.), acceleration=(1., 0.))
+        note = Object(position=(0., 0.), velocity=(0., 0.), acceleration=(1., 0.))
 
         note.step_forward()
 
