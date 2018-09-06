@@ -14,6 +14,11 @@ class Object(object):
         self.velocity = tuple(sum(pair) for pair in zip(self.velocity, self.acceleration))
         self.position = tuple(sum(pair) for pair in zip(self.position, self.velocity))
 
+    def __str__(self):
+        return "position:{}\n" \
+               "velocity:{}\n" \
+               "acceleration:{}".format(self.position, self.velocity, self.acceleration)
+
 
 class MassiveObject(Object):
     def __init__(self, position=(0., 0.), mass=1., collision_radius=1.):
@@ -44,6 +49,11 @@ class MassiveObject(Object):
     def is_collision(self, position):
         return self.absolute_distance_from(position) <= self.collision_radius
 
+    def __str__(self):
+        return "mass:{}\n" \
+               "collision_radius:{}\n" \
+               "{}".format(self.mass, self.collision_radius, super(MassiveObject, self).__str__())
+
 
 class Model(object):
     def __init__(self, player):
@@ -58,6 +68,9 @@ class Model(object):
                 self.notes.remove(note)
 
         self.player.step_forward()
+
+    def __str__(self):
+        return "Player:\n{}\nNotes:\n{}".format(str(self.player, ), "\n".join(map(str, self.notes)))
 
 
 @pytest.fixture(name="model")
