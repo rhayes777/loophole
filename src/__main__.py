@@ -2,7 +2,6 @@ from control import input, state
 import pygame
 import sys
 import os
-from random import randint
 import signal
 import logging
 
