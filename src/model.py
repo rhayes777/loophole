@@ -48,10 +48,10 @@ class MassiveObject(Object):
 class Model(object):
     def __init__(self, player):
         self.player = player
-        self.notes = []
+        self.notes = set()
 
     def step_forward(self):
-        for note in self.notes:
+        for note in list(self.notes):
             note.step_forward()
             note.acceleration = self.player.acceleration_from(note.position)
             if self.player.is_collision(note.position):
@@ -79,19 +79,19 @@ class TestModel(object):
     def test_init(self, model):
         model.player.collision_radius = None
         assert isinstance(model.player, MassiveObject)
-        assert model.notes == []
+        assert model.notes == set()
 
     def test_step_forward(self, model, note_across, note_up):
         model.player.collision_radius = None
-        model.notes.extend([note_across, note_up])
+        model.notes.update([note_across, note_up])
 
         model.step_forward()
 
-        assert model.notes[0].position == (1, 0)
-        assert model.notes[1].position == (0, 1)
+        assert note_across.position == (1, 0)
+        assert note_up.position == (0, 1)
 
-        assert model.notes[0].acceleration == (-1, almost_zero)
-        assert model.notes[1].acceleration == (almost_zero, -1)
+        assert note_across.acceleration == (-1, almost_zero)
+        assert note_up.acceleration == (almost_zero, -1)
 
         assert model.player.position == (0, 0)
 
@@ -113,10 +113,10 @@ class TestModel(object):
         assert not player.is_collision(note.position)
 
     def test_elimination(self, model, note_up):
-        model.notes.append(note_up)
+        model.notes.add(note_up)
         model.step_forward()
 
-        assert model.notes == []
+        assert model.notes == set()
 
 
 class TestMassiveObject(object):
