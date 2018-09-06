@@ -26,13 +26,13 @@ last_buttons = {'x': False,
                 'start': False,
                 'select': False}
 
-velocity_dict = {'x': (0, 0),
-                 'up': (15, 0),
-                 'circle': (0, 0),
-                 'right': (0, 15),
-                 'square': (0, 0),
-                 'down': (-15, 0),
-                 'triangle': (0, 0),
+velocity_dict = {'x': (-15, 15),
+                 'up': (0, 15),
+                 'circle': (15, 15),
+                 'right': (15, 0),
+                 'square': (15, -15),
+                 'down': (0, -15),
+                 'triangle': (-15, -15),
                  'left': (-15, 0),
                  'start': (0, 0),
                  'select': (0, 0)}
@@ -41,18 +41,21 @@ velocity_dict = {'x': (0, 0),
 def button_listener(button_dict):
     print(button_dict)
     global last_buttons
-    new_buttons = [button for button, is_on in button_dict.items() if is_on and last_buttons[button]]
+    new_buttons = [button for button, is_on in button_dict.items() if is_on and not last_buttons[button]]
     last_buttons = button_dict
 
     if len(new_buttons) > 0:
         model_instance.player.velocity = velocity_dict[new_buttons[0]]
 
 
+controller.button_listener = button_listener
+
+
 def rand_tuple():
     return float(randint(0, 10)), float(randint(0, 10))
 
 
-for _ in range(0):
+for _ in range(5):
     model_instance.notes.add(model.Object(position=rand_tuple(), velocity=rand_tuple()))
 
 # Keep reading forever
