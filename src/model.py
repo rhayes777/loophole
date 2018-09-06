@@ -61,7 +61,7 @@ class TestMassiveObject(object):
     def test_angle_from(self):
         massive_object = MassiveObject(position=(0., 0.))
         assert massive_object.angle_from((1., 0.)) == math.pi
-        assert massive_object.angle_from((0., 1.)) == math.pi / 2
+        assert massive_object.angle_from((0., 1.)) == -math.pi / 2
         assert massive_object.angle_from((-1., 0.)) == 0
 
     def test_acceleration(self):
