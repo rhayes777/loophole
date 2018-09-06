@@ -41,6 +41,20 @@ class MassiveObject(Object):
         return force * math.cos(angle), force * math.sin(angle)
 
 
+class Model(object):
+    def __init__(self, player):
+        self.player = player
+        self.notes = []
+
+
+class TestModel(object):
+    def test_model(self):
+        model = Model(MassiveObject())
+
+        assert isinstance(model.player, MassiveObject)
+        assert model.notes == []
+
+
 class TestMassiveObject(object):
     def test_distance(self):
         massive_object = MassiveObject(position=(0., 0.), mass=1.)
