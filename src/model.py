@@ -16,9 +16,10 @@ class Object(object):
 
 
 class MassiveObject(Object):
-    def __init__(self, position=(0., 0.), mass=1.):
+    def __init__(self, position=(0., 0.), mass=1., collision_radius=1.):
         super(MassiveObject, self).__init__(position)
         self.mass = mass
+        self.collision_radius = collision_radius
 
     def distance_from(self, position):
         return tuple(other - this for other, this in zip(self.position, position))
@@ -39,6 +40,9 @@ class MassiveObject(Object):
         force = self.force_from_position(position)
         angle = self.angle_from(position)
         return force * math.cos(angle), force * math.sin(angle)
+
+    def is_collision(self, position):
+        return self.absolute_distance_from(position) < self.collision_radius
 
 
 class Model(object):
@@ -71,6 +75,7 @@ def make_note_up():
 
 class TestModel(object):
     def test_init(self, model):
+        model.player.collision_radius = None
         assert isinstance(model.player, MassiveObject)
         assert model.notes == []
 
@@ -86,6 +91,23 @@ class TestModel(object):
         assert model.notes[1].acceleration == (almost_zero, -1)
 
         assert model.player.position == (0, 0)
+
+    def test_moving_player(self, model):
+        model.player.velocity = (1, 0)
+
+        model.step_forward()
+
+        assert model.player.position == (1, 0)
+
+    def test_collision(self):
+        player = MassiveObject()
+        note = Object()
+
+        assert player.is_collision(note.position)
+
+        note = Object(position=(1.1, 0))
+
+        assert not player.is_collision(note.position)
 
 
 class TestMassiveObject(object):
