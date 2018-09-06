@@ -42,7 +42,7 @@ class MassiveObject(Object):
         return force * math.cos(angle), force * math.sin(angle)
 
     def is_collision(self, position):
-        return self.absolute_distance_from(position) < self.collision_radius
+        return self.absolute_distance_from(position) <= self.collision_radius
 
 
 class Model(object):
@@ -54,6 +54,8 @@ class Model(object):
         for note in self.notes:
             note.step_forward()
             note.acceleration = self.player.acceleration_from(note.position)
+            if self.player.is_collision(note.position):
+                self.notes.remove(note)
 
         self.player.step_forward()
 
@@ -80,6 +82,7 @@ class TestModel(object):
         assert model.notes == []
 
     def test_step_forward(self, model, note_across, note_up):
+        model.player.collision_radius = None
         model.notes.extend([note_across, note_up])
 
         model.step_forward()
@@ -108,6 +111,12 @@ class TestModel(object):
         note = Object(position=(1.1, 0))
 
         assert not player.is_collision(note.position)
+
+    def test_elimination(self, model, note_up):
+        model.notes.append(note_up)
+        model.step_forward()
+
+        assert model.notes == []
 
 
 class TestMassiveObject(object):
