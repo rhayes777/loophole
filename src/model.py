@@ -46,13 +46,40 @@ class Model(object):
         self.player = player
         self.notes = []
 
+    def step_forward(self):
+        for note in self.notes:
+            note.step_forward()
+
+        self.player.step_forward()
+
+
+@pytest.fixture(name="model")
+def make_model():
+    return Model(MassiveObject())
+
+
+@pytest.fixture(name="note_across")
+def make_note_across():
+    return Object(velocity=(1, 0))
+
+
+@pytest.fixture(name="note_up")
+def make_note_up():
+    return Object(velocity=(0, 1))
+
 
 class TestModel(object):
-    def test_model(self):
-        model = Model(MassiveObject())
-
+    def test_init(self, model):
         assert isinstance(model.player, MassiveObject)
         assert model.notes == []
+
+    def test_step_forward(self, model, note_across, note_up):
+        model.notes.extend([note_across, note_up])
+
+        model.step_forward()
+
+        assert model.notes[0].position == (1, 0)
+        assert model.notes[1].position == (0, 1)
 
 
 class TestMassiveObject(object):
