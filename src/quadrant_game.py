@@ -55,10 +55,10 @@ controller.button_listener = button_listener
 
 
 def rand_tuple():
-    return float(randint(0, 10)), float(randint(0, 10))
+    return float(randint(0, sprite.SCREEN_SHAPE[0])), float(randint(0, sprite.SCREEN_SHAPE[1]))
 
 
-for _ in range(5):
+for _ in range(10):
     model_instance.notes.add(model.Object(position=rand_tuple(), velocity=rand_tuple()))
 
 # Keep reading forever
@@ -66,9 +66,9 @@ while play:
     controller.read()
     clock.tick(40)
     model_instance.step_forward()
-    note = sprite.Note((player.position[0], player.position[1]), sprite.Style.Crotchet, sprite.Color.RED, randint(0, 255))
-    print(note.alpha)
-    sprite.draw()
-    sprite.sprite_group_notes.remove(note)
+    sprite.Note(player.position, sprite.Style.Crotchet, sprite.Color.RED, randint(0, 255))
+    for note in model_instance.notes:
+        sprite.Note(note.position, sprite.Style.Crotchet, sprite.Color.BLUE, 255)
 
-    print(model_instance)
+    sprite.draw()
+    sprite.sprite_group_notes.empty()
