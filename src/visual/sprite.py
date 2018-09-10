@@ -10,9 +10,16 @@
 import pygame
 import os
 
-BLACK = [0, 0, 0]
-WHITE = [255, 255, 255]
-SCREEN_SIZE = (1240, 1080)
+
+class Color(object):
+    BLACK = (0, 0, 0)
+    WHITE = (255, 255, 255)
+    RED = (255, 0, 0)
+    GREEN = (0, 255, 0)
+    BLUE = (0, 0, 255)
+
+
+SCREEN_SHAPE = (1240, 1080)
 
 pygame.init()
 # init pygame display
@@ -20,7 +27,7 @@ pygame.display.init()
 clock = pygame.time.Clock()
 
 # screen setup
-screen = pygame.display.set_mode(SCREEN_SIZE)
+screen = pygame.display.set_mode(SCREEN_SHAPE)
 
 # Image directory stuff
 
@@ -62,22 +69,16 @@ images_dict = {
     3: image_semiquaver
 }
 
-alpha = 255
-
-image_minim.set_alpha(alpha)
-
-image_minim_transparent = image_minim.copy()
-image_minim_transparent.fill((255, 255, 255, alpha), None, pygame.BLEND_RGBA_MULT)
-
 sprite_group_notes = pygame.sprite.Group()
 
 
 class Note(pygame.sprite.Sprite):
 
-    def __init__(self, x, y, style, brightness):
+    def __init__(self, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), style=Style.Minim, color=Color.WHITE,
+                 alpha=255):
         pygame.sprite.Sprite.__init__(self, sprite_group_notes)
 
-        self.rect = [x, y]
+        self.rect = position
 
         # 0 = Half Note (Minim)
         # 1 = Quarter Note (Crotchet)
@@ -85,15 +86,18 @@ class Note(pygame.sprite.Sprite):
         # 3 = Sixteenth note (Semiquaver)
         self.style = style
 
-        self.brightness = brightness
+        self.__alpha = alpha
 
-        self.temp_image = images_dict[style]
+        self.image = images_dict[style].copy()
+        self.image.fill(color + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
 
-        self.image = self.temp_image.copy()
-        self.image.fill((0, 0, self.brightness, self.brightness), None, pygame.BLEND_RGBA_MULT)
+    @property
+    def alpha(self):
+        return self.__alpha
 
-    def set_brightness(self, brightness):
-        self.brightness = brightness
+    @alpha.setter
+    def alpha(self, new_value):
+        self.__alpha = new_value
 
 
 test_notes_list = []
@@ -101,11 +105,11 @@ test_notes_list = []
 for i in range(1, 20):
 
     for j in range(0, 4):
-        test_notes_list.append(Note(30 * i, 45 * j, j, i * 12))
+        test_notes_list.append(Note((30 * i, 45 * j), j, Color.GREEN, i * 12))
 
 
 def draw():
-    screen.fill(BLACK)
+    screen.fill(Color.BLACK)
 
     sprite_group_notes.draw(screen)
 
