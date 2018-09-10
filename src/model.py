@@ -1,6 +1,9 @@
 import math
 import pytest
 
+MASS = 100.
+COLLISION_RADIUS = 10.
+
 almost_zero = pytest.approx(0, abs=0.0001)
 
 
@@ -21,7 +24,7 @@ class Object(object):
 
 
 class MassiveObject(Object):
-    def __init__(self, position=(0., 0.), mass=1., collision_radius=1.):
+    def __init__(self, position=(0., 0.), mass=MASS, collision_radius=COLLISION_RADIUS):
         super(MassiveObject, self).__init__(position)
         self.mass = mass
         self.collision_radius = collision_radius

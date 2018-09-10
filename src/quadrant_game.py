@@ -59,7 +59,7 @@ def rand_tuple():
 
 
 for _ in range(10):
-    model_instance.notes.add(model.Object(position=rand_tuple(), velocity=rand_tuple()))
+    model_instance.notes.add(model.Object(position=rand_tuple()))
 
 # Keep reading forever
 while play:
