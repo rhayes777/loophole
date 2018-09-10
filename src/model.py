@@ -3,7 +3,7 @@ import pytest
 from random import uniform
 
 # MASS = 1000.
-MASS = 0.
+MASS = 10000.
 DISTANT_MASS = 0.
 COLLISION_RADIUS = 30.
 VELOCITY = 0.1
