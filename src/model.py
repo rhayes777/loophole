@@ -4,7 +4,7 @@ from random import uniform
 
 # MASS = 1000.
 MASS = 0.
-DISTANT_MASS = 0.02
+DISTANT_MASS = 0.
 COLLISION_RADIUS = 30.
 VELOCITY = 0.1
 SPEED = 2

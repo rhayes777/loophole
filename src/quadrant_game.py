@@ -63,11 +63,12 @@ def rand_tuple():
 #     model_instance.notes.add(model.Object(position=rand_tuple()))
 
 model_instance.generators[0] = model.NoteGenerator(0, (0, sprite.SCREEN_SHAPE[1] / 2), 0, math.pi)
-model_instance.generators[1] = model.NoteGenerator(1, (sprite.SCREEN_SHAPE[0], sprite.SCREEN_SHAPE[1] / 2), 0,
-                                                   math.pi)
-model_instance.generators[2] = model.NoteGenerator(2, (sprite.SCREEN_SHAPE[0] / 2, sprite.SCREEN_SHAPE[1]), 0,
-                                                   math.pi)
-model_instance.generators[3] = model.NoteGenerator(3, (sprite.SCREEN_SHAPE[0] / 2, 0), 0, math.pi)
+model_instance.generators[1] = model.NoteGenerator(1, (sprite.SCREEN_SHAPE[0], sprite.SCREEN_SHAPE[1] / 2), math.pi,
+                                                   2 * math.pi)
+model_instance.generators[2] = model.NoteGenerator(2, (sprite.SCREEN_SHAPE[0] / 2, sprite.SCREEN_SHAPE[1]), math.pi / 4,
+                                                   (3 / 4) * math.pi)
+model_instance.generators[3] = model.NoteGenerator(3, (sprite.SCREEN_SHAPE[0] / 2, 0), math.pi / 4,
+                                                   (3 / 4) * math.pi)
 
 style = 0
 
