@@ -7,12 +7,13 @@ MASS = 0.
 DISTANT_MASS = 0.02
 COLLISION_RADIUS = 30.
 VELOCITY = 0.1
+SPEED = 2
 
 almost_zero = pytest.approx(0, abs=0.0001)
 
 
 class NoteGenerator(object):
-    def __init__(self, style, position, speed, min_direction, max_direction):
+    def __init__(self, style, position, min_direction, max_direction, speed=SPEED):
         self.position = position
         self.style = style
         self.speed = speed
