@@ -13,8 +13,10 @@ import os
 BLACK = [0,0,0]
 WHITE = [255, 255, 255]
 
+pygame.init()
 # init pygame display
 pygame.display.init()
+clock = pygame.time.Clock()
 
 # screen setup
 screen = pygame.display.set_mode((1240, 1080))
@@ -78,7 +80,7 @@ class Note(pygame.sprite.Sprite):
         self.temp_image = images_dict[style]
 
         self.image = self.temp_image.copy()
-        self.image.fill((self.brightness, self.brightness, self.brightness, self.brightness), None, pygame.BLEND_RGBA_MULT)
+        self.image.fill((0, 0, self.brightness, self.brightness), None, pygame.BLEND_RGBA_MULT)
 
     def set_brightness(self, brightness):
 
@@ -94,10 +96,13 @@ for i in range(1, 20):
 
 
 while True:
+    clock.tick(40)
     screen.fill(WHITE)
 
     sprite_group_notes.draw(screen)
 
     pygame.display.flip()
+
+    pygame.event.get()
 
 pygame.quit()
