@@ -1,11 +1,27 @@
 import math
 import pytest
+from random import random
 
 MASS = 1000.
 DISTANT_MASS = 0.02
-COLLISION_RADIUS = 20.
+COLLISION_RADIUS = 30.
+VELOCITY = 0.1
 
 almost_zero = pytest.approx(0, abs=0.0001)
+
+
+class NoteGenerator(object):
+    def __init__(self, position, speed, min_direction, max_direction, color):
+        self.position = position
+        self.speed = speed
+        self.min_direction = min_direction
+        self.max_direction = max_direction
+        self.color = color
+
+    def make_note(self, style):
+        direction = random(self.min_direction, self.max_direction)
+        velocity = (self.speed * math.sin(direction), self.speed * math.cos(direction))
+        return NoteObject(style, self.position, velocity)
 
 
 class Object(object):
@@ -22,6 +38,12 @@ class Object(object):
         return "position:{}\n" \
                "velocity:{}\n" \
                "acceleration:{}".format(self.position, self.velocity, self.acceleration)
+
+
+class NoteObject(Object):
+    def __init__(self, style, position=(0., 0.), velocity=(0., 0.), acceleration=(0., 0.)):
+        super(NoteObject, self).__init__(position, velocity, acceleration)
+        self.style = style
 
 
 class MassiveObject(Object):
