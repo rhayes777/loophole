@@ -17,6 +17,7 @@ class Color(object):
     RED = (255, 0, 0)
     GREEN = (0, 255, 0)
     BLUE = (0, 0, 255)
+    YELLOW = (0, 255, 255)
 
 
 SCREEN_SHAPE = (1080, 1240)
@@ -69,13 +70,20 @@ images_dict = {
     3: image_semiquaver
 }
 
+
+color_dict = {
+    0: Color.BLUE,
+    1: Color.RED,
+    2: Color.YELLOW,
+    3: Color.GREEN
+}
+
 sprite_group_notes = pygame.sprite.Group()
 
 
 class Note(pygame.sprite.Sprite):
 
-    def __init__(self, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), style=Style.Minim, color=Color.WHITE,
-                 alpha=255):
+    def __init__(self, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), style=Style.Minim, alpha=255):
         pygame.sprite.Sprite.__init__(self, sprite_group_notes)
 
         self.rect = position
@@ -89,6 +97,7 @@ class Note(pygame.sprite.Sprite):
         self.__alpha = alpha
 
         self.image = images_dict[style].copy()
+        color = color_dict[style]
         self.image.fill(color + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
 
     @property
@@ -101,11 +110,11 @@ class Note(pygame.sprite.Sprite):
 
 
 test_notes_list = []
-
-for i in range(1, 20):
-
-    for j in range(0, 4):
-        test_notes_list.append(Note((30 * i, 45 * j), j, Color.GREEN, i * 12))
+#
+# for i in range(1, 20):
+#
+#     for j in range(0, 4):
+#         test_notes_list.append(Note((30 * i, 45 * j), j, Color.GREEN, i * 12))
 
 
 def draw():

@@ -1,8 +1,9 @@
 import math
 import pytest
-from random import random
+from random import uniform
 
-MASS = 1000.
+# MASS = 1000.
+MASS = 0.
 DISTANT_MASS = 0.02
 COLLISION_RADIUS = 30.
 VELOCITY = 0.1
@@ -11,17 +12,17 @@ almost_zero = pytest.approx(0, abs=0.0001)
 
 
 class NoteGenerator(object):
-    def __init__(self, position, speed, min_direction, max_direction, color):
+    def __init__(self, style, position, speed, min_direction, max_direction):
         self.position = position
+        self.style = style
         self.speed = speed
         self.min_direction = min_direction
         self.max_direction = max_direction
-        self.color = color
 
-    def make_note(self, style):
-        direction = random(self.min_direction, self.max_direction)
+    def make_note(self):
+        direction = uniform(self.min_direction, self.max_direction)
         velocity = (self.speed * math.sin(direction), self.speed * math.cos(direction))
-        return NoteObject(style, self.position, velocity)
+        return NoteObject(self.style, self.position, velocity)
 
 
 class Object(object):
@@ -87,7 +88,11 @@ class MassiveObject(Object):
 class Model(object):
     def __init__(self, player):
         self.player = player
+        self.generators = {}
         self.notes = set()
+
+    def add_note(self, style):
+        self.notes.add(self.generators[style].make_note())
 
     def step_forward(self):
         for note in list(self.notes):

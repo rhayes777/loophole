@@ -2,6 +2,7 @@ import model
 import pygame
 from control import input
 from random import randint
+import math
 from visual import sprite
 
 play = True
@@ -58,17 +59,29 @@ def rand_tuple():
     return float(randint(0, sprite.SCREEN_SHAPE[0])), float(randint(0, sprite.SCREEN_SHAPE[1]))
 
 
-for _ in range(10):
-    model_instance.notes.add(model.Object(position=rand_tuple()))
+# for _ in range(10):
+#     model_instance.notes.add(model.Object(position=rand_tuple()))
+
+model_instance.generators[0] = model.NoteGenerator(0, (0, sprite.SCREEN_SHAPE[1] / 2), 0.2, 0, math.pi)
+model_instance.generators[1] = model.NoteGenerator(1, (sprite.SCREEN_SHAPE[0], sprite.SCREEN_SHAPE[1] / 2), 0.2, 0,
+                                                   math.pi)
+model_instance.generators[2] = model.NoteGenerator(2, (sprite.SCREEN_SHAPE[0] / 2, sprite.SCREEN_SHAPE[1]), 0.2, 0,
+                                                   math.pi)
+model_instance.generators[3] = model.NoteGenerator(3, (sprite.SCREEN_SHAPE[0] / 2, 0), 0.2, 0, math.pi)
+
+style = 0
 
 # Keep reading forever
 while play:
+    style = (style + 1) % 4
     controller.read()
     clock.tick(40)
     model_instance.step_forward()
-    sprite.Note(player.position, sprite.Style.Crotchet, sprite.Color.RED, randint(0, 255))
+    sprite.Note(player.position, sprite.Style.Crotchet, randint(0, 255))
     for note in model_instance.notes:
-        sprite.Note(note.position, sprite.Style.Crotchet, sprite.Color.BLUE, 255)
+        sprite.Note(note.position, style, 255)
+
+    model_instance.add_note(style)
 
     sprite.draw()
     sprite.sprite_group_notes.empty()
