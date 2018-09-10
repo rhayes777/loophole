@@ -19,7 +19,7 @@ class Color(object):
     BLUE = (0, 0, 255)
 
 
-SCREEN_SHAPE = (1240, 1080)
+SCREEN_SHAPE = (1080, 1240)
 
 pygame.init()
 # init pygame display

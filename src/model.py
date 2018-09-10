@@ -1,8 +1,9 @@
 import math
 import pytest
 
-MASS = 100.
-COLLISION_RADIUS = 10.
+MASS = 1000.
+DISTANT_MASS = 0.02
+COLLISION_RADIUS = 20.
 
 almost_zero = pytest.approx(0, abs=0.0001)
 
@@ -43,7 +44,7 @@ class MassiveObject(Object):
     def force_from_position(self, position):
         absolute_distance = self.absolute_distance_from(position)
         try:
-            return self.mass / (absolute_distance ** 2)
+            return self.mass / (absolute_distance ** 2) + DISTANT_MASS
         except ZeroDivisionError:
             return 0
 
