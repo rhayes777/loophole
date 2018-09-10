@@ -10,8 +10,9 @@
 import pygame
 import os
 
-BLACK = [0,0,0]
+BLACK = [0, 0, 0]
 WHITE = [255, 255, 255]
+SCREEN_SIZE = (1240, 1080)
 
 pygame.init()
 # init pygame display
@@ -19,7 +20,7 @@ pygame.display.init()
 clock = pygame.time.Clock()
 
 # screen setup
-screen = pygame.display.set_mode((1240, 1080))
+screen = pygame.display.set_mode(SCREEN_SIZE)
 
 # Image directory stuff
 
@@ -40,16 +41,25 @@ image_crotchet = pygame.image.load(os.path.join(image_directory, "crotchet.bmp")
 image_quaver = pygame.image.load(os.path.join(image_directory, "quaver.bmp"))
 image_semiquaver = pygame.image.load(os.path.join(image_directory, "semiquaver.bmp"))
 
+
 # Image Dictionary - stores images, mapped to integers (0 to 3 currently)
 # 0 = Half Note (Minim)
 # 1 = Quarter Note (Crotchet)
 # 2 = Eighth Note (Quaver)
 # 3 = Sixteenth note (Semiquaver)
+
+class Style(object):
+    Minim = 0
+    Crotchet = 1
+    Quaver = 2
+    SemiQuaver = 3
+
+
 images_dict = {
-    0 : image_minim,
-    1 : image_crotchet,
-    2 : image_quaver,
-    3 : image_semiquaver
+    0: image_minim,
+    1: image_crotchet,
+    2: image_quaver,
+    3: image_semiquaver
 }
 
 alpha = 255
@@ -61,10 +71,10 @@ image_minim_transparent.fill((255, 255, 255, alpha), None, pygame.BLEND_RGBA_MUL
 
 sprite_group_notes = pygame.sprite.Group()
 
+
 class Note(pygame.sprite.Sprite):
 
     def __init__(self, x, y, style, brightness):
-
         pygame.sprite.Sprite.__init__(self, sprite_group_notes)
 
         self.rect = [x, y]
@@ -83,26 +93,29 @@ class Note(pygame.sprite.Sprite):
         self.image.fill((0, 0, self.brightness, self.brightness), None, pygame.BLEND_RGBA_MULT)
 
     def set_brightness(self, brightness):
-
         self.brightness = brightness
+
 
 test_notes_list = []
 
 for i in range(1, 20):
 
     for j in range(0, 4):
+        test_notes_list.append(Note(30 * i, 45 * j, j, i * 12))
 
-        test_notes_list.append(Note(30 * i, 45 * j, j, i*12))
 
-
-while True:
-    clock.tick(40)
-    screen.fill(WHITE)
+def draw():
+    screen.fill(BLACK)
 
     sprite_group_notes.draw(screen)
 
     pygame.display.flip()
 
-    pygame.event.get()
 
-pygame.quit()
+if __name__ == "__main__":
+    while True:
+        clock.tick(40)
+        draw()
+        pygame.event.get()
+
+    pygame.quit()

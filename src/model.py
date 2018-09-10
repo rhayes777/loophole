@@ -39,7 +39,10 @@ class MassiveObject(Object):
 
     def force_from_position(self, position):
         absolute_distance = self.absolute_distance_from(position)
-        return self.mass / (absolute_distance ** 2)
+        try:
+            return self.mass / (absolute_distance ** 2)
+        except ZeroDivisionError:
+            return 0
 
     def acceleration_from(self, position):
         force = self.force_from_position(position)
@@ -130,6 +133,19 @@ class TestModel(object):
         model.step_forward()
 
         assert model.notes == set()
+
+    def test_falling_objects(self, model):
+        model.player.collision_radius = None
+        model.notes.update(
+            [Object(position=(1, 0)),
+             Object(position=(0, 1)),
+             Object(position=(-1, 0)),
+             Object(position=(0, -1))])
+
+        for _ in range(100):
+            model.step_forward()
+            for note in list(model.notes):
+                assert model.player.absolute_distance_from(note.position) <= 1
 
 
 class TestMassiveObject(object):

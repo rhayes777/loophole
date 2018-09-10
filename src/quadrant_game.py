@@ -2,6 +2,7 @@ import model
 import pygame
 from control import input
 from random import randint
+from visual import sprite
 
 play = True
 
@@ -14,6 +15,8 @@ controller = input.Controller(pygame)
 player = model.MassiveObject()
 
 model_instance = model.Model(player)
+
+model_instance.player.position = (sprite.SCREEN_SIZE[0] / 2, sprite.SCREEN_SIZE[1] / 2)
 
 last_buttons = {'x': False,
                 'up': False,
@@ -63,4 +66,8 @@ while play:
     controller.read()
     clock.tick(40)
     model_instance.step_forward()
+    note = sprite.Note(player.position[0], player.position[1], sprite.Style.Crotchet, 255)
+    sprite.draw()
+    sprite.sprite_group_notes.remove(note)
+
     print(model_instance)
