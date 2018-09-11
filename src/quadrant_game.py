@@ -43,7 +43,6 @@ velocity_dict = {'x': (-15, -15),
 
 
 def button_listener(button_dict):
-    print(button_dict)
     global last_buttons
     new_buttons = [button for button, is_on in button_dict.items() if is_on and not last_buttons[button]]
     last_buttons = button_dict
