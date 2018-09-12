@@ -10,9 +10,9 @@ DISTANT_MASS = 0.
 COLLISION_RADIUS = 30.
 VELOCITY = 0.1
 SPEED = 2
-ELASTIC_FORCE = 0.0003
+ELASTIC_FORCE = 0.05
 BOOST_SPEED = 100
-DAMPING_RATE = 0.000001
+DAMPING_RATE = 0.00000001
 
 almost_zero = pytest.approx(0, abs=0.0001)
 
@@ -109,7 +109,7 @@ class Model(object):
     def elastic_force_on_player(self):
         angle = self.player.angle_from(self.centre) + math.pi
         absolute_distance = self.player.absolute_distance_from(self.centre)
-        force = self.elastic_force * absolute_distance ** 2
+        force = self.elastic_force * absolute_distance
         return force * math.cos(angle), force * math.sin(angle)
 
     def add_note(self, style):
