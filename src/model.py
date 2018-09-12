@@ -86,10 +86,11 @@ class MassiveObject(Object):
 
 
 class Model(object):
-    def __init__(self, player):
+    def __init__(self, player, screen_shape):
         self.player = player
         self.generators = {}
         self.notes = set()
+        self.screen_shape = screen_shape
 
     def add_note(self, style):
         self.notes.add(self.generators[style].make_note())
@@ -107,9 +108,14 @@ class Model(object):
         return "Player:\n{}\nNotes:\n{}".format(str(self.player, ), "\n".join(map(str, self.notes)))
 
 
+@pytest.fixture(name="massive_object")
+def make_massive_object():
+    return MassiveObject(position=(0., 0.), mass=1., collision_radius=1.)
+
+
 @pytest.fixture(name="model")
-def make_model():
-    return Model(MassiveObject())
+def make_model(massive_object):
+    return Model(massive_object, (10, 10))
 
 
 @pytest.fixture(name="note_across")
@@ -123,6 +129,15 @@ def make_note_up():
 
 
 class TestModel(object):
+    def test_is_out_of_bounds(self, model):
+        assert model.is_out_of_bounds((-1, 0))
+        assert model.is_out_of_bounds((11, 0))
+        assert model.is_out_of_bounds((0, -1))
+        assert model.is_out_of_bounds((0, 11))
+        assert model.is_out_of_bounds((0, 0)) is False
+        assert model.is_out_of_bounds((10, 10)) is False
+        assert model.is_out_of_bounds((5, 5)) is False
+
     def test_init(self, model):
         model.player.collision_radius = None
         assert isinstance(model.player, MassiveObject)
@@ -165,52 +180,32 @@ class TestModel(object):
 
         assert model.notes == set()
 
-    def test_falling_objects(self, model):
-        model.player.collision_radius = None
-        model.notes.update(
-            [Object(position=(1, 0)),
-             Object(position=(0, 1)),
-             Object(position=(-1, 0)),
-             Object(position=(0, -1))])
-
-        for _ in range(100):
-            model.step_forward()
-            for note in list(model.notes):
-                assert model.player.absolute_distance_from(note.position) <= 1
-
 
 class TestMassiveObject(object):
-    def test_distance(self):
-        massive_object = MassiveObject(position=(0., 0.), mass=1.)
+    def test_distance(self, massive_object):
         assert massive_object.distance_from((1, 1)) == (-1, -1)
         assert massive_object.distance_from((0, 1)) == (0, -1)
         assert massive_object.distance_from((1, 0)) == (-1, 0)
         assert massive_object.distance_from((-1, -1)) == (1, 1)
 
-    def test_absolute_distance_from(self):
-        massive_object = MassiveObject(position=(0., 0.))
-
+    def test_absolute_distance_from(self, massive_object):
         assert massive_object.absolute_distance_from((0., 1.)) == 1
         assert massive_object.absolute_distance_from((0., -1.)) == 1
         assert massive_object.absolute_distance_from((1., 0.)) == 1
         assert massive_object.absolute_distance_from((-1., 0.)) == 1
         assert massive_object.absolute_distance_from((1., 1.)) == 2 ** 0.5
 
-    def test_force_from_position(self):
-        massive_object = MassiveObject(position=(0., 0.))
-
+    def test_force_from_position(self, massive_object):
         assert massive_object.force_from_position((0., 1.)) == 1
         assert massive_object.force_from_position((1., 0.)) == 1
         assert massive_object.force_from_position((2., 0.)) == 0.25
 
-    def test_angle_from(self):
-        massive_object = MassiveObject(position=(0., 0.))
+    def test_angle_from(self, massive_object):
         assert massive_object.angle_from((1., 0.)) == math.pi
         assert massive_object.angle_from((0., 1.)) == -math.pi / 2
         assert massive_object.angle_from((-1., 0.)) == 0
 
-    def test_acceleration(self):
-        massive_object = MassiveObject(position=(0., 0.), mass=1.)
+    def test_acceleration(self, massive_object):
         assert massive_object.acceleration_from((0, 1)) == (almost_zero, -1)
         assert massive_object.acceleration_from((1, 0)) == (-1, almost_zero)
 
