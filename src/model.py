@@ -10,9 +10,9 @@ DISTANT_MASS = 0.
 COLLISION_RADIUS = 30.
 VELOCITY = 0.1
 SPEED = 2
-ELASTIC_FORCE = 0.00005
+ELASTIC_FORCE = 0.0003
 BOOST_SPEED = 100
-DAMPING_RATE = 0.001
+DAMPING_RATE = 0.000001
 
 almost_zero = pytest.approx(0, abs=0.0001)
 
@@ -130,8 +130,6 @@ class Model(object):
         self.player.step_forward()
         self.player.velocity = (self.damping_rate * v + f for v, f in
                                 zip(self.player.velocity, self.elastic_force_on_player()))
-        if self.is_out_of_bounds(self.player.position):
-            self.player.velocity = (-speed for speed in self.player.velocity)
 
     def is_out_of_bounds(self, position):
         return True in [x < 0 or x > size for x, size in zip(position, self.screen_shape)]
