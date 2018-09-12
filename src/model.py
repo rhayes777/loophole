@@ -104,6 +104,9 @@ class Model(object):
 
         self.player.step_forward()
 
+    def is_out_of_bounds(self, position):
+        return True in [x < 0 or x > size for x, size in zip(position, self.screen_shape)]
+
     def __str__(self):
         return "Player:\n{}\nNotes:\n{}".format(str(self.player, ), "\n".join(map(str, self.notes)))
 
