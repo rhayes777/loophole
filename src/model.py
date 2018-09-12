@@ -10,6 +10,9 @@ DISTANT_MASS = 0.
 COLLISION_RADIUS = 30.
 VELOCITY = 0.1
 SPEED = 2
+ELASTIC_FORCE = 0.0001
+BOOST_SPEED = 150
+DAMPING_RATE = 0.001
 
 almost_zero = pytest.approx(0, abs=0.0001)
 
@@ -89,11 +92,25 @@ class MassiveObject(Object):
 
 
 class Model(object):
-    def __init__(self, player, screen_shape):
+    def __init__(self, player, screen_shape, elastic_force=ELASTIC_FORCE, boost_speed=BOOST_SPEED,
+                 damping_rate=DAMPING_RATE):
         self.player = player
         self.generators = {}
         self.notes = set()
         self.screen_shape = screen_shape
+        self.centre = tuple(x / 2 for x in screen_shape)
+        self.elastic_force = elastic_force
+        self.boost_speed = boost_speed
+        self.damping_rate = damping_rate
+
+    def boost(self, direction):
+        self.player.velocity = (v + self.boost_speed * x for v, x in zip(self.player.velocity, direction))
+
+    def elastic_force_on_player(self):
+        angle = self.player.angle_from(self.centre) + math.pi
+        absolute_distance = self.player.absolute_distance_from(self.centre)
+        force = self.elastic_force * absolute_distance ** 2
+        return force * math.cos(angle), force * math.sin(angle)
 
     def add_note(self, style):
         self.notes.add(self.generators[style].make_note())
@@ -111,6 +128,8 @@ class Model(object):
                 logger.exception(e)
 
         self.player.step_forward()
+        self.player.velocity = (self.damping_rate * v + f for v, f in
+                                zip(self.player.velocity, self.elastic_force_on_player()))
         if self.is_out_of_bounds(self.player.position):
             self.player.velocity = (-speed for speed in self.player.velocity)
 

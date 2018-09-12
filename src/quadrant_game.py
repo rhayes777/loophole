@@ -41,6 +41,17 @@ velocity_dict = {'x': (-15, -15),
                  'start': (0, 0),
                  'select': (0, 0)}
 
+boost_dict = {'x': (-1, -1),
+              'up': (0, -1),
+              'circle': (1, -1),
+              'right': (1, 0),
+              'square': (1, 1),
+              'down': (0, 1),
+              'triangle': (-1, 1),
+              'left': (-1, 0),
+              'start': (0, 0),
+              'select': (0, 0)}
+
 
 def button_listener(button_dict):
     global last_buttons
@@ -48,7 +59,7 @@ def button_listener(button_dict):
     last_buttons = button_dict
 
     if len(new_buttons) > 0:
-        model_instance.player.velocity = velocity_dict[new_buttons[0]]
+        model_instance.boost(boost_dict[new_buttons[0]])
 
 
 controller.button_listener = button_listener
