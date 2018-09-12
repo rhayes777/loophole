@@ -15,7 +15,7 @@ controller = input.Controller(pygame)
 
 player = model.MassiveObject()
 
-model_instance = model.Model(player)
+model_instance = model.Model(player, sprite.SCREEN_SHAPE)
 
 model_instance.player.position = (sprite.SCREEN_SHAPE[0] / 2, sprite.SCREEN_SHAPE[1] / 2)
 

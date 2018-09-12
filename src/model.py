@@ -101,8 +101,12 @@ class Model(object):
             note.acceleration = self.player.acceleration_from(note.position)
             if self.player.is_collision(note.position):
                 self.notes.remove(note)
+            if self.is_out_of_bounds(note.position):
+                self.notes.remove(note)
 
         self.player.step_forward()
+        if self.is_out_of_bounds(self.player.position):
+            self.player.velocity = (-speed for speed in self.player.velocity)
 
     def is_out_of_bounds(self, position):
         return True in [x < 0 or x > size for x, size in zip(position, self.screen_shape)]
