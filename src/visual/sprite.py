@@ -12,12 +12,40 @@ import os
 
 
 class Color(object):
+    # Basic colours
+
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
     RED = (255, 0, 0)
     GREEN = (0, 255, 0)
     BLUE = (0, 0, 255)
     YELLOW = (0, 255, 255)
+
+    # Palette colours
+
+    PURPLE_DARK = (48, 0, 15)
+    PURPLE_MID = (73, 0, 45)
+    PURPLE_LIGHT = (94, 0, 74)
+
+    PINK_DARK = (100, 34, 80)
+    PINK_MID = (100, 62, 100)
+    PINK_LIGHT = (100, 87, 100)
+
+    TEAL_DARK = (13, 70, 86)
+    TEAL_MID = (44, 92, 100)
+    TEAL_LIGHT = (77, 90, 100)
+
+    BLUE_DARK = (20, 40, 100)
+    BLUE_MID = (50, 68, 100)
+    BLUE_LIGHT = (77, 90, 100)
+
+    GREEN_DARK = (15, 52, 34)
+    GREEN_MID = (45, 77, 62)
+    GREEN_LIGHT = (74, 96, 86)
+
+    ORANGE_DARK = (72, 30, 0)
+    ORANGE_MID = (94, 58, 0)
+    ORANGE_LIGHT = (100, 84, 0)
 
 
 SCREEN_SHAPE = (1080, 1240)

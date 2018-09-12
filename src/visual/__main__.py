@@ -91,7 +91,7 @@ class Display(Thread):
         mouse_x, mouse_y = pygame.mouse.get_pos()
         angle_to_mouse = math.degrees(math.atan2(mouse_x - CAM_x, mouse_y - CAM_y))
 
-        Origin_z = 0
+        Origin_z = -1500
 
         self.num_NoteSprites_x = 10
 
@@ -99,16 +99,19 @@ class Display(Thread):
 
         row = []
 
+        mouse_zx_spread = util.get_new_range_value(screen.get_width(), 1, mouse_x, 80, 100)
+
         for i in range(self.num_NoteSprites_x):
             row.append(
-                foreground.NoteSprite(mouse_x - (i*spacing/2) + i*spacing, mouse_y, Origin_z,
-                                      10,
-                                      i,
-                                      random.randint(0, 360),
-                                      90,
-                                      9,
-                                      140,
-                                      random.randint(5, 10))
+                foreground.NoteSprite(mouse_x - (i*spacing/2) + i*spacing, mouse_y, 0,        #   x,y,z coordinates
+                                      10,                                                     #   Size
+                                      i,                                                      #   Reference number
+                                      random.randint(0, 360),                                 #   xy angle(2D plane)
+                                      mouse_zx_spread,                                        #   zx angle
+                                      9,                                                      #   velocity
+                                      140,                                                    #   spin angle
+                                      75                                                       #   spin velocity
+                                      )
             )
         return row
 
@@ -120,7 +123,7 @@ class Display(Thread):
         while True:
             # Make a new row each time the loop runs
 
-            #
+
 
 
             row = self.new_row()
@@ -197,6 +200,9 @@ class Display(Thread):
         """
         # This function goes through each line in the queue. It gets that row of NoteSprites (row) and also what
         # number it is is in queue (j)
+
+        """ The queue is reversed here, so that NoteSprites are drawn in the correct Z-order;
+        Foremost objects drawn last so that they cover objects behind them """
 
         reversed_queue = reversed(self.row_queue.queue)
 

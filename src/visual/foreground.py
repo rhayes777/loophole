@@ -74,10 +74,6 @@ class NoteSprite(object):
                  angle_zx=math.radians(random.randint(0, 180)),
                  velocity=random.randint(1, 6), spin_angle=90, spin_velocity=2):
 
-
-
-
-
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.pos_z = pos_z
@@ -127,7 +123,6 @@ class NoteSprite(object):
         """ Calculate and update movement """
 
         if self.pos_z >= CAM_z:
-
             self.pos_z = CAM_z
 
             self.is_on = False
@@ -149,8 +144,8 @@ class NoteSprite(object):
             camera_x = 2
         camera_y = mouse_y
 
-        origin_x = screen.get_width()/2
-        origin_y = screen.get_height()/2
+        origin_x = screen.get_width() / 2
+        origin_y = screen.get_height() / 2
 
         x_distance_to_origin = abs(self.pos_x - origin_x)
 
@@ -164,13 +159,15 @@ class NoteSprite(object):
         """ Parallax stuff """
         amount = 60
 
-        amount_x = math.sin(util.get_new_range_value(1, Origin_z, z_distance_to_cam, 0, 1))*amount
-        amount_y = math.cos(util.get_new_range_value(1, Origin_z, z_distance_to_cam, 0, 1))*amount
+        amount_x = -math.sin(util.get_new_range_value(1, Origin_z, z_distance_to_cam, 0, 1)) * amount
+        amount_y = -math.cos(util.get_new_range_value(1, Origin_z, z_distance_to_cam, 0, 1)) * amount
 
         para_x = util.get_new_range_value(1, screen.get_width(), camera_x, amount_x, -amount_x)
         para_y = util.get_new_range_value(1, screen.get_height(), camera_y, amount_y, -amount_y)
 
-        print("Para x", para_x)
+
+        spin_add_x = self.spin_velocity * math.sin(x_distance_to_origin)
+        spin_add_y = self.spin_velocity * math.sin(x_distance_to_origin)
 
         """ Update position """
 
@@ -182,15 +179,9 @@ class NoteSprite(object):
 
         max_scale = screen.get_width() / self.size
 
-
-
-
-
-
-
         """ Create scaling factors based on maximum scale, and distance of object from the camera along Z and X axes"""
 
-        z_scale = util.get_new_range_value(0, CAM_z, z_distance_to_cam, max_scale/12, 1)
+        z_scale = util.get_new_range_value(0, CAM_z, z_distance_to_cam, max_scale / 12, 1)
         x_scale = util.get_new_range_value(0, screen.get_width() / 2, x_distance_to_cam, max_scale, 1)
         y_scale = util.get_new_range_value(0, screen.get_height() / 2, y_distance_to_cam, max_scale, 1)
 
@@ -219,7 +210,7 @@ class NoteSprite(object):
         if self.is_on:
             # determine colour based on position
             color = [
-                util.get_new_range_value(0, info.current_w, self.pos_x, 30, 255,),  # Red
+                util.get_new_range_value(0, info.current_w, self.pos_x, 30, 255, ),  # Red
                 util.get_new_range_value(0, info.current_h, self.pos_y, 20, 140),  # Green
                 util.get_new_range_value(0, info.current_h, self.pos_y, 120, 255),  # Blue
             ]
@@ -230,7 +221,7 @@ class NoteSprite(object):
                                  self.size_render,
                                  self.size_render])
             color2 = [
-                util.get_new_range_value(0, info.current_h, self.pos_y, 160, 155,),  # Red
+                util.get_new_range_value(0, info.current_h, self.pos_y, 160, 155, ),  # Red
                 util.get_new_range_value(0, info.current_w, self.pos_x, 140, 110),  # Green
                 util.get_new_range_value(0, info.current_w, self.pos_x, 120, 55),  # Blue
             ]
@@ -240,4 +231,3 @@ class NoteSprite(object):
                                  self.pos_y - (self.size_render / 2),
                                  self.size_render,
                                  self.size_render], 5)
-
