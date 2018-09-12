@@ -1,6 +1,9 @@
 import math
 import pytest
 from random import uniform
+import logging
+
+logger = logging.getLogger(__name__)
 
 MASS = 10000.
 DISTANT_MASS = 0.
@@ -99,10 +102,13 @@ class Model(object):
         for note in list(self.notes):
             note.step_forward()
             note.acceleration = self.player.acceleration_from(note.position)
-            if self.player.is_collision(note.position):
-                self.notes.remove(note)
-            if self.is_out_of_bounds(note.position):
-                self.notes.remove(note)
+            try:
+                if self.player.is_collision(note.position):
+                    self.notes.remove(note)
+                if self.is_out_of_bounds(note.position):
+                    self.notes.remove(note)
+            except KeyError as e:
+                logger.exception(e)
 
         self.player.step_forward()
         if self.is_out_of_bounds(self.player.position):

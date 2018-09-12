@@ -48,7 +48,7 @@ class Color(object):
     ORANGE_LIGHT = (100, 84, 0)
 
 
-SCREEN_SHAPE = (1080, 1240)
+SCREEN_SHAPE = (1080, 800)
 
 pygame.init()
 # init pygame display
