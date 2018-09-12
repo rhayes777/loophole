@@ -100,10 +100,10 @@ images_dict = {
 
 
 color_dict = {
-    0: Color.BLUE,
-    1: Color.RED,
-    2: Color.YELLOW,
-    3: Color.GREEN
+    0: Color.PURPLE_LIGHT,
+    1: Color.ORANGE_LIGHT,
+    2: Color.PINK_LIGHT,
+    3: Color.TEAL_LIGHT
 }
 
 sprite_group_notes = pygame.sprite.Group()
