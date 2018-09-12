@@ -164,15 +164,14 @@ class TestModel(object):
 
         assert model.player.position == (1, 0)
 
-    def test_collision(self):
-        player = MassiveObject()
+    def test_collision(self, massive_object):
         note = Object()
 
-        assert player.is_collision(note.position)
+        assert massive_object.is_collision(note.position)
 
         note = Object(position=(1.1, 0))
 
-        assert not player.is_collision(note.position)
+        assert not massive_object.is_collision(note.position)
 
     def test_elimination(self, model, note_up):
         model.notes.add(note_up)
