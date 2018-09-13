@@ -72,10 +72,10 @@ image_directory = os.path.join(directory_name, image_directory_name)
 # Load Images
 
 # load minim image, prepare it for alpha functions (transparency)
-image_minim = pygame.image.load(os.path.join(image_directory, "minim.bmp"))
-image_crotchet = pygame.image.load(os.path.join(image_directory, "crotchet.bmp"))
-image_quaver = pygame.image.load(os.path.join(image_directory, "quaver.bmp"))
-image_semiquaver = pygame.image.load(os.path.join(image_directory, "semiquaver.bmp"))
+image_minim = pygame.image.load(os.path.join(image_directory, "crotchet_glow.bmp"))
+image_crotchet = pygame.image.load(os.path.join(image_directory, "crotchet_glow.bmp"))
+image_quaver = pygame.image.load(os.path.join(image_directory, "crotchet_glow.bmp"))
+image_semiquaver = pygame.image.load(os.path.join(image_directory, "crotchet_glow.bmp"))
 
 
 # Image Dictionary - stores images, mapped to integers (0 to 3 currently)
