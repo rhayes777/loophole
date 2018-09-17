@@ -76,6 +76,7 @@ image_minim = pygame.image.load(os.path.join(image_directory, "crotchet_glow.bmp
 image_crotchet = pygame.image.load(os.path.join(image_directory, "crotchet_glow.bmp"))
 image_quaver = pygame.image.load(os.path.join(image_directory, "crotchet_glow.bmp"))
 image_semiquaver = pygame.image.load(os.path.join(image_directory, "crotchet_glow.bmp"))
+image_crotchet_rotation = pygame.image.load(os.path.join(image_directory, "crotchet_glow_rotation.bmp"))
 
 
 # Image Dictionary - stores images, mapped to integers (0 to 3 currently)
@@ -111,7 +112,7 @@ sprite_group_notes = pygame.sprite.Group()
 
 class Note(pygame.sprite.Sprite):
 
-    def __init__(self, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), style=Style.Minim, alpha=255):
+    def __init__(self, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), style=Style.Minim, alpha=255, frame=0):
         pygame.sprite.Sprite.__init__(self, sprite_group_notes)
 
         self.rect = position
@@ -124,9 +125,14 @@ class Note(pygame.sprite.Sprite):
 
         self.__alpha = alpha
 
-        self.image = images_dict[style].copy()
+        self.frame = frame
+
+        self.image = crotchet_rotation_animation.show_frame(frame)
+
         color = color_dict[style]
         self.image.fill(color + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
+
+
 
     @property
     def alpha(self):
@@ -144,6 +150,49 @@ test_notes_list = []
 #     for j in range(0, 4):
 #         test_notes_list.append(Note((30 * i, 45 * j), j, Color.GREEN, i * 12))
 
+
+class SpriteSheet(object):
+
+    def __init__(self, file_name):
+
+        self.sprite_sheet = file_name
+
+    def get_image(self, x, y, width, height):
+
+        image = pygame.Surface([width, height])
+
+        image.set_colorkey(Color.WHITE)
+        image.convert_alpha()
+
+        image.blit(self.sprite_sheet, (0, 0), (x, y, width, height))
+
+
+
+        return image
+
+
+crotchet_rotation_spritesheet = SpriteSheet(image_crotchet_rotation)
+
+
+class SpriteAnimation(pygame.sprite.Sprite):
+
+    def __init__(self, sprite_sheet, width, height, frames_total):
+
+        self.sprite_sheet = sprite_sheet
+        self.width = width
+        self.height = height
+        self.frames_total = frames_total
+
+    def show_frame(self, frame_id):
+
+        image = self.sprite_sheet.get_image(0, frame_id * self.height, self.width, self.height)
+
+
+
+        return image
+
+
+crotchet_rotation_animation = SpriteAnimation(crotchet_rotation_spritesheet, 65, 65, 15)
 
 def draw():
     screen.fill(Color.BLACK)

@@ -81,16 +81,18 @@ model_instance.generators[3] = model.NoteGenerator(3, (sprite.SCREEN_SHAPE[0] / 
                                                    (5 / 2) * math.pi)
 
 style = 0
+rotation_frame = 0
 
 # Keep reading forever
 while play:
     style = (style + 1) % 4
+    rotation_frame = (rotation_frame + 1) % 14
     controller.read()
     clock.tick(40)
     model_instance.step_forward()
-    sprite.Note(player.position, sprite.Style.Crotchet, randint(0, 255))
+    sprite.Note(player.position, sprite.Style.Crotchet, randint(0, 255), 0)
     for note in model_instance.notes:
-        sprite.Note(note.position, note.style, 255)
+        sprite.Note(note.position, note.style, 255, rotation_frame)
 
     model_instance.add_note(style)
 
