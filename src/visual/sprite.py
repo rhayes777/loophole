@@ -9,6 +9,7 @@
 
 import pygame
 import os
+import math
 
 
 class Color(object):
@@ -155,6 +156,12 @@ class SpriteSheet(object):
         image.blit(self.filename, (0, 0), (0, frame * self.shape[1], self.shape[0], self.shape[1]))
 
         return image
+
+    def frame_number_for_angle(self, angle):
+        return int((angle / (2 * math.pi)) * self.total_frames) % self.total_frames
+
+    def image_for_angle(self, angle):
+        return self.get_image(self.frame_number_for_angle(angle))
 
 
 sprite_sheet = SpriteSheet(image_crotchet_rotation, (65, 65), 15)
