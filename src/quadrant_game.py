@@ -90,9 +90,9 @@ while play:
     controller.read()
     clock.tick(40)
     model_instance.step_forward()
-    sprite.Note(player.position, sprite.Style.Crotchet, randint(0, 255), 0)
+    sprite.Note(sprite.sprite_sheet.get_image(rotation_frame), player.position, sprite.Style.Crotchet, randint(0, 255), 0)
     for note in model_instance.notes:
-        sprite.Note(note.position, note.style, 255, rotation_frame)
+        sprite.Note(sprite.sprite_sheet.get_image(rotation_frame), note.position, note.style, 255, rotation_frame)
 
     model_instance.add_note(style)
 

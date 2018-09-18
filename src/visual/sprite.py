@@ -112,7 +112,7 @@ sprite_group_notes = pygame.sprite.Group()
 
 class Note(pygame.sprite.Sprite):
 
-    def __init__(self, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), style=Style.Minim, alpha=255, frame=0):
+    def __init__(self, image, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), style=Style.Minim, alpha=255, frame=0):
         pygame.sprite.Sprite.__init__(self, sprite_group_notes)
 
         self.rect = position
@@ -127,20 +127,13 @@ class Note(pygame.sprite.Sprite):
 
         self.frame = frame
 
-        self.image = sprite_sheet.get_image(frame)
+        self.image = image
 
         color = color_dict[style]
         self.image.fill(color + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
 
 
 test_notes_list = []
-
-
-#
-# for i in range(1, 20):
-#
-#     for j in range(0, 4):
-#         test_notes_list.append(Note((30 * i, 45 * j), j, Color.GREEN, i * 12))
 
 
 class SpriteSheet(object):
