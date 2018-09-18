@@ -136,17 +136,21 @@ test_notes_list = []
 
 class SpriteSheet(object):
 
-    def __init__(self, filename, shape, total_frames):
+    def __init__(self, filename, shape, total_frames, key=(255, 255, 255)):
         self.filename = filename
         self.shape = shape
         self.total_frames = total_frames
+        self.key = key
 
     def get_image(self, frame_number):
         frame = frame_number % self.total_frames
-        image = pygame.Surface([self.shape[0], self.shape[1]])
-        image.blit(self.filename, (0, 0), (0, frame * self.shape[1], self.shape[0], self.shape[1]))
+        surface = pygame.Surface(self.shape, depth=24)
+        surface.fill(self.key, surface.get_rect())
+        surface.set_colorkey(self.key)
+        surface.blit(self.filename, (0, 0), (0, frame * self.shape[1], self.shape[0], self.shape[1]))
+        surface.set_alpha(128)
 
-        return image
+        return surface
 
     def frame_number_for_angle(self, angle):
         return int((angle / (2 * math.pi)) * self.total_frames) % self.total_frames
