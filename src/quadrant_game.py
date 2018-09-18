@@ -86,7 +86,7 @@ rotation_frame = 0
 # Keep reading forever
 while play:
     style = (style + 1) % 4
-    rotation_frame = (rotation_frame + 1) % 14
+    rotation_frame += 1
     controller.read()
     clock.tick(40)
     model_instance.step_forward()

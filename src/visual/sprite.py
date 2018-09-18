@@ -99,7 +99,6 @@ images_dict = {
     3: image_semiquaver
 }
 
-
 color_dict = {
     0: Color.PURPLE_LIGHT,
     1: Color.ORANGE_LIGHT,
@@ -123,27 +122,19 @@ class Note(pygame.sprite.Sprite):
         # 3 = Sixteenth note (Semiquaver)
         self.style = style
 
-        self.__alpha = alpha
+        self.alpha = alpha
 
         self.frame = frame
 
-        self.image = crotchet_rotation_animation.show_frame(frame)
+        self.image = sprite_sheet.get_image(frame)
 
         color = color_dict[style]
         self.image.fill(color + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
 
 
-
-    @property
-    def alpha(self):
-        return self.__alpha
-
-    @alpha.setter
-    def alpha(self, new_value):
-        self.__alpha = new_value
-
-
 test_notes_list = []
+
+
 #
 # for i in range(1, 20):
 #
@@ -153,46 +144,21 @@ test_notes_list = []
 
 class SpriteSheet(object):
 
-    def __init__(self, file_name):
+    def __init__(self, filename, shape, total_frames):
+        self.filename = filename
+        self.shape = shape
+        self.total_frames = total_frames
 
-        self.sprite_sheet = file_name
-
-    def get_image(self, x, y, width, height):
-
-        image = pygame.Surface([width, height])
-
-        image.set_colorkey(Color.WHITE)
-        image.convert_alpha()
-
-        image.blit(self.sprite_sheet, (0, 0), (x, y, width, height))
-
-
+    def get_image(self, frame_number):
+        frame = frame_number % self.total_frames
+        image = pygame.Surface([self.shape[0], self.shape[1]])
+        image.blit(self.filename, (0, 0), (0, frame * self.shape[1], self.shape[0], self.shape[1]))
 
         return image
 
 
-crotchet_rotation_spritesheet = SpriteSheet(image_crotchet_rotation)
+sprite_sheet = SpriteSheet(image_crotchet_rotation, (65, 65), 15)
 
-
-class SpriteAnimation(pygame.sprite.Sprite):
-
-    def __init__(self, sprite_sheet, width, height, frames_total):
-
-        self.sprite_sheet = sprite_sheet
-        self.width = width
-        self.height = height
-        self.frames_total = frames_total
-
-    def show_frame(self, frame_id):
-
-        image = self.sprite_sheet.get_image(0, frame_id * self.height, self.width, self.height)
-
-
-
-        return image
-
-
-crotchet_rotation_animation = SpriteAnimation(crotchet_rotation_spritesheet, 65, 65, 15)
 
 def draw():
     screen.fill(Color.BLACK)
