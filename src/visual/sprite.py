@@ -73,10 +73,10 @@ image_directory = os.path.join(directory_name, image_directory_name)
 # Load Images
 
 # load minim image, prepare it for alpha functions (transparency)
-image_minim = pygame.image.load(os.path.join(image_directory, "crotchet_glow.bmp"))
-image_crotchet = pygame.image.load(os.path.join(image_directory, "crotchet_glow.bmp"))
-image_quaver = pygame.image.load(os.path.join(image_directory, "crotchet_glow.bmp"))
-image_semiquaver = pygame.image.load(os.path.join(image_directory, "crotchet_glow.bmp"))
+image_minim = pygame.image.load(os.path.join(image_directory, "minim.bmp"))
+image_crotchet = pygame.image.load(os.path.join(image_directory, "crotchet.bmp"))
+image_quaver = pygame.image.load(os.path.join(image_directory, "quaver.bmp"))
+image_semiquaver = pygame.image.load(os.path.join(image_directory, "semiquaver.bmp"))
 image_crotchet_rotation = pygame.image.load(os.path.join(image_directory, "crotchet_glow_rotation.bmp"))
 
 
@@ -112,7 +112,7 @@ sprite_group_notes = pygame.sprite.Group()
 
 class Note(pygame.sprite.Sprite):
 
-    def __init__(self, image, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), style=Style.Minim, alpha=255, frame=0):
+    def __init__(self, image, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), style=Style.Minim, alpha=255):
         pygame.sprite.Sprite.__init__(self, sprite_group_notes)
 
         self.rect = position
@@ -124,8 +124,6 @@ class Note(pygame.sprite.Sprite):
         self.style = style
 
         self.alpha = alpha
-
-        self.frame = frame
 
         self.image = image
 
