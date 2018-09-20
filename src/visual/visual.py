@@ -167,6 +167,10 @@ class SpriteSheet(object):
 sprite_sheet = SpriteSheet(image_crotchet_rotation, (65, 65), 15)
 
 
+def make_score_notice(text, xpos, ypos, life):
+    font.Score(text, xpos, ypos, Color.WHITE, 40, font.font_arcade, life)
+
+
 def draw():
     screen.fill(Color.BLACK)
 

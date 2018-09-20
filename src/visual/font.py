@@ -53,10 +53,6 @@ class Notice(object):
 
         self.alpha = 255 * divide
 
-        print(self.timer)
-        print(divide)
-        print(self.alpha)
-
         # iterate through each Letter in char_list
         for i in range(len(self.char_list) - 1):
             char_size_x, char_size_y = self.this_font.size("a")  # get size of characters in string
@@ -88,7 +84,7 @@ class Letter(object):
 class Score(Notice, object):
     def __init__(self, words, xpos, ypos, color, size, this_font, life):
         super(Score, self).__init__(words, xpos, ypos, color, size, this_font, life)
-        self. life = life
+        self.life = life
 
 
 class Wave(Notice, object):
@@ -167,8 +163,6 @@ class Shrink(Notice):
                 this_surface.blit(self.char_list[i].anim_list[j].img,
                                   (self.xpos - start_x) - (j * (char_size_x * 2)) + (i * char_size_x),
                                   self.ypos - (j * 15))
-
-            print(self.timer)
 
             for j in range(len(self.char_list[i].anim_list) - self.timer):
                 char_size_x = self.char_list[i].anim_list[j].img.get_width

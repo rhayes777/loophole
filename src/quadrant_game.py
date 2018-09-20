@@ -3,7 +3,7 @@ import pygame
 from control import input
 from random import randint
 import math
-from visual import sprite
+from visual import visual
 
 play = True
 
@@ -15,9 +15,9 @@ controller = input.Controller(pygame)
 
 player = model.MassiveObject()
 
-model_instance = model.Model(player, sprite.SCREEN_SHAPE)
+model_instance = model.Model(player, visual.SCREEN_SHAPE)
 
-model_instance.player.position = (sprite.SCREEN_SHAPE[0] / 2, sprite.SCREEN_SHAPE[1] / 2)
+model_instance.player.position = (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1] / 2)
 
 last_buttons = {'x': False,
                 'up': False,
@@ -66,18 +66,18 @@ controller.button_listener = button_listener
 
 
 def rand_tuple():
-    return float(randint(0, sprite.SCREEN_SHAPE[0])), float(randint(0, sprite.SCREEN_SHAPE[1]))
+    return float(randint(0, visual.SCREEN_SHAPE[0])), float(randint(0, visual.SCREEN_SHAPE[1]))
 
 
 # for _ in range(10):
 #     model_instance.notes.add(model.Object(position=rand_tuple()))
 
-model_instance.generators[0] = model.NoteGenerator(0, (0, sprite.SCREEN_SHAPE[1] / 2), 0, math.pi)
-model_instance.generators[1] = model.NoteGenerator(1, (sprite.SCREEN_SHAPE[0], sprite.SCREEN_SHAPE[1] / 2), math.pi,
+model_instance.generators[0] = model.NoteGenerator(0, (0, visual.SCREEN_SHAPE[1] / 2), 0, math.pi)
+model_instance.generators[1] = model.NoteGenerator(1, (visual.SCREEN_SHAPE[0], visual.SCREEN_SHAPE[1] / 2), math.pi,
                                                    2 * math.pi)
-model_instance.generators[2] = model.NoteGenerator(2, (sprite.SCREEN_SHAPE[0] / 2, sprite.SCREEN_SHAPE[1]), math.pi / 2,
+model_instance.generators[2] = model.NoteGenerator(2, (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1]), math.pi / 2,
                                                    (3 / 2) * math.pi)
-model_instance.generators[3] = model.NoteGenerator(3, (sprite.SCREEN_SHAPE[0] / 2, 0), (3 / 2) * math.pi,
+model_instance.generators[3] = model.NoteGenerator(3, (visual.SCREEN_SHAPE[0] / 2, 0), (3 / 2) * math.pi,
                                                    (5 / 2) * math.pi)
 
 style = 0
@@ -90,11 +90,16 @@ while play:
     controller.read()
     clock.tick(40)
     model_instance.step_forward()
-    sprite.Note(sprite.image_minim.copy(), player.position, sprite.Style.Crotchet, randint(100, 255))
+    visual.Note(visual.image_minim.copy(), player.position, visual.Style.Crotchet, randint(100, 255))
     for note in model_instance.notes:
-        sprite.Note(sprite.sprite_sheet.get_image(rotation_frame), note.position, note.style, 255)
+        visual.Note(visual.sprite_sheet.get_image(rotation_frame), note.position, note.style, 255)
 
     model_instance.add_note(style)
 
-    sprite.draw()
-    sprite.sprite_group_notes.empty()
+    # Collision for Score.Notice creation
+    if model_instance.player_colliding_notes:
+        visual.make_score_notice("500", player.position[0], player.position[1], 30)
+
+
+    visual.draw()
+    visual.sprite_group_notes.empty()

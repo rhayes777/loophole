@@ -102,6 +102,7 @@ class Model(object):
         self.elastic_force = elastic_force
         self.boost_speed = boost_speed
         self.damping_rate = damping_rate
+        self.player_colliding_notes = False
 
     def boost(self, direction):
         self.player.velocity = (v + self.boost_speed * x for v, x in zip(self.player.velocity, direction))
@@ -122,6 +123,7 @@ class Model(object):
             try:
                 if self.player.is_collision(note.position):
                     self.notes.remove(note)
+                    self.player_colliding_notes = True
                 if self.is_out_of_bounds(note.position):
                     self.notes.remove(note)
             except KeyError as e:
