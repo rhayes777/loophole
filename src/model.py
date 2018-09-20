@@ -7,12 +7,12 @@ logger = logging.getLogger(__name__)
 
 MASS = 10000.
 DISTANT_MASS = 0.
-COLLISION_RADIUS = 30.
+COLLISION_RADIUS = 80.
 VELOCITY = 0.1
 SPEED = 2
 ELASTIC_FORCE = 0.05
-BOOST_SPEED = 100
-DAMPING_RATE = 0.00000001
+BOOST_SPEED = 60
+DAMPING_RATE = 0.7
 
 almost_zero = pytest.approx(0, abs=0.0001)
 

@@ -86,13 +86,13 @@ rotation_frame = 0
 # Keep reading forever
 while play:
     style = (style + 1) % 4
-    rotation_frame = (rotation_frame + 1) % 14
+    rotation_frame += 1
     controller.read()
     clock.tick(40)
     model_instance.step_forward()
-    sprite.Note(player.position, sprite.Style.Crotchet, randint(0, 255), 0)
+    sprite.Note(sprite.image_minim.copy(), player.position, sprite.Style.Crotchet, randint(100, 255))
     for note in model_instance.notes:
-        sprite.Note(note.position, note.style, 255, rotation_frame)
+        sprite.Note(sprite.sprite_sheet.get_image(rotation_frame), note.position, note.style, 255)
 
     model_instance.add_note(style)
 
