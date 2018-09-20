@@ -21,25 +21,41 @@ PINK_MASK = (255, 0, 255)
 
 Notices_list = []
 
+
 # notice class handles messages displayed to screen using fonts
 class Notice(object):
-    def __init__(self, words, xpos, ypos, colour, size, this_font):
+    alpha = None  # type: int
+
+    def __init__(self, words, xpos, ypos, color, size, this_font, life):
         self.xpos = xpos
         self.ypos = ypos
         self.words = words
         self.char_list = []  # Character list - to store Letter instances
-        self.colour = colour
+        self.color = color
         self.size = size  # size (Font size)
         self.this_font = this_font  # font
+        self.life = life
+        self.timer = self.life
 
         # append each Letter instance to char_list
         for i in range(len(self.words)):
-            self.char_list.append(Letter(self.words[i], self.colour, self.size, self.this_font))
+            self.char_list.append(Letter(self.words[i], self.color, self.size, self.this_font))
 
         Notices_list.append(self)
 
     # draw text
-    def blit_text(self, this_surface):
+    def blit_text(self, this_surface, current_time):
+
+        if self.timer >= 1:
+            self.timer -= 1
+
+        divide = float(self.timer) / float(self.life)
+
+        self.alpha = 255 * divide
+
+        print(self.timer)
+        print(divide)
+        print(self.alpha)
 
         # iterate through each Letter in char_list
         for i in range(len(self.char_list) - 1):
@@ -48,25 +64,36 @@ class Notice(object):
             text_width, text_height = self.this_font.size(self.words)  # get size of text
             start_x = text_width / 2  # get x-offset (coordinate to start drawing Letters from)
 
-            this_surface.blit(self.char_list[i].char_render,
+            char_img = self.char_list[i].char_render.copy()
+
+            char_img.fill(self.color + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
+
+            this_surface.blit(char_img,
                               (self.xpos - start_x + (i * char_size_x),
                                self.ypos))
 
 
 # Letter class stores individual characters in strings in Notices
 class Letter(object):
-    def __init__(self, char, colour, size, this_font):
-        self.colour = colour
+    def __init__(self, char, color, size, this_font):
+        self.color = color
         self.size = size
         self.this_font = this_font
         self.char = char
 
-        self.char_render = self.this_font.render(self.char, True, self.colour)  # Actual raster render of the character
+        self.char_render = self.this_font.render(self.char, True, self.color)  # Actual raster render of the character
+
+
+# Score class for whenever player gains some points
+class Score(Notice, object):
+    def __init__(self, words, xpos, ypos, color, size, this_font, life):
+        super(Score, self).__init__(words, xpos, ypos, color, size, this_font, life)
+        self. life = life
 
 
 class Wave(Notice, object):
-    def __init__(self, words, colour, size, this_font, shrink=False):
-        super(Wave, self).__init__(words, size, colour, this_font)
+    def __init__(self, words, color, size, this_font, life, shrink=False):
+        super(Wave, self).__init__(words, size, color, this_font, life)
         self.char_list = []
         self.wave_timer = 0
         self.shrink = shrink  # shrinking effect
@@ -75,13 +102,13 @@ class Wave(Notice, object):
 
             for i in range(len(self.words)):
                 self.char_list.append(
-                    Letter(self.words[i], self.colour, self.size, self.this_font))  # Use normal letters
+                    Letter(self.words[i], self.color, self.size, self.this_font))  # Use normal letters
 
         else:
 
             for i in range(len(self.words)):
                 self.char_list.append(
-                    ShrinkLetter(self.words[i], self.colour, self.size, self.this_font))  # Use ShrinkLetters
+                    ShrinkLetter(self.words[i], self.color, self.size, self.this_font))  # Use ShrinkLetters
 
     def blit_text(self, this_surface, drop=False):
 
@@ -115,15 +142,15 @@ class Wave(Notice, object):
 
 
 class Shrink(Notice):
-    def __init__(self, words, colour, size, this_font, is_shrinking=True, drop_colour=BLUE):
-        Notice.__init__(self, words, colour, size, this_font)
-        self.drop_colour = drop_colour
+    def __init__(self, words, color, size, this_font, is_shrinking=True, drop_color=BLUE):
+        Notice.__init__(self, words, color, size, this_font)
+        self.drop_color = drop_color
         self.is_shrinking = is_shrinking
         self.char_list = []
         self.timer = 0
 
         for i in range(len(self.words)):
-            self.char_list.append(ShrinkLetter(self.words[i], self.colour, self.size, self.this_font))
+            self.char_list.append(ShrinkLetter(self.words[i], self.color, self.size, self.this_font))
 
     def blit_text(self, this_surface, drop=False):
 
@@ -152,15 +179,15 @@ class Shrink(Notice):
 
 
 class ShrinkLetter(object):
-    def __init__(self, char, colour, size, this_font):
-        self.colour = colour
+    def __init__(self, char, color, size, this_font):
+        self.color = color
         self.size = size
         self.this_font = this_font
         self.char = char
 
         self.anim_list = []
 
-        self.char_render = self.this_font.render(self.char, True, self.colour)
+        self.char_render = self.this_font.render(self.char, True, self.color)
 
         for i in range(1, 7):
             frame = FontFrame(self.size, self.this_font, self.char_render, i)
@@ -182,7 +209,7 @@ class FontFrame(object):
         pygame.transform.smoothscale(img, (img_w, img_h))
 
 
-def render_notices(surface):
+def render_notices(surface, current_time):
 
     for i in range(0, len(Notices_list)):
-        Notices_list[i].blit_text(surface)
+        Notices_list[i].blit_text(surface, current_time)

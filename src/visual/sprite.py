@@ -112,7 +112,7 @@ sprite_group_notes = pygame.sprite.Group()
 
 # Notices (Text objects - font.py)
 
-notice_score_500 = font.Notice("500", 250, 250, Color.WHITE, 40, font.font_arcade)
+notice_score_500 = font.Score("500", 250, 250, Color.WHITE, 40, font.font_arcade, 500)
 
 
 class Note(pygame.sprite.Sprite):
@@ -167,7 +167,6 @@ class SpriteSheet(object):
 sprite_sheet = SpriteSheet(image_crotchet_rotation, (65, 65), 15)
 
 
-
 def draw():
     screen.fill(Color.BLACK)
 
@@ -175,7 +174,11 @@ def draw():
 
     xy = pygame.mouse.get_cursor()
 
-    font.render_notices(screen)
+    timer = 0
+
+    timer += 1
+
+    font.render_notices(screen, timer)
 
     pygame.display.flip()
 
