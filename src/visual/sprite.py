@@ -9,6 +9,7 @@
 
 import pygame
 import os
+import font
 
 
 class Color(object):
@@ -109,6 +110,10 @@ color_dict = {
 
 sprite_group_notes = pygame.sprite.Group()
 
+# Notices (Text objects - font.py)
+
+notice_score_500 = font.Notice("500", 250, 250, Color.WHITE, 40, font.font_arcade)
+
 
 class Note(pygame.sprite.Sprite):
 
@@ -194,10 +199,15 @@ class SpriteAnimation(pygame.sprite.Sprite):
 
 crotchet_rotation_animation = SpriteAnimation(crotchet_rotation_spritesheet, 65, 65, 15)
 
+
 def draw():
     screen.fill(Color.BLACK)
 
     sprite_group_notes.draw(screen)
+
+    xy = pygame.mouse.get_cursor()
+
+    font.render_notices(screen)
 
     pygame.display.flip()
 
