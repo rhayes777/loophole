@@ -104,7 +104,12 @@ while play:
     for note in model_instance.dead_notes:
         visual.make_score_notice(note.points, note.position, 30, note.style)
 
-    # visual.make_score_notice()
+    visual.make_score_notice(model_instance.scorers[0].score, (INDENT, visual.SCREEN_SHAPE[1] / 2), 5, 0)
+    visual.make_score_notice(model_instance.scorers[1].score,
+                             (visual.SCREEN_SHAPE[0] - INDENT, visual.SCREEN_SHAPE[1] / 2), 5, 1)
+    visual.make_score_notice(model_instance.scorers[2].score,
+                             (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1] - INDENT), 5, 2)
+    visual.make_score_notice(model_instance.scorers[3].score, (visual.SCREEN_SHAPE[0] / 2, INDENT), 5, 3)
 
     visual.draw()
     visual.sprite_group_notes.empty()
