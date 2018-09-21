@@ -26,9 +26,8 @@ Notices_list = []
 class Notice(object):
     alpha = None  # type: int
 
-    def __init__(self, words, xpos, ypos, color, size, this_font, life):
-        self.xpos = xpos
-        self.ypos = ypos
+    def __init__(self, words, position, color, size, this_font, life):
+        self.position = position
         self.words = words
         self.char_list = []  # Character list - to store Letter instances
         self.color = color
@@ -65,8 +64,8 @@ class Notice(object):
             char_img.fill(self.color + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
 
             this_surface.blit(char_img,
-                              (self.xpos - start_x + (i * char_size_x),
-                               self.ypos))
+                              (self.position[0] - start_x + (i * char_size_x),
+                               self.position[1]))
 
 
 # Letter class stores individual characters in strings in Notices
@@ -82,8 +81,8 @@ class Letter(object):
 
 # Score class for whenever player gains some points
 class Score(Notice, object):
-    def __init__(self, words, xpos, ypos, color, size, this_font, life):
-        super(Score, self).__init__(words, xpos, ypos, color, size, this_font, life)
+    def __init__(self, words, position, color, size, this_font, life):
+        super(Score, self).__init__(words, position, color, size, this_font, life)
         self.life = life
 
 
@@ -124,8 +123,8 @@ class Wave(Notice, object):
             if self.shrink is False:  # if shrink effect is off just do the wavy effect
 
                 this_surface.blit(self.char_list[i].char_render,
-                                  (self.xpos - start_x + (i * char_size_x),
-                                   self.ypos + wave_add))  # wav_add determines oscillation in the y-direction
+                                  (self.position[0] - start_x + (i * char_size_x),
+                                   self.position[1] + wave_add))  # wav_add determines oscillation in the y-direction
 
             elif self.shrink is True:  # if shrink effect is on do the wavy effect and the shrink effect
 
@@ -133,43 +132,43 @@ class Wave(Notice, object):
 
                 for j in range(len(self.char_list[i].anim_list) - less):
                     this_surface.blit(self.char_list[i].anim_list[j].img,
-                                      ((self.xpos - start_x) + (i * char_size_x * 1.5),
-                                       (self.ypos + wave_add) - (j * 25)))
+                                      ((self.position[0] - start_x) + (i * char_size_x * 1.5),
+                                       (self.position[1] + wave_add) - (j * 25)))
 
 
-class Shrink(Notice):
-    def __init__(self, words, color, size, this_font, is_shrinking=True, drop_color=BLUE):
-        Notice.__init__(self, words, color, size, this_font)
-        self.drop_color = drop_color
-        self.is_shrinking = is_shrinking
-        self.char_list = []
-        self.timer = 0
-
-        for i in range(len(self.words)):
-            self.char_list.append(ShrinkLetter(self.words[i], self.color, self.size, self.this_font))
-
-    def blit_text(self, this_surface, drop=False):
-
-        self.timer += 1
-
-        for i in range(len(self.char_list)):
-
-            text_width, text_height = self.this_font.size(self.words)
-            start_x = text_width / 2
-
-            for j in range(len(self.char_list[i].anim_list) - self.timer):
-                char_size_x = self.char_list[i].anim_list[j].img.get_width
-
-                this_surface.blit(self.char_list[i].anim_list[j].img,
-                                  (self.xpos - start_x) - (j * (char_size_x * 2)) + (i * char_size_x),
-                                  self.ypos - (j * 15))
-
-            for j in range(len(self.char_list[i].anim_list) - self.timer):
-                char_size_x = self.char_list[i].anim_list[j].img.get_width
-
-                this_surface.blit(self.char_list[i].anim_list[j].img,
-                                  (self.xpos - start_x - (j * 25) + (i * char_size_x),
-                                   self.ypos - (j * 15)))
+# class Shrink(Notice):
+#     def __init__(self, words, color, size, this_font, is_shrinking=True, drop_color=BLUE):
+#         Notice.__init__(self, words, color, size, this_font)
+#         self.drop_color = drop_color
+#         self.is_shrinking = is_shrinking
+#         self.char_list = []
+#         self.timer = 0
+#
+#         for i in range(len(self.words)):
+#             self.char_list.append(ShrinkLetter(self.words[i], self.color, self.size, self.this_font))
+#
+#     def blit_text(self, this_surface, drop=False):
+#
+#         self.timer += 1
+#
+#         for i in range(len(self.char_list)):
+#
+#             text_width, text_height = self.this_font.size(self.words)
+#             start_x = text_width / 2
+#
+#             for j in range(len(self.char_list[i].anim_list) - self.timer):
+#                 char_size_x = self.char_list[i].anim_list[j].img.get_width
+#
+#                 this_surface.blit(self.char_list[i].anim_list[j].img,
+#                                   (self.xpos - start_x) - (j * (char_size_x * 2)) + (i * char_size_x),
+#                                   self.ypos - (j * 15))
+#
+#             for j in range(len(self.char_list[i].anim_list) - self.timer):
+#                 char_size_x = self.char_list[i].anim_list[j].img.get_width
+#
+#                 this_surface.blit(self.char_list[i].anim_list[j].img,
+#                                   (self.xpos - start_x - (j * 25) + (i * char_size_x),
+#                                    self.ypos - (j * 15)))
 
 
 class ShrinkLetter(object):

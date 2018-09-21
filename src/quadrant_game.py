@@ -97,9 +97,8 @@ while play:
     model_instance.add_note(style)
 
     # Collision for Score.Notice creation
-    if model_instance.player_colliding_notes:
-        visual.make_score_notice("500", player.position[0], player.position[1], 30)
-
+    for note in model_instance.dead_notes:
+        visual.make_score_notice("500", note.position, 30)
 
     visual.draw()
     visual.sprite_group_notes.empty()

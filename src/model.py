@@ -97,12 +97,12 @@ class Model(object):
         self.player = player
         self.generators = {}
         self.notes = set()
+        self.dead_notes = set()
         self.screen_shape = screen_shape
         self.centre = tuple(x / 2 for x in screen_shape)
         self.elastic_force = elastic_force
         self.boost_speed = boost_speed
         self.damping_rate = damping_rate
-        self.player_colliding_notes = False
 
     def boost(self, direction):
         self.player.velocity = (v + self.boost_speed * x for v, x in zip(self.player.velocity, direction))
@@ -117,13 +117,14 @@ class Model(object):
         self.notes.add(self.generators[style].make_note())
 
     def step_forward(self):
+        self.dead_notes = set()
         for note in list(self.notes):
             note.step_forward()
             note.acceleration = self.player.acceleration_from(note.position)
             try:
                 if self.player.is_collision(note.position):
                     self.notes.remove(note)
-                    self.player_colliding_notes = True
+                    self.dead_notes.add(note)
                 if self.is_out_of_bounds(note.position):
                     self.notes.remove(note)
             except KeyError as e:
