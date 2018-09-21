@@ -19,14 +19,14 @@ GREEN = (46, 190, 60)
 BLUE = (30, 48, 180)
 PINK_MASK = (255, 0, 255)
 
-Notices_list = []
+notices_list = []
 
 
 # notice class handles messages displayed to screen using fonts
 class Notice(object):
     alpha = None  # type: int
 
-    def __init__(self, words, position, color, size, this_font, life):
+    def __init__(self, words, position, color, size, this_font, life, rate=1):
         self.position = position
         self.words = words
         self.char_list = []  # Character list - to store Letter instances
@@ -35,18 +35,19 @@ class Notice(object):
         self.this_font = this_font  # font
         self.life = life
         self.timer = self.life
+        self.rate = rate
 
         # append each Letter instance to char_list
         for i in range(len(self.words)):
             self.char_list.append(Letter(self.words[i], self.color, self.size, self.this_font))
 
-        Notices_list.append(self)
+        notices_list.append(self)
 
     # draw text
-    def blit_text(self, this_surface, current_time):
+    def blit_text(self, this_surface):
 
-        if self.timer >= 1:
-            self.timer -= 1
+        if self.timer >= 0:
+            self.timer -= self.rate
 
         divide = float(self.timer) / float(self.life)
 
@@ -82,7 +83,7 @@ class Letter(object):
 # Score class for whenever player gains some points
 class Score(Notice, object):
     def __init__(self, words, position, color, size, this_font, life):
-        super(Score, self).__init__(words, position, color, size, this_font, life)
+        super(Score, self).__init__(str(words), position, color, size, this_font, life)
         self.life = life
 
 
@@ -202,7 +203,8 @@ class FontFrame(object):
         pygame.transform.smoothscale(img, (img_w, img_h))
 
 
-def render_notices(surface, current_time):
-
-    for i in range(0, len(Notices_list)):
-        Notices_list[i].blit_text(surface, current_time)
+def render_notices(surface):
+    for notice in list(notices_list):
+        notice.blit_text(surface)
+        if notice.timer <= 0:
+            notices_list.remove(notice)

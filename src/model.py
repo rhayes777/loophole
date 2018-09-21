@@ -13,6 +13,7 @@ SPEED = 2
 ELASTIC_FORCE = 0.05
 BOOST_SPEED = 60
 DAMPING_RATE = 0.7
+POINTS_PER_NOTE = 50
 
 almost_zero = pytest.approx(0, abs=0.0001)
 
@@ -29,6 +30,14 @@ class NoteGenerator(object):
         direction = uniform(self.min_direction, self.max_direction)
         velocity = (self.speed * math.sin(direction), self.speed * math.cos(direction))
         return NoteObject(self.style, self.position, velocity)
+
+
+class Scorer(object):
+    def __init__(self):
+        self.score = 0
+
+    def add_points(self, points):
+        self.score += points
 
 
 class Object(object):
@@ -51,6 +60,12 @@ class NoteObject(Object):
     def __init__(self, style, position=(0., 0.), velocity=(0., 0.), acceleration=(0., 0.)):
         super(NoteObject, self).__init__(position, velocity, acceleration)
         self.style = style
+
+
+class DeadNote(NoteObject):
+    def __init__(self, note, points):
+        super(DeadNote, self).__init__(note.style, note.position, note.velocity, note.acceleration)
+        self.points = points
 
 
 class MassiveObject(Object):
@@ -96,6 +111,7 @@ class Model(object):
                  damping_rate=DAMPING_RATE):
         self.player = player
         self.generators = {}
+        self.scorers = {}
         self.notes = set()
         self.dead_notes = set()
         self.screen_shape = screen_shape
@@ -116,6 +132,9 @@ class Model(object):
     def add_note(self, style):
         self.notes.add(self.generators[style].make_note())
 
+    def add_points(self, style, points):
+        self.scorers[style].add_points(points)
+
     def step_forward(self):
         self.dead_notes = set()
         for note in list(self.notes):
@@ -124,7 +143,8 @@ class Model(object):
             try:
                 if self.player.is_collision(note.position):
                     self.notes.remove(note)
-                    self.dead_notes.add(note)
+                    self.add_points(note.style, POINTS_PER_NOTE)
+                    self.dead_notes.add(DeadNote(note, POINTS_PER_NOTE))
                 if self.is_out_of_bounds(note.position):
                     self.notes.remove(note)
             except KeyError as e:

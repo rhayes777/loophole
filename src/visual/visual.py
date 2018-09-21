@@ -167,8 +167,8 @@ class SpriteSheet(object):
 sprite_sheet = SpriteSheet(image_crotchet_rotation, (65, 65), 15)
 
 
-def make_score_notice(text, position, life):
-    font.Score(text, position, Color.WHITE, 40, font.font_arcade, life)
+def make_score_notice(text, position, life, style):
+    font.Score(text, position, tuple(min(val + 50, 255) for val in color_dict[style]), 40, font.font_arcade, life)
 
 
 def draw():
@@ -182,7 +182,7 @@ def draw():
 
     timer += 1
 
-    font.render_notices(screen, timer)
+    font.render_notices(screen)
 
     pygame.display.flip()
 
@@ -193,4 +193,4 @@ if __name__ == "__main__":
         draw()
         pygame.event.get()
 
-    pygame.quit()
+    # pygame.quit()

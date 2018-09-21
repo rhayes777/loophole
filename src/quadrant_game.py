@@ -7,6 +7,8 @@ from visual import visual
 
 play = True
 
+INDENT = 50
+
 pygame.init()
 pygame.display.init()
 clock = pygame.time.Clock()
@@ -80,6 +82,8 @@ model_instance.generators[2] = model.NoteGenerator(2, (visual.SCREEN_SHAPE[0] / 
 model_instance.generators[3] = model.NoteGenerator(3, (visual.SCREEN_SHAPE[0] / 2, 0), (3 / 2) * math.pi,
                                                    (5 / 2) * math.pi)
 
+model_instance.scorers = {i: model.Scorer() for i in range(4)}
+
 style = 0
 rotation_frame = 0
 
@@ -98,7 +102,9 @@ while play:
 
     # Collision for Score.Notice creation
     for note in model_instance.dead_notes:
-        visual.make_score_notice("500", note.position, 30)
+        visual.make_score_notice(note.points, note.position, 30, note.style)
+
+    # visual.make_score_notice()
 
     visual.draw()
     visual.sprite_group_notes.empty()
