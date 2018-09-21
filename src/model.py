@@ -15,17 +15,19 @@ BOOST_SPEED = 60
 DAMPING_RATE = 0.7
 POINTS_PER_NOTE = 50
 DECAY_RATE = 1
+ANGULAR_RANGE = math.pi / 4
+
 
 almost_zero = pytest.approx(0, abs=0.0001)
 
 
 class NoteGenerator(object):
-    def __init__(self, style, position, min_direction, max_direction, speed=SPEED):
+    def __init__(self, style, position, direction, angular_range=ANGULAR_RANGE, speed=SPEED):
         self.position = position
         self.style = style
         self.speed = speed
-        self.min_direction = min_direction
-        self.max_direction = max_direction
+        self.min_direction = direction - angular_range
+        self.max_direction = direction + angular_range
 
     def make_note(self):
         direction = uniform(self.min_direction, self.max_direction)

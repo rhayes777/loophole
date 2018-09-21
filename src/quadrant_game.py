@@ -90,13 +90,11 @@ def rand_tuple():
 # for _ in range(10):
 #     model_instance.notes.add(model.Object(position=rand_tuple()))
 
-model_instance.generators[0] = model.NoteGenerator(0, (0, visual.SCREEN_SHAPE[1] / 2), 0, math.pi)
-model_instance.generators[1] = model.NoteGenerator(1, (visual.SCREEN_SHAPE[0], visual.SCREEN_SHAPE[1] / 2), math.pi,
-                                                   2 * math.pi)
-model_instance.generators[2] = model.NoteGenerator(2, (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1]), math.pi / 2,
-                                                   (3 / 2) * math.pi)
-model_instance.generators[3] = model.NoteGenerator(3, (visual.SCREEN_SHAPE[0] / 2, 0), (3 / 2) * math.pi,
-                                                   (5 / 2) * math.pi)
+model_instance.generators[0] = model.NoteGenerator(0, (0, visual.SCREEN_SHAPE[1] / 2), math.pi / 2)
+model_instance.generators[1] = model.NoteGenerator(1, (visual.SCREEN_SHAPE[0], visual.SCREEN_SHAPE[1] / 2),
+                                                   1.5 * math.pi)
+model_instance.generators[2] = model.NoteGenerator(2, (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1]), math.pi)
+model_instance.generators[3] = model.NoteGenerator(3, (visual.SCREEN_SHAPE[0] / 2, 0), 2 * math.pi)
 
 model_instance.scorers = {i: model.Scorer() for i in range(4)}
 
