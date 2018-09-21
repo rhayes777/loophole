@@ -14,6 +14,7 @@ ELASTIC_FORCE = 0.05
 BOOST_SPEED = 60
 DAMPING_RATE = 0.7
 POINTS_PER_NOTE = 50
+DECAY_RATE = 1
 
 almost_zero = pytest.approx(0, abs=0.0001)
 
@@ -33,11 +34,16 @@ class NoteGenerator(object):
 
 
 class Scorer(object):
-    def __init__(self):
+    def __init__(self, decay_rate=DECAY_RATE):
         self.score = 0
+        self.decay_rate = decay_rate
 
     def add_points(self, points):
         self.score += points
+
+    def decay(self):
+        self.score -= self.decay_rate
+        self.score = max(self.score, 0)
 
 
 class Object(object):
@@ -136,6 +142,8 @@ class Model(object):
         self.scorers[style].add_points(points)
 
     def step_forward(self):
+        for scorer in self.scorers.values():
+            scorer.decay()
         self.dead_notes = set()
         for note in list(self.notes):
             note.step_forward()
