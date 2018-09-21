@@ -126,5 +126,7 @@ while play:
                              (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1] - INDENT), 5, 2)
     visual.make_score_notice(model_instance.scorers[3].score, (visual.SCREEN_SHAPE[0] / 2, INDENT), 5, 3)
 
+    track.tempo_shift = 1 + float(model_instance.average_score) / 1000
+
     visual.draw()
     visual.sprite_group_notes.empty()

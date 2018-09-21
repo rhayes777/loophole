@@ -143,6 +143,11 @@ class Model(object):
     def add_points(self, style, points):
         self.scorers[style].add_points(points)
 
+    @property
+    def average_score(self):
+        scorers = self.scorers.values()
+        return sum(scorer.score for scorer in scorers) / len(scorers)
+
     def step_forward(self):
         for scorer in self.scorers.values():
             scorer.decay()
