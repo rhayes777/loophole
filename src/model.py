@@ -5,11 +5,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-MASS = 10000.
+MASS = 30000.
 DISTANT_MASS = 0.
 COLLISION_RADIUS = 80.
 VELOCITY = 0.1
-SPEED = 2
+SPEED = 20
 ELASTIC_FORCE = 0.05
 BOOST_SPEED = 60
 DAMPING_RATE = 0.7
