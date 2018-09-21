@@ -4,6 +4,18 @@ from control import input
 from random import randint
 import math
 from visual import visual
+from audio import player
+from os import path
+from Queue import Queue
+
+note_queue = Queue()
+
+
+def note_on_listener(midi_note):
+    note_queue.put(midi_note)
+
+
+directory = path.dirname(path.realpath(__file__))
 
 play = True
 
@@ -12,6 +24,10 @@ INDENT = 50
 pygame.init()
 pygame.display.init()
 clock = pygame.time.Clock()
+
+track = player.Track("{}/media/song_pc.mid".format(directory), is_looping=True)
+for channel in track.channels:
+    channel.note_on_listener = note_on_listener
 
 controller = input.Controller(pygame)
 
@@ -84,12 +100,12 @@ model_instance.generators[3] = model.NoteGenerator(3, (visual.SCREEN_SHAPE[0] / 
 
 model_instance.scorers = {i: model.Scorer() for i in range(4)}
 
-style = 0
 rotation_frame = 0
+
+track.start()
 
 # Keep reading forever
 while play:
-    style = (style + 1) % 4
     rotation_frame += 1
     controller.read()
     clock.tick(40)
@@ -98,7 +114,8 @@ while play:
     for note in model_instance.notes:
         visual.Note(visual.sprite_sheet.get_image(rotation_frame), note.position, note.style, 255)
 
-    model_instance.add_note(style)
+    while not note_queue.empty():
+        model_instance.add_note(note_queue.get().channel % 4)
 
     # Collision for Score.Notice creation
     for note in model_instance.dead_notes:
