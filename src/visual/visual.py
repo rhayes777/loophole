@@ -11,6 +11,7 @@ import pygame
 import os
 import font
 import math
+from random import randint
 
 
 class Color(object):
@@ -117,6 +118,42 @@ sprite_group_notes = pygame.sprite.Group()
 
 # notice_score_500 = font.Score("500", 250, 250, Color.WHITE, 40, font.font_arcade, 500)
 
+circle_effects_list = []
+
+class Circle_Effect():
+
+    def __init__(self, color=Color.WHITE, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), scale_rate=4,
+                 max_size = randint(250,550)):
+
+        self.position = position
+
+        self.color = color
+
+        self.scale_rate = scale_rate
+
+        self.max_size = max_size
+
+        self.size = 1
+
+        circle_effects_list.append(self)
+
+    def draw(self, surface):
+
+        self.size +=self.scale_rate
+
+        self.scale_rate *=1.1
+
+        self.color = scale_rgb(Color.WHITE, Color.GREY_DARK, self.size / self.max_size)
+
+        pygame.draw.ellipse(surface, self.color, [self.position[0] - self.size/2, self.position[1] - self.size/2,
+                            self.size, self.size], 1)
+
+def render_circle_effects(surface):
+
+    for circle_effect in list(circle_effects_list):
+        circle_effect.draw(surface)
+        if circle_effect.size > circle_effect.max_size:
+            circle_effects_list.remove(circle_effect)
 
 class Note(pygame.sprite.Sprite):
 
@@ -176,6 +213,22 @@ sprite_sheet = SpriteSheet(image_crotchet_rotation, (65, 65), 15, Color.BLACK)
 def make_score_notice(text, position, life, style):
     font.Score(text, position, tuple(min(val + 50, 255) for val in color_dict[style]), 40, font.font_arcade, life)
 
+def scale_rgb(original_rgb, target_rgb, scalar):
+
+    range_R = original_rgb[0] - target_rgb[0]
+    range_G = original_rgb[1] - target_rgb[1]
+    range_B = original_rgb[2] - target_rgb[2]
+
+    return_R = original_rgb[0] - (range_R * scalar)
+    return_G = original_rgb[1] - (range_G * scalar)
+    return_B = original_rgb[2] - (range_B * scalar)
+
+    calculated_RGB = [return_R, return_G, return_B]
+
+    return calculated_RGB
+
+
+
 
 def draw():
     screen.fill(Color.GREY_DARK)
@@ -187,6 +240,8 @@ def draw():
     timer = 0
 
     timer += 1
+
+    render_circle_effects(screen)
 
     font.render_notices(screen)
 

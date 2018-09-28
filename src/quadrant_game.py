@@ -118,6 +118,7 @@ while play:
     # Collision for Score.Notice creation
     for note in model_instance.dead_notes:
         visual.make_score_notice(note.points, note.position, 30, note.style)
+        visual.Circle_Effect(visual.Color.GREY, note.position)
 
     visual.make_score_notice(model_instance.scorers[0].score, (INDENT, visual.SCREEN_SHAPE[1] / 2), 5, 0)
     visual.make_score_notice(model_instance.scorers[1].score,
