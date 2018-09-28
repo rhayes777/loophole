@@ -18,6 +18,9 @@ class Color(object):
 
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
+    GREY = (123, 123, 123)
+    GREY_DARK = (30, 30, 50)
+
     RED = (255, 0, 0)
     GREEN = (0, 255, 0)
     BLUE = (0, 0, 255)
@@ -132,7 +135,10 @@ class Note(pygame.sprite.Sprite):
 
         self.image = image
 
+        # self.image.set_colorkey(Color.WHITE)
+
         color = color_dict[style]
+
         self.image.fill(color + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
 
 
@@ -164,7 +170,7 @@ class SpriteSheet(object):
         return self.get_image(self.frame_number_for_angle(angle))
 
 
-sprite_sheet = SpriteSheet(image_crotchet_rotation, (65, 65), 15)
+sprite_sheet = SpriteSheet(image_crotchet_rotation, (65, 65), 15, Color.BLACK)
 
 
 def make_score_notice(text, position, life, style):
@@ -172,7 +178,7 @@ def make_score_notice(text, position, life, style):
 
 
 def draw():
-    screen.fill(Color.BLACK)
+    screen.fill(Color.GREY_DARK)
 
     sprite_group_notes.draw(screen)
 
