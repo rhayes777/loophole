@@ -31,7 +31,7 @@ class Color(object):
 
     PURPLE_DARK = (48, 0, 15)
     PURPLE_MID = (73, 0, 45)
-    PURPLE_LIGHT = (94, 0, 74)
+    PURPLE_LIGHT = (194, 0, 174)
 
     PINK_DARK = (100, 34, 80)
     PINK_MID = (100, 62, 100)
@@ -39,19 +39,19 @@ class Color(object):
 
     TEAL_DARK = (13, 70, 86)
     TEAL_MID = (44, 92, 100)
-    TEAL_LIGHT = (77, 90, 100)
+    TEAL_LIGHT = (177, 90, 200)
 
     BLUE_DARK = (20, 40, 100)
     BLUE_MID = (50, 68, 100)
-    BLUE_LIGHT = (77, 90, 100)
+    BLUE_LIGHT = (177, 90, 200)
 
     GREEN_DARK = (15, 52, 34)
     GREEN_MID = (45, 77, 62)
-    GREEN_LIGHT = (74, 96, 86)
+    GREEN_LIGHT = (174, 96, 186)
 
     ORANGE_DARK = (72, 30, 0)
     ORANGE_MID = (94, 58, 0)
-    ORANGE_LIGHT = (100, 84, 0)
+    ORANGE_LIGHT = (200, 184, 0)
 
 
 SCREEN_SHAPE = (1080, 800)
@@ -122,7 +122,7 @@ circle_effects_list = []
 
 class Circle_Effect():
 
-    def __init__(self, color=Color.WHITE, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), scale_rate=4,
+    def __init__(self, color=Color.WHITE, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), size=1, scale_rate=4,
                  max_size = randint(250,550)):
 
         self.position = position
@@ -133,7 +133,7 @@ class Circle_Effect():
 
         self.max_size = max_size
 
-        self.size = 1
+        self.size = size
 
         circle_effects_list.append(self)
 
@@ -147,6 +147,12 @@ class Circle_Effect():
 
         pygame.draw.ellipse(surface, self.color, [self.position[0] - self.size/2, self.position[1] - self.size/2,
                             self.size, self.size], 1)
+
+def make_circle_explosion(color=Color.GREY, number=randint(2,6), position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2)):
+
+    for i in range(number):
+        Circle_Effect(color, position, (i+1)/2, randint(3, 6))
+
 
 def render_circle_effects(surface):
 
@@ -196,7 +202,7 @@ class SpriteSheet(object):
         surface.fill(self.key, surface.get_rect())
         surface.set_colorkey(self.key)
         surface.blit(self.filename, (0, 0), (0, frame * self.shape[1], self.shape[0], self.shape[1]))
-        surface.set_alpha(128)
+        surface.set_alpha(255)
 
         return surface
 
@@ -213,6 +219,52 @@ sprite_sheet = SpriteSheet(image_crotchet_rotation, (65, 65), 15, Color.BLACK)
 def make_score_notice(text, position, life, style):
     font.Score(text, position, tuple(min(val + 50, 255) for val in color_dict[style]), 40, font.font_arcade, life)
 
+
+def fill_gradient(surface, color, gradient, rect=None, vertical=True, forward=True):
+    """fill a surface with a gradient pattern
+    Parameters:
+    color -> starting color
+    gradient -> final color
+    rect -> area to fill; default is surface's rect
+    vertical -> True=vertical; False=horizontal
+    forward -> True=forward; False=reverse
+
+    Pygame recipe: http://www.pygame.org/wiki/GradientCode
+    """
+    if rect is None: rect = surface.get_rect()
+    x1, x2 = rect.left, rect.right
+    y1, y2 = rect.top, rect.bottom
+    if vertical:
+        h = y2 - y1
+    else:
+        h = x2 - x1
+    if forward:
+        a, b = color, gradient
+    else:
+        b, a = color, gradient
+    rate = (
+        float(b[0] - a[0]) / h,
+        float(b[1] - a[1]) / h,
+        float(b[2] - a[2]) / h
+    )
+    fn_line = pygame.draw.line
+    if vertical:
+        for line in range(y1, y2):
+            color = (
+                min(max(a[0] + (rate[0] * (line - y1)), 0), 255),
+                min(max(a[1] + (rate[1] * (line - y1)), 0), 255),
+                min(max(a[2] + (rate[2] * (line - y1)), 0), 255)
+            )
+            fn_line(surface, color, (x1, line), (x2, line))
+    else:
+        for col in range(x1, x2):
+            color = (
+                min(max(a[0] + (rate[0] * (col - x1)), 0), 255),
+                min(max(a[1] + (rate[1] * (col - x1)), 0), 255),
+                min(max(a[2] + (rate[2] * (col - x1)), 0), 255)
+            )
+            fn_line(surface, color, (col, y1), (col, y2))
+
 def scale_rgb(original_rgb, target_rgb, scalar):
 
     range_R = original_rgb[0] - target_rgb[0]
@@ -223,7 +275,14 @@ def scale_rgb(original_rgb, target_rgb, scalar):
     return_G = original_rgb[1] - (range_G * scalar)
     return_B = original_rgb[2] - (range_B * scalar)
 
-    calculated_RGB = [return_R, return_G, return_B]
+    if return_R >=255:
+        return_R == 255
+    if return_G >=255:
+        return_G == 255
+    if return_B >=255:
+        return_B == 255
+
+    calculated_RGB = [int(return_R), int(return_G), int(return_B)]
 
     return calculated_RGB
 
