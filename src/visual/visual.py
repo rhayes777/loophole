@@ -77,12 +77,15 @@ image_directory = os.path.join(directory_name, image_directory_name)
 
 # Load Images
 
-# load minim image, prepare it for alpha functions (transparency)
+# load note images, prepare it for alpha functions (transparency)
 image_minim = pygame.image.load(os.path.join(image_directory, "minim.bmp"))
 image_crotchet = pygame.image.load(os.path.join(image_directory, "crotchet.bmp"))
 image_quaver = pygame.image.load(os.path.join(image_directory, "quaver.bmp"))
 image_semiquaver = pygame.image.load(os.path.join(image_directory, "semiquaver.bmp"))
 image_crotchet_rotation = pygame.image.load(os.path.join(image_directory, "crotchet_glow_rotation.bmp"))
+
+# load energy glow
+image_energy_glow = pygame.image.load(os.path.join(image_directory, "energy_glow.bmp"))
 
 
 # Image Dictionary - stores images, mapped to integers (0 to 3 currently)
@@ -113,6 +116,7 @@ color_dict = {
 }
 
 sprite_group_notes = pygame.sprite.Group()
+sprite_group_energy_glows = pygame.sprite.Group()
 
 # Notices (Text objects - font.py)
 
@@ -120,11 +124,11 @@ sprite_group_notes = pygame.sprite.Group()
 
 circle_effects_list = []
 
+
 class Circle_Effect():
 
     def __init__(self, color=Color.WHITE, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), size=1, scale_rate=4,
-                 max_size = randint(250,550)):
-
+                 max_size=randint(250, 550)):
         self.position = position
 
         self.color = color
@@ -138,28 +142,66 @@ class Circle_Effect():
         circle_effects_list.append(self)
 
     def draw(self, surface):
+        self.size += self.scale_rate
 
-        self.size +=self.scale_rate
-
-        self.scale_rate *=1.1
+        self.scale_rate *= 1.1
 
         self.color = scale_rgb(Color.WHITE, Color.GREY_DARK, self.size / self.max_size)
 
-        pygame.draw.ellipse(surface, self.color, [self.position[0] - self.size/2, self.position[1] - self.size/2,
-                            self.size, self.size], 1)
+        pygame.draw.ellipse(surface, self.color, [self.position[0] - self.size / 2, self.position[1] - self.size / 2,
+                                                  self.size, self.size], 1)
 
-def make_circle_explosion(color=Color.GREY, number=randint(2,6), position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2)):
 
+def make_circle_explosion(color=Color.GREY, number=randint(2, 6), position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2)):
     for i in range(number):
-        Circle_Effect(color, position, (i+1)/2, randint(3, 6))
+        Circle_Effect(color, position, (i + 1) / 2, randint(3, 6))
 
 
 def render_circle_effects(surface):
-
     for circle_effect in list(circle_effects_list):
         circle_effect.draw(surface)
         if circle_effect.size > circle_effect.max_size:
             circle_effects_list.remove(circle_effect)
+
+energy_img_size = image_energy_glow.get_rect()
+image_energy_width = energy_img_size.width
+image_energy_height = energy_img_size.height
+
+GLOW_POS_LEFT = (0 - image_energy_width / 2, SCREEN_SHAPE[1] / 2 - image_energy_height / 2)
+GLOW_POS_UP = [SCREEN_SHAPE[0] / 2 - image_energy_width / 2, 0 - image_energy_height / 2]
+GLOW_POS_RIGHT = [SCREEN_SHAPE[0] - image_energy_width / 2, SCREEN_SHAPE[1] / 2 - image_energy_height / 2]
+GLOW_POS_DOWN = [SCREEN_SHAPE[0] / 2 - image_energy_width / 2, SCREEN_SHAPE[1] - image_energy_height / 2]
+
+
+class EnergyGlow(pygame.sprite.Sprite):
+
+    def __init__(self, position=GLOW_POS_LEFT, style=Style.Minim, alpha=255):
+        pygame.sprite.Sprite.__init__(self, sprite_group_energy_glows)
+
+        self.image = image_energy_glow.copy()
+
+        px = position[0]
+        py = position[1]
+
+        newx = px - 300
+        newy = py - 300
+
+        self.rect = (newx, newy)
+
+        self.color = color_dict[style]
+
+        self.image.fill(self.color + (alpha,), None, pygame.BLEND_RGBA_MULT)
+
+        energy_glows.append(self)
+
+    def set_alpha(self, alpha):
+
+        self.image = image_energy_glow.copy()
+
+        self.image.fill(self.color + (alpha,), None, pygame.BLEND_RGBA_MULT)
+
+
+energy_glows = []
 
 class Note(pygame.sprite.Sprite):
 
@@ -265,8 +307,8 @@ def fill_gradient(surface, color, gradient, rect=None, vertical=True, forward=Tr
             )
             fn_line(surface, color, (col, y1), (col, y2))
 
-def scale_rgb(original_rgb, target_rgb, scalar):
 
+def scale_rgb(original_rgb, target_rgb, scalar):
     range_R = original_rgb[0] - target_rgb[0]
     range_G = original_rgb[1] - target_rgb[1]
     range_B = original_rgb[2] - target_rgb[2]
@@ -275,11 +317,11 @@ def scale_rgb(original_rgb, target_rgb, scalar):
     return_G = original_rgb[1] - (range_G * scalar)
     return_B = original_rgb[2] - (range_B * scalar)
 
-    if return_R >=255:
+    if return_R >= 255:
         return_R == 255
-    if return_G >=255:
+    if return_G >= 255:
         return_G == 255
-    if return_B >=255:
+    if return_B >= 255:
         return_B == 255
 
     calculated_RGB = [int(return_R), int(return_G), int(return_B)]
@@ -287,10 +329,10 @@ def scale_rgb(original_rgb, target_rgb, scalar):
     return calculated_RGB
 
 
-
-
 def draw():
     screen.fill(Color.GREY_DARK)
+
+    sprite_group_energy_glows.draw(screen)
 
     sprite_group_notes.draw(screen)
 

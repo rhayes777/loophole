@@ -48,6 +48,12 @@ class Scorer(object):
         self.score = max(self.score, 0)
 
 
+class Glow(Scorer):
+    def __init__(self, decay_rate_this, energy):
+        Scorer.__init__(decay_rate_this)
+        self.energy = energy
+
+
 class Object(object):
     def __init__(self, position=(0., 0.), velocity=(0., 0.), acceleration=(0., 0.)):
         self.position = position
