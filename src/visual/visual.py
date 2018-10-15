@@ -77,6 +77,9 @@ image_directory = os.path.join(directory_name, image_directory_name)
 
 # Load Images
 
+# background
+image_background = pygame.image.load(os.path.join(image_directory, "background.bmp"))
+
 # load note images, prepare it for alpha functions (transparency)
 image_minim = pygame.image.load(os.path.join(image_directory, "minim.bmp"))
 image_crotchet = pygame.image.load(os.path.join(image_directory, "crotchet.bmp"))
@@ -331,6 +334,8 @@ def scale_rgb(original_rgb, target_rgb, scalar):
 
 def draw():
     screen.fill(Color.GREY_DARK)
+
+    # screen.blit(image_background, image_background.get_rect())
 
     sprite_group_energy_glows.draw(screen)
 

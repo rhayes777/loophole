@@ -121,10 +121,10 @@ while play:
 
     glow_min_alpha = 155
 
-    score_alpha_left = get_new_range_value(0, 500, model_instance.scorers[0].score, 1, glow_min_alpha)
-    score_alpha_right = get_new_range_value(0, 500, model_instance.scorers[1].score, 1, glow_min_alpha)
-    score_alpha_down = get_new_range_value(0, 500, model_instance.scorers[2].score, 1, glow_min_alpha)
-    score_alpha_up = get_new_range_value(0, 500, model_instance.scorers[3].score, 1, glow_min_alpha)
+    score_alpha_left = get_new_range_value(0, 500, model_instance.scorers[0].score, 75, glow_min_alpha)
+    score_alpha_right = get_new_range_value(0, 500, model_instance.scorers[1].score, 75, glow_min_alpha)
+    score_alpha_down = get_new_range_value(0, 500, model_instance.scorers[2].score, 75, glow_min_alpha)
+    score_alpha_up = get_new_range_value(0, 500, model_instance.scorers[3].score, 75, glow_min_alpha)
 
     glow_left.set_alpha(score_alpha_left)
     glow_right.set_alpha(score_alpha_right)
