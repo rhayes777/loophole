@@ -132,7 +132,7 @@ while play:
     glow_up.set_alpha(score_alpha_up)
 
     for note in model_instance.notes:
-        visual.Note(visual.sprite_sheet.image_for_angle(note.angle), note.position, note.style, 255)
+        visual.Note(visual.sprite_sheet.get_image(rotation_frame), note.position, note.style, 255)
 
     while not note_queue.empty():
         model_instance.add_note(note_queue.get().channel % 4)

@@ -1,8 +1,7 @@
-import logging
 import math
-from random import uniform
-
 import pytest
+from random import uniform
+import logging
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +16,7 @@ DAMPING_RATE = 0.7
 POINTS_PER_NOTE = 50
 DECAY_RATE = 1
 ANGULAR_RANGE = math.pi / 4
+
 
 almost_zero = pytest.approx(0, abs=0.0001)
 
@@ -55,17 +55,14 @@ class Glow(Scorer):
 
 
 class Object(object):
-    def __init__(self, position=(0., 0.), velocity=(0., 0.), acceleration=(0., 0.), angle=0., rotation_speed=0.5):
+    def __init__(self, position=(0., 0.), velocity=(0., 0.), acceleration=(0., 0.)):
         self.position = position
         self.velocity = velocity
         self.acceleration = acceleration
-        self.angle = angle
-        self.rotation_speed = rotation_speed
 
     def step_forward(self):
         self.velocity = tuple(sum(pair) for pair in zip(self.velocity, self.acceleration))
         self.position = tuple(sum(pair) for pair in zip(self.position, self.velocity))
-        self.angle = (self.angle + self.rotation_speed) % (2 * math.pi)
 
     def __str__(self):
         return "position:{}\n" \
