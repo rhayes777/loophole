@@ -90,12 +90,15 @@ image_crotchet_rotation = pygame.image.load(os.path.join(image_directory, "crotc
 # load energy glow
 image_energy_glow = pygame.image.load(os.path.join(image_directory, "energy_glow.bmp"))
 
+# load player
+image_player = pygame.image.load(os.path.join(image_directory, "player_cursor.bmp"))
 
 # Image Dictionary - stores images, mapped to integers (0 to 3 currently)
 # 0 = Half Note (Minim)
 # 1 = Quarter Note (Crotchet)
 # 2 = Eighth Note (Quaver)
 # 3 = Sixteenth note (Semiquaver)
+
 
 class Style(object):
     Minim = 0
@@ -118,17 +121,38 @@ color_dict = {
     3: Color.TEAL_LIGHT
 }
 
+sprite_group_player = pygame.sprite.Group()
 sprite_group_notes = pygame.sprite.Group()
 sprite_group_energy_glows = pygame.sprite.Group()
 
-# Notices (Text objects - font.py)
 
-# notice_score_500 = font.Score("500", 250, 250, Color.WHITE, 40, font.font_arcade, 500)
+class PlayerCursor(pygame.sprite.Sprite):
+
+    def __init__(self, image, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), alpha=255):
+            pygame.sprite.Sprite.__init__(self, sprite_group_player)
+
+            self.image = image.copy()
+
+            self.rect = position
+
+            self.alpha = alpha
+
+            self.image.set_colorkey(Color.BLACK)
+
+    def draw(self, pos):
+
+        new_x = pos[0] - 25
+        new_y = pos[1] - 25
+
+        self.rect = (new_x, new_y)
+
+
+player_cursor_instance = PlayerCursor(image_player)
 
 circle_effects_list = []
 
 
-class Circle_Effect():
+class CircleEffect():
 
     def __init__(self, color=Color.WHITE, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), size=1, scale_rate=4,
                  max_size=randint(250, 550)):
@@ -157,7 +181,7 @@ class Circle_Effect():
 
 def make_circle_explosion(color=Color.GREY, number=randint(2, 6), position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2)):
     for i in range(number):
-        Circle_Effect(color, position, (i + 1) / 2, randint(3, 6))
+        CircleEffect(color, position, (i + 1) / 2, randint(3, 6))
 
 
 def render_circle_effects(surface):
@@ -205,6 +229,7 @@ class EnergyGlow(pygame.sprite.Sprite):
 
 
 energy_glows = []
+
 
 class Note(pygame.sprite.Sprite):
 
@@ -341,7 +366,9 @@ def draw():
 
     sprite_group_notes.draw(screen)
 
-    xy = pygame.mouse.get_cursor()
+    sprite_group_player.draw(screen)
+
+    print(player_cursor_instance.rect)
 
     timer = 0
 

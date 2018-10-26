@@ -86,6 +86,7 @@ controller.button_listener = button_listener
 def rand_tuple():
     return float(randint(0, visual.SCREEN_SHAPE[0])), float(randint(0, visual.SCREEN_SHAPE[1]))
 
+
 def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, new_range_max):
     if old_value > old_range_max:
         old_value = old_range_max
@@ -93,6 +94,7 @@ def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, 
         old_value = old_range_min
     return (old_value - old_range_min) * (new_range_max - new_range_min) / (
             old_range_max - old_range_min) + new_range_min
+
 
 model_instance.generators[0] = model.NoteGenerator(0, (0, visual.SCREEN_SHAPE[1] / 2), math.pi / 2)
 model_instance.generators[1] = model.NoteGenerator(1, (visual.SCREEN_SHAPE[0], visual.SCREEN_SHAPE[1] / 2),
@@ -117,20 +119,7 @@ while play:
     controller.read()
     clock.tick(40)
     model_instance.step_forward()
-    visual.Note(visual.image_minim.copy(), player.position, visual.Style.Crotchet, randint(100, 255))
-
-    glow_min_alpha = 155
-
-    score_alpha_left = get_new_range_value(0, 500, model_instance.scorers[0].score, 75, glow_min_alpha)
-    score_alpha_right = get_new_range_value(0, 500, model_instance.scorers[1].score, 75, glow_min_alpha)
-    score_alpha_down = get_new_range_value(0, 500, model_instance.scorers[2].score, 75, glow_min_alpha)
-    score_alpha_up = get_new_range_value(0, 500, model_instance.scorers[3].score, 75, glow_min_alpha)
-
-    glow_left.set_alpha(score_alpha_left)
-    glow_right.set_alpha(score_alpha_right)
-    glow_down.set_alpha(score_alpha_down)
-    glow_up.set_alpha(score_alpha_up)
-
+    visual.player_cursor_instance.draw(player.position)
     for note in model_instance.notes:
         visual.Note(visual.sprite_sheet.image_for_angle(note.angle), note.position, note.style, 255)
 
