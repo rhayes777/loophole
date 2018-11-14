@@ -56,13 +56,16 @@ class Color(object):
 
 SCREEN_SHAPE = (1080, 800)
 
+from pygame.locals import FULLSCREEN, DOUBLEBUF
+flags = FULLSCREEN | DOUBLEBUF
+
 pygame.init()
 # init pygame display
 pygame.display.init()
 clock = pygame.time.Clock()
 
 # screen setup
-screen = pygame.display.set_mode(SCREEN_SHAPE)
+screen = pygame.display.set_mode(SCREEN_SHAPE, flags)
 
 # Image directory stuff
 
