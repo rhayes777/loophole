@@ -117,7 +117,7 @@ track.start()
 while play:
     rotation_frame += 1
     controller.read()
-    clock.tick(40)
+    clock.tick(24)
     model_instance.step_forward()
     visual.player_cursor_instance.draw(player.position)
     for note in model_instance.notes:
