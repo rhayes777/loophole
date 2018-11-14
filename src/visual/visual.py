@@ -54,7 +54,7 @@ class Color(object):
     ORANGE_LIGHT = (200, 184, 0)
 
 
-SCREEN_SHAPE = (1080, 800)
+SCREEN_SHAPE = (600, 400)
 
 from pygame.locals import FULLSCREEN, DOUBLEBUF
 flags = FULLSCREEN | DOUBLEBUF
