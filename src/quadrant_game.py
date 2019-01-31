@@ -127,14 +127,14 @@ while play:
         visual.Note(visual.sprite_sheet.image_for_angle(note.angle), note.position, note.style, 255)
 
     while not note_queue.empty():
-        model_instance.add_note(note_queue.get().channel % 4)
+        model_instance.add_note(note_queue.get())
 
     # Collision for Score.Notice creation
     for note in model_instance.dead_notes:
         visual.make_score_notice(note.points, note.position, 30, note.style)
         visual.make_circle_explosion(visual.Color.GREY, 5, note.position)
         note_set = [65, 66, 67, 68, 69, 70, 72, 55, 58, 59, 60, 61, 62, 63]
-        note_on(channel=1, note=note_set[randint(0, len(note_set) - 1)] + 12, velocity=85)
+        note_on(channel=note.note.channel, note=note.note.note, velocity=note.note.velocity)
 
     visual.make_score_notice(model_instance.scorers[0].score, (INDENT, visual.SCREEN_SHAPE[1] / 2), 5, 0)
     visual.make_score_notice(model_instance.scorers[1].score,
