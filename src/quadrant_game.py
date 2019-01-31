@@ -1,12 +1,15 @@
-import model
-import pygame
-from control import input
-from random import randint
 import math
-from visual import visual
-from audio import player
-from os import path
 from Queue import Queue
+from os import path
+from random import randint
+
+import pygame
+
+import model
+from audio import player
+from audio.player import note_on
+from control import input
+from visual import visual
 
 note_queue = Queue()
 
@@ -130,6 +133,8 @@ while play:
     for note in model_instance.dead_notes:
         visual.make_score_notice(note.points, note.position, 30, note.style)
         visual.make_circle_explosion(visual.Color.GREY, 5, note.position)
+        note_set = [65, 66, 67, 68, 69, 70, 72, 55, 58, 59, 60, 61, 62, 63]
+        note_on(channel=1, note=note_set[randint(0, len(note_set) - 1)] + 12, velocity=85)
 
     visual.make_score_notice(model_instance.scorers[0].score, (INDENT, visual.SCREEN_SHAPE[1] / 2), 5, 0)
     visual.make_score_notice(model_instance.scorers[1].score,

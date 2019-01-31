@@ -196,6 +196,7 @@ class Channel(object):
         self.__modulation = 0
         self.__pan = 63
         self.key_tracker = None
+        self.note_set = set()
 
     @property
     def volume(self):
@@ -335,6 +336,9 @@ class Channel(object):
                 # Check if it was a note message
                 if msg.type == Channel.note_on:
                     # Keep track of notes that are currently playing
+                    # if self.number == 1:
+                    #     self.note_set.add(msg.note)
+                    #     print(self.note_set)
                     self.playing_notes.add(msg.note)
                     if self.note_on_listener is not None:
                         self.note_on_listener(msg)
