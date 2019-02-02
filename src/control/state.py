@@ -100,7 +100,7 @@ class Normal(State):
         super(Normal, self).did_receive_new_on_buttons(buttons)
         if len(buttons) > 0:
             player.set_program(15, program=116)
-            player.note_on(15, velocity=127)
+            player.play_note_for_channel_note_velocity(15, velocity=127)
 
 
 class Accelerate(Normal):

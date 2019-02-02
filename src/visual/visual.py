@@ -66,8 +66,6 @@ clock = pygame.time.Clock()
 # screen setup
 screen = pygame.display.set_mode(SCREEN_SHAPE)
 
-# Image directory stuff
-
 # find the directory the application is in, applying path.dirname to avoid problems with slashes etc
 directory_name = os.path.dirname(os.path.realpath(__file__))
 

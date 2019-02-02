@@ -7,15 +7,16 @@ import pygame
 
 import model
 from audio import player
-from audio.player import note_on
+from audio.player import play_note
 from control import input
 from visual import visual
 
 note_queue = Queue()
 
 
-def note_on_listener(midi_note):
-    note_queue.put(midi_note)
+def message_read_listener(msg):
+    if msg.type == "note_on":
+        note_queue.put(msg)
 
 
 directory = path.dirname(path.realpath(__file__))
@@ -28,9 +29,8 @@ pygame.init()
 pygame.display.init()
 clock = pygame.time.Clock()
 
-track = player.Track("{}/media/song_pc.mid".format(directory), is_looping=True)
-for channel in track.channels:
-    channel.note_on_listener = note_on_listener
+track = player.Track("{}/media/song_pc.mid".format(directory), is_looping=True,
+                     message_read_listener=message_read_listener)
 
 controller = input.Controller(pygame)
 
@@ -134,7 +134,7 @@ while play:
         visual.make_score_notice(note.points, note.position, 30, note.style)
         visual.make_circle_explosion(visual.Color.GREY, 5, note.position)
         note_set = [65, 66, 67, 68, 69, 70, 72, 55, 58, 59, 60, 61, 62, 63]
-        note_on(channel=note.note.channel, note=note.note.note, velocity=note.note.velocity)
+        play_note(note.note)
 
     visual.make_score_notice(model_instance.scorers[0].score, (INDENT, visual.SCREEN_SHAPE[1] / 2), 5, 0)
     visual.make_score_notice(model_instance.scorers[1].score,
@@ -143,7 +143,7 @@ while play:
                              (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1] - INDENT), 5, 2)
     visual.make_score_notice(model_instance.scorers[3].score, (visual.SCREEN_SHAPE[0] / 2, INDENT), 5, 3)
 
-    track.tempo_shift = 1 + float(model_instance.average_score) / 1000
+    # track.tempo_shift = 1 + float(model_instance.average_score) / 1000
 
     visual.draw()
     visual.sprite_group_notes.empty()

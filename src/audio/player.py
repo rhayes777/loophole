@@ -1,9 +1,11 @@
-import mido
-from Queue import Queue
-from threading import Thread
 import logging
-from datetime import datetime
 import os
+from Queue import Queue
+from datetime import datetime
+from threading import Thread
+
+import mido
+
 import music
 
 mido.set_backend('mido.backends.pygame')
@@ -115,8 +117,12 @@ def make_port(name):
         return simple_port
 
 
-def note_on(channel=0, note=50, velocity=50):
-    keys_port.send(mido.Message('note_on', channel=channel, note=note, velocity=velocity))
+def play_note_for_channel_note_velocity(channel=0, note=50, velocity=50):
+    keys_port.send(mido.Message(note_on, channel=channel, note=note, velocity=velocity))
+
+
+def play_note(note):
+    keys_port.send(note)
 
 
 def set_program(channel=0, program=0):
@@ -166,10 +172,12 @@ class Intervals:
         return map(lambda note: mido.Message('note_off', note=note, velocity=0), self.playing_notes)
 
 
+note_off = "note_off"
+note_on = "note_on"
+
+
 class Channel(object):
     """Represents an individual midi channel through which messages are passed"""
-    note_off = "note_off"
-    note_on = "note_on"
 
     def __init__(self, number, volume=VOLUME_DEFAULT, fade_rate=1, note_on_listener=None):
         """
@@ -334,7 +342,7 @@ class Channel(object):
                 self.port.send(msg)
             if hasattr(msg, 'type'):
                 # Check if it was a note message
-                if msg.type == Channel.note_on:
+                if msg.type == note_on:
                     # Keep track of notes that are currently playing
                     # if self.number == 1:
                     #     self.note_set.add(msg.note)
@@ -342,7 +350,7 @@ class Channel(object):
                     self.playing_notes.add(msg.note)
                     if self.note_on_listener is not None:
                         self.note_on_listener(msg)
-                elif msg.type == Channel.note_off and msg.note in self.playing_notes:
+                elif msg.type == note_off and msg.note in self.playing_notes:
                     self.playing_notes.remove(msg.note)
         except AttributeError as e:
             logging.exception(e)
@@ -360,11 +368,11 @@ class Channel(object):
         :param note: The midi position of the note
         """
         # noinspection PyTypeChecker
-        self.send_message(mido.Message(type=Channel.note_off, velocity=0, note=note))
+        self.send_message(mido.Message(type=note_off, velocity=0, note=note))
 
     def stop_all_notes(self):
         for i in range(128):
-            self.port.send(mido.Message(type="note_off", velocity=0, channel=self.number, note=i))
+            self.port.send(mido.Message(type=note_off, velocity=0, channel=self.number, note=i))
 
     @property
     def is_percussive(self):
@@ -374,7 +382,7 @@ class Channel(object):
 class Track(Thread):
     """Represents a midi song loaded from a file"""
 
-    def __init__(self, file_path="../media/channels_test.mid", is_looping=False):
+    def __init__(self, file_path="../media/channels_test.mid", is_looping=False, message_read_listener=lambda x: x):
         super(Track, self).__init__()
         self.filename = file_path
         self.is_stopping = False
@@ -390,6 +398,7 @@ class Track(Thread):
             channel.key_tracker = key_tracker
         self.__tempo_shift = TEMPO_SHIFT_DEFAULT
         self.__tempo_shift_queue = Queue()
+        self.message_read_listener = message_read_listener
 
     @property
     def tempo_shift(self):
@@ -421,6 +430,9 @@ class Track(Thread):
             channels.extend(self.channels_with_instrument_type(instrument_type))
         return channels
 
+    def send_message(self, msg):
+        self.channels[msg.channel].send_message(msg)
+
     def run(self):
         """Play the midi file (call start() to run on new thread)"""
         self.is_stopping = False
@@ -430,7 +442,7 @@ class Track(Thread):
 
             # Take midi messages from a generator
             for msg in play:
-
+                self.message_read_listener(msg)
                 if self.is_stopping:
                     break
 
@@ -438,7 +450,7 @@ class Track(Thread):
                     if isinstance(msg, mido.MetaMessage):
                         continue
                     # Send a message to its assigned channel
-                    self.channels[msg.channel].send_message(msg)
+                    # self.channels[msg.channel].send_message(msg)
                 except AttributeError as e:
                     logging.exception(e)
                 except IndexError as e:

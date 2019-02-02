@@ -1,9 +1,8 @@
 import logging
 
 
-# noinspection PyClassHasNoInit
 # List of button names
-class Button:
+class Button(object):
     left = 'left'
     down = 'down'
     up = 'up'
