@@ -72,7 +72,7 @@ screen = pygame.display.set_mode(SCREEN_SHAPE)
 directory_name = os.path.dirname(os.path.realpath(__file__))
 
 # set where image directory is in relation to visual directory
-image_directory_name = "../media/images"
+image_directory_name = "{}/../media/images".format(directory_name)
 
 # join the above two together with path.join to avoid problems again
 image_directory = os.path.join(directory_name, image_directory_name)
