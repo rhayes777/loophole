@@ -247,17 +247,11 @@ class Note(pygame.sprite.Sprite):
         self.style = style
 
         self.alpha = alpha
-
         self.image = image
-
-        # self.image.set_colorkey(Color.WHITE)
 
         color = color_dict[style]
 
         self.image.fill(color + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
-
-
-test_notes_list = []
 
 
 class SpriteSheet(object):
@@ -292,53 +286,6 @@ def make_score_notice(text, position, life, style):
     font.Score(text, position, tuple(min(val + 50, 255) for val in color_dict[style]), 40, font.font_arcade, life)
 
 
-def fill_gradient(surface, color, gradient, rect=None, vertical=True, forward=True):
-    """fill a surface with a gradient pattern
-    Parameters:
-    color -> starting color
-    gradient -> final color
-    rect -> area to fill; default is surface's rect
-    vertical -> True=vertical; False=horizontal
-    forward -> True=forward; False=reverse
-
-    Pygame recipe: http://www.pygame.org/wiki/GradientCode
-    """
-    if rect is None:
-        rect = surface.get_rect()
-    x1, x2 = rect.left, rect.right
-    y1, y2 = rect.top, rect.bottom
-    if vertical:
-        h = y2 - y1
-    else:
-        h = x2 - x1
-    if forward:
-        a, b = color, gradient
-    else:
-        b, a = color, gradient
-    rate = (
-        float(b[0] - a[0]) / h,
-        float(b[1] - a[1]) / h,
-        float(b[2] - a[2]) / h
-    )
-    fn_line = pygame.draw.line
-    if vertical:
-        for line in range(y1, y2):
-            color = (
-                min(max(a[0] + (rate[0] * (line - y1)), 0), 255),
-                min(max(a[1] + (rate[1] * (line - y1)), 0), 255),
-                min(max(a[2] + (rate[2] * (line - y1)), 0), 255)
-            )
-            fn_line(surface, color, (x1, line), (x2, line))
-    else:
-        for col in range(x1, x2):
-            color = (
-                min(max(a[0] + (rate[0] * (col - x1)), 0), 255),
-                min(max(a[1] + (rate[1] * (col - x1)), 0), 255),
-                min(max(a[2] + (rate[2] * (col - x1)), 0), 255)
-            )
-            fn_line(surface, color, (col, y1), (col, y2))
-
-
 def scale_rgb(original_rgb, target_rgb, scalar):
     range__r = original_rgb[0] - target_rgb[0]
     range__g = original_rgb[1] - target_rgb[1]
@@ -361,26 +308,15 @@ def scale_rgb(original_rgb, target_rgb, scalar):
 
 
 def draw():
-    # screen.blit(image_background, image_background.get_rect())
     screen.fill(Color.GREY_DARK)
 
     sprite_group_energy_glows.draw(screen)
-
     sprite_group_notes.draw(screen)
-
     sprite_group_player.draw(screen)
-
-    print(player_cursor_instance.rect)
-
-    timer = 0
-
-    timer += 1
-
     render_circle_effects(screen)
-
     font.render_notices(screen)
 
-    pygame.display.update()
+    pygame.display.flip()
 
 
 if __name__ == "__main__":
