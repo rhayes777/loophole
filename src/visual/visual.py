@@ -361,9 +361,8 @@ def scale_rgb(original_rgb, target_rgb, scalar):
 
 
 def draw():
-    screen.fill(Color.GREY_DARK)
-
     # screen.blit(image_background, image_background.get_rect())
+    screen.fill(Color.GREY_DARK)
 
     sprite_group_energy_glows.draw(screen)
 
@@ -381,14 +380,7 @@ def draw():
 
     font.render_notices(screen)
 
-    x_third = int(SCREEN_SHAPE[0] / 3)
-    y_third = int(SCREEN_SHAPE[1] / 3)
-
-    print(SCREEN_SHAPE)
-    print(x_third)
-    print(y_third)
-
-    pygame.display.update([pygame.draw.line(screen, (0, 0, 0), (x_third, y_third), (2 * x_third, 2 * y_third), 1)])
+    pygame.display.update()
 
 
 if __name__ == "__main__":
