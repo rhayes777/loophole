@@ -7,11 +7,13 @@
 
 # invert sprite BMPs so they are white
 
-import pygame
-import os
-import font
 import math
+import os
 from random import randint
+
+import pygame
+
+import font
 
 
 class Color(object):
@@ -93,6 +95,7 @@ image_energy_glow = pygame.image.load(os.path.join(image_directory, "energy_glow
 # load player
 image_player = pygame.image.load(os.path.join(image_directory, "player_cursor.bmp"))
 
+
 # Image Dictionary - stores images, mapped to integers (0 to 3 currently)
 # 0 = Half Note (Minim)
 # 1 = Quarter Note (Crotchet)
@@ -129,18 +132,17 @@ sprite_group_energy_glows = pygame.sprite.Group()
 class PlayerCursor(pygame.sprite.Sprite):
 
     def __init__(self, image, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), alpha=255):
-            pygame.sprite.Sprite.__init__(self, sprite_group_player)
+        pygame.sprite.Sprite.__init__(self, sprite_group_player)
 
-            self.image = image.copy()
+        self.image = image.copy()
 
-            self.rect = position
+        self.rect = position
 
-            self.alpha = alpha
+        self.alpha = alpha
 
-            self.image.set_colorkey(Color.BLACK)
+        self.image.set_colorkey(Color.BLACK)
 
     def draw(self, pos):
-
         new_x = pos[0] - 25
         new_y = pos[1] - 25
 
@@ -152,7 +154,7 @@ player_cursor_instance = PlayerCursor(image_player)
 circle_effects_list = []
 
 
-class CircleEffect():
+class CircleEffect(object):
 
     def __init__(self, color=Color.WHITE, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), size=1, scale_rate=4,
                  max_size=randint(250, 550)):
@@ -190,6 +192,7 @@ def render_circle_effects(surface):
         if circle_effect.size > circle_effect.max_size:
             circle_effects_list.remove(circle_effect)
 
+
 energy_img_size = image_energy_glow.get_rect()
 image_energy_width = energy_img_size.width
 image_energy_height = energy_img_size.height
@@ -222,7 +225,6 @@ class EnergyGlow(pygame.sprite.Sprite):
         energy_glows.append(self)
 
     def set_alpha(self, alpha):
-
         self.image = image_energy_glow.copy()
 
         self.image.fill(self.color + (alpha,), None, pygame.BLEND_RGBA_MULT)
@@ -260,8 +262,8 @@ test_notes_list = []
 
 class SpriteSheet(object):
 
-    def __init__(self, filename, shape, total_frames, key=(255, 255, 255)):
-        self.filename = filename
+    def __init__(self, image, shape, total_frames, key=(255, 255, 255)):
+        self.image = image
         self.shape = shape
         self.total_frames = total_frames
         self.key = key
@@ -271,7 +273,7 @@ class SpriteSheet(object):
         surface = pygame.Surface(self.shape, depth=24)
         surface.fill(self.key, surface.get_rect())
         surface.set_colorkey(self.key)
-        surface.blit(self.filename, (0, 0), (0, frame * self.shape[1], self.shape[0], self.shape[1]))
+        surface.blit(self.image, (0, 0), (0, frame * self.shape[1], self.shape[0], self.shape[1]))
         surface.set_alpha(255)
 
         return surface
@@ -301,7 +303,8 @@ def fill_gradient(surface, color, gradient, rect=None, vertical=True, forward=Tr
 
     Pygame recipe: http://www.pygame.org/wiki/GradientCode
     """
-    if rect is None: rect = surface.get_rect()
+    if rect is None:
+        rect = surface.get_rect()
     x1, x2 = rect.left, rect.right
     y1, y2 = rect.top, rect.bottom
     if vertical:
@@ -337,24 +340,24 @@ def fill_gradient(surface, color, gradient, rect=None, vertical=True, forward=Tr
 
 
 def scale_rgb(original_rgb, target_rgb, scalar):
-    range_R = original_rgb[0] - target_rgb[0]
-    range_G = original_rgb[1] - target_rgb[1]
-    range_B = original_rgb[2] - target_rgb[2]
+    range__r = original_rgb[0] - target_rgb[0]
+    range__g = original_rgb[1] - target_rgb[1]
+    range__b = original_rgb[2] - target_rgb[2]
 
-    return_R = original_rgb[0] - (range_R * scalar)
-    return_G = original_rgb[1] - (range_G * scalar)
-    return_B = original_rgb[2] - (range_B * scalar)
+    return__r = original_rgb[0] - (range__r * scalar)
+    return__g = original_rgb[1] - (range__g * scalar)
+    return__b = original_rgb[2] - (range__b * scalar)
 
-    if return_R >= 255:
-        return_R == 255
-    if return_G >= 255:
-        return_G == 255
-    if return_B >= 255:
-        return_B == 255
+    if return__r >= 255:
+        return__r = 255
+    if return__g >= 255:
+        return__g = 255
+    if return__b >= 255:
+        return__b = 255
 
-    calculated_RGB = [int(return_R), int(return_G), int(return_B)]
+    calculated__r_g_b = [int(return__r), int(return__g), int(return__b)]
 
-    return calculated_RGB
+    return calculated__r_g_b
 
 
 def draw():
@@ -378,7 +381,14 @@ def draw():
 
     font.render_notices(screen)
 
-    pygame.display.flip()
+    x_third = int(SCREEN_SHAPE[0] / 3)
+    y_third = int(SCREEN_SHAPE[1] / 3)
+
+    print(SCREEN_SHAPE)
+    print(x_third)
+    print(y_third)
+
+    pygame.display.update([pygame.draw.line(screen, (0, 0, 0), (x_third, y_third), (2 * x_third, 2 * y_third), 1)])
 
 
 if __name__ == "__main__":
