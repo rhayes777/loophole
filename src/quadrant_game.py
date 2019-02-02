@@ -25,7 +25,7 @@ pygame.init()
 pygame.display.init()
 clock = pygame.time.Clock()
 
-track = player.Track("{}/media/song_pc.mid".format(directory), is_looping=True)
+track = player.Track("{}/media/test/Test_3.mid".format(directory), is_looping=True)
 for channel in track.channels:
     channel.note_on_listener = note_on_listener
 
