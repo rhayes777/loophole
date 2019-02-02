@@ -29,7 +29,7 @@ pygame.init()
 pygame.display.init()
 clock = pygame.time.Clock()
 
-track = player.Track("{}/media/song_pc.mid".format(directory), is_looping=True,
+track = player.Track("{}/media/test/Test_3.mid".format(directory), is_looping=True,
                      message_read_listener=message_read_listener)
 
 controller = input.Controller(pygame)
@@ -120,7 +120,7 @@ track.start()
 while play:
     rotation_frame += 1
     controller.read()
-    clock.tick(40)
+    clock.tick(24)
     model_instance.step_forward()
     visual.player_cursor_instance.draw(player.position)
     for note in model_instance.notes:

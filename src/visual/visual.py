@@ -56,7 +56,10 @@ class Color(object):
     ORANGE_LIGHT = (200, 184, 0)
 
 
-SCREEN_SHAPE = (1080, 800)
+SCREEN_SHAPE = (600, 400)
+
+from pygame.locals import FULLSCREEN, DOUBLEBUF
+flags = FULLSCREEN | DOUBLEBUF
 
 pygame.init()
 # init pygame display
@@ -64,7 +67,7 @@ pygame.display.init()
 clock = pygame.time.Clock()
 
 # screen setup
-screen = pygame.display.set_mode(SCREEN_SHAPE)
+screen = pygame.display.set_mode(SCREEN_SHAPE, flags)
 
 # find the directory the application is in, applying path.dirname to avoid problems with slashes etc
 directory_name = os.path.dirname(os.path.realpath(__file__))
