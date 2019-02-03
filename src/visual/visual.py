@@ -11,6 +11,7 @@ import math
 import os
 from random import randint
 
+import config
 import pygame
 
 import font
@@ -77,21 +78,19 @@ image_directory = os.path.join(directory_name, image_directory_name)
 
 # Load Images
 
-# background
-image_background = pygame.image.load(os.path.join(image_directory, "background.bmp"))
 
 # load note images, prepare it for alpha functions (transparency)
-image_minim = pygame.image.load(os.path.join(image_directory, "minim.bmp"))
-image_crotchet = pygame.image.load(os.path.join(image_directory, "crotchet.bmp"))
-image_quaver = pygame.image.load(os.path.join(image_directory, "quaver.bmp"))
-image_semiquaver = pygame.image.load(os.path.join(image_directory, "semiquaver.bmp"))
-image_crotchet_rotation = pygame.image.load(os.path.join(image_directory, "crotchet_glow_rotation.bmp"))
+image_minim = pygame.image.load(os.path.join(image_directory, config.MINIM))
+image_crotchet = pygame.image.load(os.path.join(image_directory, config.CROTCHET))
+image_quaver = pygame.image.load(os.path.join(image_directory, config.QUAVER))
+image_semiquaver = pygame.image.load(os.path.join(image_directory, config.SEMIQUAVER))
+image_crotchet_rotation = pygame.image.load(os.path.join(image_directory, config.CROTCHET_GLOW_ROTATION))
 
 # load energy glow
-image_energy_glow = pygame.image.load(os.path.join(image_directory, "energy_glow.bmp"))
+image_energy_glow = pygame.image.load(os.path.join(image_directory, config.ENERGY_GLOW))
 
 # load player
-image_player = pygame.image.load(os.path.join(image_directory, "player_cursor.bmp"))
+image_player = pygame.image.load(os.path.join(image_directory, config.PLAYER_CURSOR))
 
 
 # Image Dictionary - stores images, mapped to integers (0 to 3 currently)

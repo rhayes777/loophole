@@ -19,3 +19,11 @@ POINTS_PER_NOTE = int(parser.get("physics", "POINTS_PER_NOTE"))
 DECAY_RATE = int(parser.get("physics", "DECAY_RATE"))
 
 TRACK_NAME = parser.get("music", "TRACK_NAME")
+
+MINIM = parser.get("visual", "MINIM")
+CROTCHET = parser.get("visual", "CROTCHET")
+QUAVER = parser.get("visual", "QUAVER")
+SEMIQUAVER = parser.get("visual", "SEMIQUAVER")
+CROTCHET_GLOW_ROTATION = parser.get("visual", "CROTCHET_GLOW_ROTATION")
+ENERGY_GLOW = parser.get("visual", "ENERGY_GLOW")
+PLAYER_CURSOR = parser.get("visual", "PLAYER_CURSOR")
