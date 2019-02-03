@@ -1,3 +1,4 @@
+import copy
 import math
 from Queue import Queue
 from os import path
@@ -29,7 +30,7 @@ pygame.init()
 pygame.display.init()
 clock = pygame.time.Clock()
 
-track = player.Track("{}/media/test/Test_3.mid".format(directory), is_looping=True,
+track = player.Track("{}/media/song_pc.mid".format(directory), is_looping=True,
                      message_read_listener=message_read_listener)
 
 controller = input.Controller(pygame)
@@ -134,7 +135,10 @@ while play:
         visual.make_score_notice(note.points, note.position, 30, note.style)
         visual.make_circle_explosion(visual.Color.GREY, 5, note.position)
         note_set = [65, 66, 67, 68, 69, 70, 72, 55, 58, 59, 60, 61, 62, 63]
-        play_note(note.note)
+        midi_note = copy.copy(note.note)
+        midi_note.channel = 5
+        midi_note.time = 0
+        play_note(midi_note)
 
     visual.make_score_notice(model_instance.scorers[0].score, (INDENT, visual.SCREEN_SHAPE[1] / 2), 5, 0)
     visual.make_score_notice(model_instance.scorers[1].score,

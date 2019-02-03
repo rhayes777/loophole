@@ -344,9 +344,6 @@ class Channel(object):
                 # Check if it was a note message
                 if msg.type == note_on:
                     # Keep track of notes that are currently playing
-                    # if self.number == 1:
-                    #     self.note_set.add(msg.note)
-                    #     print(self.note_set)
                     self.playing_notes.add(msg.note)
                     if self.note_on_listener is not None:
                         self.note_on_listener(msg)
@@ -450,7 +447,7 @@ class Track(Thread):
                     if isinstance(msg, mido.MetaMessage):
                         continue
                     # Send a message to its assigned channel
-                    # self.channels[msg.channel].send_message(msg)
+                    self.channels[msg.channel].send_message(msg)
                 except AttributeError as e:
                     logging.exception(e)
                 except IndexError as e:
