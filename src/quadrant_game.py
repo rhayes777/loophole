@@ -6,13 +6,12 @@ from random import randint
 
 import pygame
 
+import config
 import model
 from audio import player
 from audio.player import play_note
 from control import input
 from visual import visual
-
-import config
 
 note_queue = Queue()
 
@@ -102,11 +101,11 @@ def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, 
             old_range_max - old_range_min) + new_range_min
 
 
-model_instance.generators[0] = model.NoteGenerator(0, (0, visual.SCREEN_SHAPE[1] / 2), math.pi / 2)
-model_instance.generators[1] = model.NoteGenerator(1, (visual.SCREEN_SHAPE[0], visual.SCREEN_SHAPE[1] / 2),
-                                                   1.5 * math.pi)
-model_instance.generators[2] = model.NoteGenerator(2, (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1]), math.pi)
-model_instance.generators[3] = model.NoteGenerator(3, (visual.SCREEN_SHAPE[0] / 2, 0), 2 * math.pi)
+model_instance.generators.append(model.NoteGenerator(0, (0, visual.SCREEN_SHAPE[1] / 2), math.pi / 2))
+model_instance.generators.append(model.NoteGenerator(1, (visual.SCREEN_SHAPE[0], visual.SCREEN_SHAPE[1] / 2),
+                                                     1.5 * math.pi))
+model_instance.generators.append(model.NoteGenerator(2, (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1]), math.pi))
+model_instance.generators.append(model.NoteGenerator(3, (visual.SCREEN_SHAPE[0] / 2, 0), 2 * math.pi))
 
 model_instance.scorers = {i: model.Scorer() for i in range(4)}
 
@@ -114,6 +113,16 @@ glow_left = visual.EnergyGlow(model_instance.generators[0].position, model_insta
 glow_right = visual.EnergyGlow(model_instance.generators[1].position, model_instance.generators[1].style)
 glow_down = visual.EnergyGlow(model_instance.generators[2].position, model_instance.generators[2].style)
 glow_up = visual.EnergyGlow(model_instance.generators[3].position, model_instance.generators[3].style)
+
+
+class Side(object):
+    def __init__(self, position, direction, colour):
+        self.generator = model.NoteGenerator(position, direction)
+        self.position = position
+        self.direction = direction
+        self.colour = colour
+        self.glow = visual.EnergyGlow(position, colour)
+
 
 rotation_frame = 0
 

@@ -14,9 +14,8 @@ almost_zero = pytest.approx(0, abs=0.0001)
 
 
 class NoteGenerator(object):
-    def __init__(self, style, position, direction, angular_range=ANGULAR_RANGE, speed=SPEED):
+    def __init__(self, position, direction, angular_range=ANGULAR_RANGE, speed=SPEED):
         self.position = position
-        self.style = style
         self.speed = speed
         self.min_direction = direction - angular_range
         self.max_direction = direction + angular_range
@@ -24,7 +23,7 @@ class NoteGenerator(object):
     def make_note(self, note):
         direction = uniform(self.min_direction, self.max_direction)
         velocity = (self.speed * math.sin(direction), self.speed * math.cos(direction))
-        return NoteObject(self.style, self.position, velocity, note=note)
+        return NoteObject(self.position, velocity, note=note)
 
 
 class Scorer(object):
@@ -66,15 +65,18 @@ class Object(object):
 
 
 class NoteObject(Object):
-    def __init__(self, style, position=(0., 0.), velocity=(0., 0.), acceleration=(0., 0.), note=None):
+    def __init__(self, position=(0., 0.), velocity=(0., 0.), acceleration=(0., 0.), note=None):
         super(NoteObject, self).__init__(position, velocity, acceleration)
-        self.style = style
         self.note = note
+
+    @property
+    def style(self):
+        return self.note.channel % 4
 
 
 class DeadNote(NoteObject):
     def __init__(self, note, points):
-        super(DeadNote, self).__init__(note.style, note.position, note.velocity, note.acceleration, note.note)
+        super(DeadNote, self).__init__(note.position, note.velocity, note.acceleration, note.note)
         self.points = points
 
 
@@ -120,7 +122,7 @@ class Model(object):
     def __init__(self, player, screen_shape, elastic_force=ELASTIC_FORCE, boost_speed=BOOST_SPEED,
                  damping_rate=DAMPING_RATE):
         self.player = player
-        self.generators = {}
+        self.generators = []
         self.scorers = {}
         self.notes = set()
         self.dead_notes = set()
@@ -140,8 +142,7 @@ class Model(object):
         return force * math.cos(angle), force * math.sin(angle)
 
     def add_note(self, note):
-        style = note.channel % 4
-        self.notes.add(self.generators[style].make_note(note))
+        self.notes.add(self.generators[note.channel % 4].make_note(note))
 
     def add_points(self, style, points):
         self.scorers[style].add_points(points)
