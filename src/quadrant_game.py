@@ -12,6 +12,8 @@ from audio.player import play_note
 from control import input
 from visual import visual
 
+import config
+
 note_queue = Queue()
 
 
@@ -30,7 +32,7 @@ pygame.init()
 pygame.display.init()
 clock = pygame.time.Clock()
 
-track = player.Track("{}/media/song_pc.mid".format(directory), is_looping=True,
+track = player.Track("{}/media/{}".format(directory, config.TRACK_NAME), is_looping=True,
                      message_read_listener=message_read_listener)
 
 controller = input.Controller(pygame)
