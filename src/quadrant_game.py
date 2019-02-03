@@ -136,7 +136,7 @@ while play:
         visual.make_circle_explosion(visual.Color.GREY, 5, note.position)
 
         midi_note = copy.copy(note.note)
-        midi_note.channel = 5
+        midi_note.channel = 9
         midi_note.time = 0
         play_note(midi_note)
 
