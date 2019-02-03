@@ -123,7 +123,7 @@ class Model(object):
                  damping_rate=DAMPING_RATE):
         self.player = player
         self.generators = []
-        self.scorers = {}
+        self.scorers = []
         self.notes = set()
         self.dead_notes = set()
         self.screen_shape = screen_shape
@@ -149,11 +149,10 @@ class Model(object):
 
     @property
     def average_score(self):
-        scorers = self.scorers.values()
-        return sum(scorer.score for scorer in scorers) / len(scorers)
+        return sum(scorer.score for scorer in self.scorers) / len(self.scorers)
 
     def step_forward(self):
-        for scorer in self.scorers.values():
+        for scorer in self.scorers:
             scorer.decay()
         self.dead_notes = set()
         for note in list(self.notes):

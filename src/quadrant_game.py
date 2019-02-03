@@ -101,20 +101,6 @@ def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, 
             old_range_max - old_range_min) + new_range_min
 
 
-model_instance.generators.append(model.NoteGenerator(0, (0, visual.SCREEN_SHAPE[1] / 2), math.pi / 2))
-model_instance.generators.append(model.NoteGenerator(1, (visual.SCREEN_SHAPE[0], visual.SCREEN_SHAPE[1] / 2),
-                                                     1.5 * math.pi))
-model_instance.generators.append(model.NoteGenerator(2, (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1]), math.pi))
-model_instance.generators.append(model.NoteGenerator(3, (visual.SCREEN_SHAPE[0] / 2, 0), 2 * math.pi))
-
-model_instance.scorers = {i: model.Scorer() for i in range(4)}
-
-glow_left = visual.EnergyGlow(model_instance.generators[0].position, model_instance.generators[0].style)
-glow_right = visual.EnergyGlow(model_instance.generators[1].position, model_instance.generators[1].style)
-glow_down = visual.EnergyGlow(model_instance.generators[2].position, model_instance.generators[2].style)
-glow_up = visual.EnergyGlow(model_instance.generators[3].position, model_instance.generators[3].style)
-
-
 class Side(object):
     def __init__(self, position, direction, colour):
         self.generator = model.NoteGenerator(position, direction)
@@ -122,7 +108,23 @@ class Side(object):
         self.direction = direction
         self.colour = colour
         self.glow = visual.EnergyGlow(position, colour)
+        self.scorer = model.Scorer()
 
+    def update(self):
+        visual.make_score_notice(self.scorer.score, self.position, 5, self.colour)
+        self.glow.set_alpha(min(255, self.scorer.score))
+
+
+sides = [
+    Side((INDENT, visual.SCREEN_SHAPE[1] / 2), math.pi / 2, visual.color_dict[0]),
+    Side((visual.SCREEN_SHAPE[0] - INDENT, visual.SCREEN_SHAPE[1] / 2), 1.5 * math.pi, visual.color_dict[1]),
+    Side((visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1] - INDENT), math.pi, visual.color_dict[2]),
+    Side((visual.SCREEN_SHAPE[0] / 2, INDENT), 2 * math.pi, visual.color_dict[3]),
+]
+
+for side in sides:
+    model_instance.generators.append(side.generator)
+    model_instance.scorers.append(side.scorer)
 
 rotation_frame = 0
 
@@ -136,14 +138,14 @@ while play:
     model_instance.step_forward()
     visual.player_cursor_instance.draw(player.position)
     for note in model_instance.notes:
-        visual.Note(visual.sprite_sheet.image_for_angle(note.angle), note.position, note.style, 255)
+        visual.Note(visual.sprite_sheet.image_for_angle(note.angle), note.position, visual.color_dict[note.style], 255)
 
     while not note_queue.empty():
         model_instance.add_note(note_queue.get())
 
     # Collision for Score.Notice creation
     for note in model_instance.dead_notes:
-        visual.make_score_notice(note.points, note.position, 30, note.style)
+        visual.make_score_notice(note.points, note.position, 30, visual.color_dict[note.style])
         visual.make_circle_explosion(visual.Color.GREY, 5, note.position)
 
         midi_note = copy.copy(note.note)
@@ -151,17 +153,8 @@ while play:
         midi_note.time = 0
         play_note(midi_note)
 
-    visual.make_score_notice(model_instance.scorers[0].score, (INDENT, visual.SCREEN_SHAPE[1] / 2), 5, 0)
-    visual.make_score_notice(model_instance.scorers[1].score,
-                             (visual.SCREEN_SHAPE[0] - INDENT, visual.SCREEN_SHAPE[1] / 2), 5, 1)
-    visual.make_score_notice(model_instance.scorers[2].score,
-                             (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1] - INDENT), 5, 2)
-    visual.make_score_notice(model_instance.scorers[3].score, (visual.SCREEN_SHAPE[0] / 2, INDENT), 5, 3)
-
-    glow_left.set_alpha(min(255, model_instance.scorers[0].score))
-    glow_right.set_alpha(min(255, model_instance.scorers[1].score))
-    glow_down.set_alpha(min(255, model_instance.scorers[2].score))
-    glow_up.set_alpha(min(255, model_instance.scorers[3].score))
+    for side in sides:
+        side.update()
 
     visual.draw()
     visual.sprite_group_notes.empty()
