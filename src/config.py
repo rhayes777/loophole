@@ -14,7 +14,6 @@ else:
 MASS = float(parser.get("physics", "MASS"))
 DISTANT_MASS = float(parser.get("physics", "DISTANT_MASS"))
 COLLISION_RADIUS = float(parser.get("physics", "COLLISION_RADIUS"))
-VELOCITY = float(parser.get("physics", "VELOCITY"))
 SPEED = float(parser.get("physics", "SPEED"))
 ELASTIC_FORCE = float(parser.get("physics", "ELASTIC_FORCE"))
 BOOST_SPEED = float(parser.get("physics", "BOOST_SPEED"))
