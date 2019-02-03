@@ -4,18 +4,10 @@ from random import uniform
 
 import pytest
 
+from config import *
+
 logger = logging.getLogger(__name__)
 
-MASS = 30000.
-DISTANT_MASS = 0.
-COLLISION_RADIUS = 80.
-VELOCITY = 0.1
-SPEED = 20
-ELASTIC_FORCE = 0.05
-BOOST_SPEED = 60
-DAMPING_RATE = 0.7
-POINTS_PER_NOTE = 50
-DECAY_RATE = 3
 ANGULAR_RANGE = math.pi / 4
 
 almost_zero = pytest.approx(0, abs=0.0001)
