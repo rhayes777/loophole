@@ -1,11 +1,15 @@
 import os
 from ConfigParser import ConfigParser
+from sys import argv
 
 directory = os.path.realpath(os.path.dirname(__file__))
 
 parser = ConfigParser()
 
-parser.read("{}/config.ini".format(directory))
+if len(argv) > 1:
+    parser.read(argv[1])
+else:
+    parser.read("{}/config.ini".format(directory))
 
 MASS = float(parser.get("physics", "MASS"))
 DISTANT_MASS = float(parser.get("physics", "DISTANT_MASS"))
