@@ -32,7 +32,7 @@ pygame.init()
 pygame.display.init()
 clock = pygame.time.Clock()
 
-track = player.Track("{}/media/{}".format(directory, config.TRACK_NAME), is_looping=True,
+track = player.Track("{}/media/audio/{}".format(directory, config.TRACK_NAME), is_looping=True,
                      message_read_listener=message_read_listener)
 
 controller = input.Controller(pygame)
