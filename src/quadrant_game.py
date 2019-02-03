@@ -134,7 +134,7 @@ while play:
     for note in model_instance.dead_notes:
         visual.make_score_notice(note.points, note.position, 30, note.style)
         visual.make_circle_explosion(visual.Color.GREY, 5, note.position)
-        note_set = [65, 66, 67, 68, 69, 70, 72, 55, 58, 59, 60, 61, 62, 63]
+
         midi_note = copy.copy(note.note)
         midi_note.channel = 5
         midi_note.time = 0
@@ -147,7 +147,10 @@ while play:
                              (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1] - INDENT), 5, 2)
     visual.make_score_notice(model_instance.scorers[3].score, (visual.SCREEN_SHAPE[0] / 2, INDENT), 5, 3)
 
-    # track.tempo_shift = 1 + float(model_instance.average_score) / 1000
+    glow_left.set_alpha(min(255, model_instance.scorers[0].score))
+    glow_right.set_alpha(min(255, model_instance.scorers[1].score))
+    glow_down.set_alpha(min(255, model_instance.scorers[2].score))
+    glow_up.set_alpha(min(255, model_instance.scorers[3].score))
 
     visual.draw()
     visual.sprite_group_notes.empty()
