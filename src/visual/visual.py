@@ -11,9 +11,9 @@ import math
 import os
 from random import randint
 
-import config
 import pygame
 
+import config
 import font
 
 
@@ -202,7 +202,7 @@ GLOW_POS_DOWN = [SCREEN_SHAPE[0] / 2 - image_energy_width / 2, SCREEN_SHAPE[1] -
 
 class EnergyGlow(pygame.sprite.Sprite):
 
-    def __init__(self, position=GLOW_POS_LEFT, style=Style.Minim, alpha=255):
+    def __init__(self, position=GLOW_POS_LEFT, colour=(255, 255, 255), alpha=255):
         pygame.sprite.Sprite.__init__(self, sprite_group_energy_glows)
 
         self.image = image_energy_glow.copy()
@@ -215,7 +215,7 @@ class EnergyGlow(pygame.sprite.Sprite):
 
         self.rect = (newx, newy)
 
-        self.color = color_dict[style]
+        self.color = colour
 
         self.image.fill(self.color + (alpha,), None, pygame.BLEND_RGBA_MULT)
 
@@ -232,7 +232,7 @@ energy_glows = []
 
 class Note(pygame.sprite.Sprite):
 
-    def __init__(self, image, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), style=Style.Minim, alpha=255):
+    def __init__(self, image, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), colour=(255, 255, 255), alpha=255):
         pygame.sprite.Sprite.__init__(self, sprite_group_notes)
 
         self.rect = position
@@ -241,14 +241,11 @@ class Note(pygame.sprite.Sprite):
         # 1 = Quarter Note (Crotchet)
         # 2 = Eighth Note (Quaver)
         # 3 = Sixteenth note (Semiquaver)
-        self.style = style
 
         self.alpha = alpha
         self.image = image
 
-        color = color_dict[style]
-
-        self.image.fill(color + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
+        self.image.fill(colour + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
 
 
 class SpriteSheet(object):
@@ -279,8 +276,8 @@ class SpriteSheet(object):
 sprite_sheet = SpriteSheet(image_crotchet_rotation, (65, 65), 15, Color.BLACK)
 
 
-def make_score_notice(text, position, life, style):
-    font.Score(text, position, tuple(min(val + 50, 255) for val in color_dict[style]), 40, font.font_arcade, life)
+def make_score_notice(text, position, life, colour):
+    font.Score(text, position, tuple(min(val + 50, 255) for val in colour), 40, font.font_arcade, life)
 
 
 def scale_rgb(original_rgb, target_rgb, scalar):
