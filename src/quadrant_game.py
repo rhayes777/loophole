@@ -91,24 +91,29 @@ def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, 
 
 
 class Side(object):
-    def __init__(self, position, direction, colour):
+    def __init__(self, name, position, direction, colour):
+        self.name = name
         self.generator = model.NoteGenerator(position, direction)
         self.position = position
         self.direction = direction
         self.colour = colour
         self.glow = visual.EnergyGlow(position, colour)
         self.scorer = model.Scorer()
+        self.channels = list(map(int, config.parser.get(self.name, "channels").split(",")))
 
     def update(self):
         visual.make_score_notice(self.scorer.score, self.position, 5, self.colour)
         self.glow.set_alpha(min(255, self.scorer.score))
 
+    def add_note(self, side_note):
+        model_instance.notes.add(self.generator.make_note(side_note, self.colour))
+
 
 sides = [
-    Side((INDENT, visual.SCREEN_SHAPE[1] / 2), math.pi / 2, visual.color_dict[0]),
-    Side((visual.SCREEN_SHAPE[0] - INDENT, visual.SCREEN_SHAPE[1] / 2), 1.5 * math.pi, visual.color_dict[1]),
-    Side((visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1] - INDENT), math.pi, visual.color_dict[2]),
-    Side((visual.SCREEN_SHAPE[0] / 2, INDENT), 2 * math.pi, visual.color_dict[3]),
+    Side("left", (INDENT, visual.SCREEN_SHAPE[1] / 2), math.pi / 2, visual.color_dict[0]),
+    Side("right", (visual.SCREEN_SHAPE[0] - INDENT, visual.SCREEN_SHAPE[1] / 2), 1.5 * math.pi, visual.color_dict[1]),
+    Side("bottom", (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1] - INDENT), math.pi, visual.color_dict[2]),
+    Side("top", (visual.SCREEN_SHAPE[0] / 2, INDENT), 2 * math.pi, visual.color_dict[3]),
 ]
 
 for side in sides:
@@ -127,14 +132,21 @@ while play:
     model_instance.step_forward()
     visual.player_cursor_instance.draw(player.position)
     for note in model_instance.notes:
-        visual.Note(visual.sprite_sheet.image_for_angle(note.angle), note.position, visual.color_dict[note.style], 255)
+        visual.Note(visual.sprite_sheet.image_for_angle(note.angle), note.position, note.colour, 255)
 
     while not note_queue.empty():
-        model_instance.add_note(note_queue.get())
+        note = note_queue.get()
+        for side in sides:
+            if note.channel in side.channels:
+                side.add_note(note)
 
     # Collision for Score.Notice creation
     for note in model_instance.dead_notes:
-        visual.make_score_notice(note.points, note.position, 30, visual.color_dict[note.style])
+        for side in sides:
+            if note.note.channel in side.channels:
+                side.scorer.add_points(config.POINTS_PER_NOTE)
+
+        visual.make_score_notice(config.POINTS_PER_NOTE, note.position, 30, note.colour)
         visual.make_circle_explosion(visual.Color.GREY, 5, note.position)
 
         midi_note = copy.copy(note.note)
