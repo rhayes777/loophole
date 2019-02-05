@@ -457,6 +457,9 @@ class Track(Thread):
                 play = self.mid.play(meta_messages=True)
                 continue
             break
+        self.stop_all_notes()
+
+    def stop_all_notes(self):
         for channel in self.channels:
             channel.stop_all_notes()
 

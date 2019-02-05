@@ -8,7 +8,7 @@ import pygame
 
 import config
 import model
-from audio import player
+from audio import player as pl
 from audio.player import play_note
 from control import input
 from visual import visual
@@ -31,8 +31,8 @@ pygame.init()
 pygame.display.init()
 clock = pygame.time.Clock()
 
-track = player.Track("{}/media/audio/{}".format(directory, config.TRACK_NAME), is_looping=True,
-                     message_read_listener=message_read_listener)
+track = pl.Track("{}/media/audio/{}".format(directory, config.TRACK_NAME), is_looping=True,
+                 message_read_listener=message_read_listener)
 
 controller = input.Controller(pygame)
 
@@ -52,17 +52,6 @@ last_buttons = {'x': False,
                 'left': False,
                 'start': False,
                 'select': False}
-
-velocity_dict = {'x': (-15, -15),
-                 'up': (0, -15),
-                 'circle': (15, -15),
-                 'right': (15, 0),
-                 'square': (15, 15),
-                 'down': (0, 15),
-                 'triangle': (-15, 15),
-                 'left': (-15, 0),
-                 'start': (0, 0),
-                 'select': (0, 0)}
 
 boost_dict = {'x': (-1, -1),
               'up': (0, -1),
