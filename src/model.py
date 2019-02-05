@@ -20,10 +20,10 @@ class NoteGenerator(object):
         self.min_direction = direction - angular_range
         self.max_direction = direction + angular_range
 
-    def make_note(self, note):
+    def make_note(self, note, colour):
         direction = uniform(self.min_direction, self.max_direction)
         velocity = (self.speed * math.sin(direction), self.speed * math.cos(direction))
-        return NoteObject(self.position, velocity, note=note)
+        return NoteObject(colour, self.position, velocity, note=note)
 
 
 class Scorer(object):
@@ -65,19 +65,10 @@ class Object(object):
 
 
 class NoteObject(Object):
-    def __init__(self, position=(0., 0.), velocity=(0., 0.), acceleration=(0., 0.), note=None):
+    def __init__(self, colour, position=(0., 0.), velocity=(0., 0.), acceleration=(0., 0.), note=None):
         super(NoteObject, self).__init__(position, velocity, acceleration)
         self.note = note
-
-    @property
-    def style(self):
-        return self.note.channel % 4
-
-
-class DeadNote(NoteObject):
-    def __init__(self, note, points):
-        super(DeadNote, self).__init__(note.position, note.velocity, note.acceleration, note.note)
-        self.points = points
+        self.colour = colour
 
 
 class MassiveObject(Object):
@@ -141,12 +132,6 @@ class Model(object):
         force = self.elastic_force * absolute_distance
         return force * math.cos(angle), force * math.sin(angle)
 
-    def add_note(self, note):
-        self.notes.add(self.generators[note.channel % 4].make_note(note))
-
-    def add_points(self, style, points):
-        self.scorers[style].add_points(points)
-
     @property
     def average_score(self):
         return sum(scorer.score for scorer in self.scorers) / len(self.scorers)
@@ -161,8 +146,7 @@ class Model(object):
             try:
                 if self.player.is_collision(note.position):
                     self.notes.remove(note)
-                    self.add_points(note.style, POINTS_PER_NOTE)
-                    self.dead_notes.add(DeadNote(note, POINTS_PER_NOTE))
+                    self.dead_notes.add(note)
                 if self.is_out_of_bounds(note.position):
                     self.notes.remove(note)
             except KeyError as e:
