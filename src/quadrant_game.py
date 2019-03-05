@@ -90,6 +90,9 @@ def get_new_range_value(old_range_min, old_range_max, old_value, new_range_min, 
             old_range_max - old_range_min) + new_range_min
 
 
+state_limits = list(map(int, config.parser.get("all", "state_limits").split(",")))
+
+
 class Side(object):
     def __init__(self, name, position, direction, colour):
         self.name = name
@@ -101,13 +104,26 @@ class Side(object):
         self.scorer = model.Scorer()
         self.channels = list(map(int, config.parser.get(self.name, "channels").split(",")))
 
+    @property
+    def state(self):
+        index = 0
+        while True:
+            try:
+                if self.scorer.score < state_limits[index]:
+                    return index
+                index += 1
+            except IndexError:
+                return index
+
     def update(self):
         visual.make_score_notice(self.scorer.score, self.position, 5, self.colour)
         self.glow.set_alpha(min(255, self.scorer.score))
 
     def add_note(self, side_note):
-        model_instance.notes.add(self.generator.make_note(side_note, self.colour))
-        track.channels[side_note.channel].send_message(side_note)
+        print(self.state)
+        if side_note.channel % 4 == self.state:
+            model_instance.notes.add(self.generator.make_note(side_note, self.colour))
+            track.channels[side_note.channel].send_message(side_note)
 
 
 sides = [
