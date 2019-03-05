@@ -449,7 +449,7 @@ class Track(Thread):
                     if isinstance(msg, mido.MetaMessage):
                         continue
                     # Send a message to its assigned channel
-                    if self.play_notes:
+                    if self.play_notes or msg.type not in (note_on, note_off):
                         self.channels[msg.channel].send_message(msg)
                 except AttributeError as e:
                     logging.exception(e)

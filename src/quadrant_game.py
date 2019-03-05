@@ -107,6 +107,7 @@ class Side(object):
 
     def add_note(self, side_note):
         model_instance.notes.add(self.generator.make_note(side_note, self.colour))
+        track.channels[side_note.channel].send_message(side_note)
 
 
 sides = [
