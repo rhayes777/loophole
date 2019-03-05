@@ -379,9 +379,11 @@ class Channel(object):
 class Track(Thread):
     """Represents a midi song loaded from a file"""
 
-    def __init__(self, file_path="../media/channels_test.mid", is_looping=False, message_read_listener=lambda x: x):
+    def __init__(self, file_path="../media/channels_test.mid", is_looping=False, play_notes=True,
+                 message_read_listener=lambda x: x):
         super(Track, self).__init__()
         self.filename = file_path
+        self.play_notes = play_notes
         self.is_stopping = False
         self.is_looping = is_looping
         self.mid = mido.MidiFile(file_path)
@@ -447,7 +449,8 @@ class Track(Thread):
                     if isinstance(msg, mido.MetaMessage):
                         continue
                     # Send a message to its assigned channel
-                    self.channels[msg.channel].send_message(msg)
+                    if self.play_notes:
+                        self.channels[msg.channel].send_message(msg)
                 except AttributeError as e:
                     logging.exception(e)
                 except IndexError as e:
