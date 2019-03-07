@@ -84,7 +84,6 @@ class Letter(object):
 class Score(Notice, object):
     def __init__(self, words, position, color, size, this_font, life):
         super(Score, self).__init__(str(words), position, color, size, this_font, life)
-        self.life = life
 
 
 class Wave(Notice, object):
