@@ -125,17 +125,23 @@ class Side(object):
             visual.make_score_notice(10 * self.state, self.position, 5, visual.Color.WHITE)
 
     def add_note(self, side_note):
-        print side_note.note
         if side_note.channel % 4 == self.state:
             model_instance.notes.add(self.generator.make_note(side_note, self.colour))
             track.channels[side_note.channel].send_message(side_note)
 
 
+class DrumSide(Side):
+    def add_note(self, side_note):
+        if side_note.channel % 4 == self.state:
+            model_instance.notes.add(self.generator.make_note(side_note, self.colour))
+            track.channels[10].send_message(side_note)
+
+
 sides = [
-    Side("left", (INDENT, visual.SCREEN_SHAPE[1] / 2), math.pi / 2, visual.color_dict[0]),
-    Side("right", (visual.SCREEN_SHAPE[0] - INDENT, visual.SCREEN_SHAPE[1] / 2), 1.5 * math.pi, visual.color_dict[1]),
-    Side("bottom", (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1] - INDENT), math.pi, visual.color_dict[2]),
-    Side("top", (visual.SCREEN_SHAPE[0] / 2, INDENT), 2 * math.pi, visual.color_dict[3]),
+    Side("bass", (INDENT, visual.SCREEN_SHAPE[1] / 2), math.pi / 2, visual.color_dict[0]),
+    Side("drums", (visual.SCREEN_SHAPE[0] - INDENT, visual.SCREEN_SHAPE[1] / 2), 1.5 * math.pi, visual.color_dict[1]),
+    Side("guitar", (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1] - INDENT), math.pi, visual.color_dict[2]),
+    Side("keys", (visual.SCREEN_SHAPE[0] / 2, INDENT), 2 * math.pi, visual.color_dict[3]),
 ]
 
 for side in sides:
