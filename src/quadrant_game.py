@@ -8,6 +8,7 @@ import pygame
 
 import config
 import model
+import model_quadrant_game
 from audio import player as pl
 from audio.player import play_note
 from control import input
@@ -36,9 +37,9 @@ track = pl.Track("{}/media/audio/{}".format(directory, config.TRACK_NAME), is_lo
 
 controller = input.Controller(pygame)
 
-player = model.MassiveObject()
+player = model_quadrant_game.MassiveObject()
 
-model_instance = model.Model(player, visual.SCREEN_SHAPE)
+model_instance = model_quadrant_game.Model(player, visual.SCREEN_SHAPE)
 
 model_instance.player.position = (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1] / 2)
 
