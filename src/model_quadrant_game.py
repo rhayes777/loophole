@@ -3,7 +3,7 @@ import math
 
 import pytest
 
-from config import *
+import config
 from model import Object
 
 logger = logging.getLogger(__name__)
@@ -12,7 +12,7 @@ almost_zero = pytest.approx(0, abs=0.0001)
 
 
 class MassiveObject(Object):
-    def __init__(self, position=(0., 0.), mass=MASS, collision_radius=COLLISION_RADIUS):
+    def __init__(self, position=(0., 0.), mass=config.MASS, collision_radius=config.COLLISION_RADIUS):
         super(MassiveObject, self).__init__(position)
         self.mass = mass
         self.collision_radius = collision_radius
@@ -31,7 +31,7 @@ class MassiveObject(Object):
     def force_from_position(self, position):
         absolute_distance = self.absolute_distance_from(position)
         try:
-            return self.mass / (absolute_distance ** 2) + DISTANT_MASS
+            return self.mass / (absolute_distance ** 2) + config.DISTANT_MASS
         except ZeroDivisionError:
             return 0
 
@@ -50,8 +50,8 @@ class MassiveObject(Object):
 
 
 class Model(object):
-    def __init__(self, player, screen_shape, elastic_force=ELASTIC_FORCE, boost_speed=BOOST_SPEED,
-                 damping_rate=DAMPING_RATE):
+    def __init__(self, player, screen_shape, elastic_force=config.ELASTIC_FORCE, boost_speed=config.BOOST_SPEED,
+                 damping_rate=config.DAMPING_RATE):
         self.player = player
         self.generators = []
         self.scorers = []

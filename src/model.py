@@ -1,7 +1,7 @@
 import math
 from random import uniform
 
-from config import DECAY_RATE, SPEED
+import config
 
 ANGULAR_RANGE = math.pi / 4
 
@@ -33,7 +33,7 @@ class NoteObject(Object):
 
 
 class Scorer(object):
-    def __init__(self, decay_rate=DECAY_RATE):
+    def __init__(self, decay_rate=config.DECAY_RATE):
         self.score = 0
         self.decay_rate = decay_rate
 
@@ -46,7 +46,7 @@ class Scorer(object):
 
 
 class NoteGenerator(object):
-    def __init__(self, position, direction, angular_range=ANGULAR_RANGE, speed=SPEED):
+    def __init__(self, position, direction, angular_range=ANGULAR_RANGE, speed=config.SPEED):
         self.position = position
         self.speed = speed
         self.min_direction = direction - angular_range
