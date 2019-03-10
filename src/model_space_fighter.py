@@ -1,12 +1,16 @@
+VELOCITY = (10, 0)
+
+
 class MockNote(object):
     def __init__(self, note):
         self.note = note
 
 
 class Alien(object):
-    def __init__(self, note, position):
+    def __init__(self, note, position, velocity=VELOCITY):
         self.note = note
         self.position = position
+        self.velocity = velocity
 
 
 class SpaceFighterModel(object):

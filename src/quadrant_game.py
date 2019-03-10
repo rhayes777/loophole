@@ -14,6 +14,7 @@ from audio.player import play_note
 from control import input
 from visual import visual
 
+
 note_queue = Queue()
 
 
@@ -98,7 +99,7 @@ debug = "t" in config.parser.get("general", "debug").lower()
 class Side(object):
     def __init__(self, name, position, direction, colour):
         self.name = name
-        self.generator = model.NoteGenerator(position, direction)
+        self.generator = model_quadrant_game.NoteGenerator(position, direction)
         self.position = position
         self.direction = direction
         self.colour = colour

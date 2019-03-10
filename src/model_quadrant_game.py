@@ -1,17 +1,39 @@
 import logging
 import math
+from random import uniform
 
 import pytest
 
 import config
-from model import Object
+import model
+
+ANGULAR_RANGE = math.pi / 4
 
 logger = logging.getLogger(__name__)
 
 almost_zero = pytest.approx(0, abs=0.0001)
 
 
-class MassiveObject(Object):
+class NoteObject(model.NoteObject):
+    def __init__(self, colour, position=(0., 0.), velocity=(0., 0.), acceleration=(0., 0.), note=None):
+        super(NoteObject, self).__init__(position=position, velocity=velocity, acceleration=acceleration, note=note)
+        self.colour = colour
+
+
+class NoteGenerator(object):
+    def __init__(self, position, direction, angular_range=ANGULAR_RANGE, speed=config.SPEED):
+        self.position = position
+        self.speed = speed
+        self.min_direction = direction - angular_range
+        self.max_direction = direction + angular_range
+
+    def make_note(self, note, colour):
+        direction = uniform(self.min_direction, self.max_direction)
+        velocity = (self.speed * math.sin(direction), self.speed * math.cos(direction))
+        return NoteObject(colour, self.position, velocity, note=note)
+
+
+class MassiveObject(model.Object):
     def __init__(self, position=(0., 0.), mass=config.MASS, collision_radius=config.COLLISION_RADIUS):
         super(MassiveObject, self).__init__(position)
         self.mass = mass
@@ -115,12 +137,12 @@ def make_model(massive_object):
 
 @pytest.fixture(name="note_across")
 def make_note_across():
-    return Object(velocity=(1, 0))
+    return model.Object(velocity=(1, 0))
 
 
 @pytest.fixture(name="note_up")
 def make_note_up():
-    return Object(velocity=(0, 1))
+    return model.Object(velocity=(0, 1))
 
 
 class TestModel(object):
@@ -160,11 +182,11 @@ class TestModel(object):
         assert model.player.position == (1, 0)
 
     def test_collision(self, massive_object):
-        note = Object()
+        note = model.Object()
 
         assert massive_object.is_collision(note.position)
 
-        note = Object(position=(1.1, 0))
+        note = model.Object(position=(1.1, 0))
 
         assert not massive_object.is_collision(note.position)
 
@@ -216,38 +238,38 @@ class TestMassiveObject(object):
 
 class TestNote(object):
     def test_no_movement(self):
-        note = Object(position=(0., 0.), velocity=(0., 0.))
+        note = model.Object(position=(0., 0.), velocity=(0., 0.))
         note.step_forward()
 
         assert note.position == (0., 0.)
 
     def test_up_movement(self):
-        note = Object(position=(0., 0.), velocity=(1., 0.))
+        note = model.Object(position=(0., 0.), velocity=(1., 0.))
         note.step_forward()
 
         assert note.position == (1., 0.)
 
     def test_right_movement(self):
-        note = Object(position=(0., 0.), velocity=(0., 1.))
+        note = model.Object(position=(0., 0.), velocity=(0., 1.))
         note.step_forward()
 
         assert note.position == (0., 1.)
 
     def test_left_movement(self):
-        note = Object(position=(0., 0.), velocity=(0., -1.))
+        note = model.Object(position=(0., 0.), velocity=(0., -1.))
         note.step_forward()
 
         assert note.position == (0., -1.)
 
     def test_double_movement(self):
-        note = Object(position=(0., 0.), velocity=(1., 1.))
+        note = model.Object(position=(0., 0.), velocity=(1., 1.))
         note.step_forward()
         note.step_forward()
 
         assert note.position == (2, 2)
 
     def test_acceleration(self):
-        note = Object(position=(0., 0.), velocity=(0., 0.), acceleration=(1., 0.))
+        note = model.Object(position=(0., 0.), velocity=(0., 0.), acceleration=(1., 0.))
 
         note.step_forward()
 

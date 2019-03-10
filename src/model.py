@@ -1,9 +1,6 @@
 import math
-from random import uniform
 
 import config
-
-ANGULAR_RANGE = math.pi / 4
 
 
 class Object(object):
@@ -26,10 +23,9 @@ class Object(object):
 
 
 class NoteObject(Object):
-    def __init__(self, colour, position=(0., 0.), velocity=(0., 0.), acceleration=(0., 0.), note=None):
+    def __init__(self, position=(0., 0.), velocity=(0., 0.), acceleration=(0., 0.), note=None):
         super(NoteObject, self).__init__(position, velocity, acceleration)
         self.note = note
-        self.colour = colour
 
 
 class Scorer(object):
@@ -44,15 +40,3 @@ class Scorer(object):
         self.score -= self.decay_rate
         self.score = max(self.score, 0)
 
-
-class NoteGenerator(object):
-    def __init__(self, position, direction, angular_range=ANGULAR_RANGE, speed=config.SPEED):
-        self.position = position
-        self.speed = speed
-        self.min_direction = direction - angular_range
-        self.max_direction = direction + angular_range
-
-    def make_note(self, note, colour):
-        direction = uniform(self.min_direction, self.max_direction)
-        velocity = (self.speed * math.sin(direction), self.speed * math.cos(direction))
-        return NoteObject(colour, self.position, velocity, note=note)
