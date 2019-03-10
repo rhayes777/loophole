@@ -14,7 +14,6 @@ from audio.player import play_note
 from control import input
 from visual import visual
 
-
 note_queue = Queue()
 
 
@@ -139,7 +138,8 @@ class DrumSide(Side):
 
 sides = [
     Side("bass", (INDENT, visual.SCREEN_SHAPE[1] / 2), math.pi / 2, visual.color_dict[0]),
-    Side("drums", (visual.SCREEN_SHAPE[0] - INDENT, visual.SCREEN_SHAPE[1] / 2), 1.5 * math.pi, visual.color_dict[1]),
+    DrumSide("drums", (visual.SCREEN_SHAPE[0] - INDENT, visual.SCREEN_SHAPE[1] / 2), 1.5 * math.pi,
+             visual.color_dict[1]),
     Side("guitar", (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1] - INDENT), math.pi, visual.color_dict[2]),
     Side("keys", (visual.SCREEN_SHAPE[0] / 2, INDENT), 2 * math.pi, visual.color_dict[3]),
 ]
