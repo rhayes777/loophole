@@ -1,16 +1,12 @@
+import config
+import model
+
 VELOCITY = (10, 0)
 
 
 class MockNote(object):
     def __init__(self, note):
         self.note = note
-
-
-class Alien(object):
-    def __init__(self, note, position, velocity=VELOCITY):
-        self.note = note
-        self.position = position
-        self.velocity = velocity
 
 
 class SpaceFighterModel(object):
@@ -21,7 +17,7 @@ class SpaceFighterModel(object):
 
     def add_note(self, note):
         x_position = (float(note.note % self.notes_per_side) / self.notes_per_side) * self.screen_shape[0]
-        self.aliens.append(Alien(note, position=(x_position, 0)))
+        self.aliens.append(model.NoteObject(note=note, velocity=(config.SPEED, 0), position=(x_position, 0)))
 
 
 class TestCase(object):
