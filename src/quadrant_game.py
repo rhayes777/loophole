@@ -124,7 +124,7 @@ class Side(object):
             visual.make_score_notice(10 * self.state, self.position, 5, visual.Color.WHITE)
 
     def add_note(self, side_note):
-        if side_note.channel % 4 == self.state:
+        if side_note.channel == self.channels[self.state]:
             model_instance.notes.add(self.generator.make_note(side_note, self.colour))
             side_note.channel = self.output_channel
             track.channels[self.output_channel].send_message(side_note)
