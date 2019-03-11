@@ -5,8 +5,13 @@ from datetime import datetime
 from threading import Thread
 
 import mido
+import pygame
+from pygame import midi
 
 import music
+
+pygame.init()
+midi.init()
 
 mido.set_backend('mido.backends.pygame')
 
