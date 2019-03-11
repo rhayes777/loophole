@@ -30,6 +30,7 @@ SEMIQUAVER = parser.get("visual", "SEMIQUAVER")
 CROTCHET_GLOW_ROTATION = parser.get("visual", "CROTCHET_GLOW_ROTATION")
 ENERGY_GLOW = parser.get("visual", "ENERGY_GLOW")
 PLAYER_CURSOR = parser.get("visual", "PLAYER_CURSOR")
+INDENT = int(parser.get("visual", "INDENT"))
 
 screen_shape = tuple(map(int, parser.get("visual", "screen_shape").split(",")))
 FULLSCREEN = "t" in parser.get("visual", "FULLSCREEN").lower()

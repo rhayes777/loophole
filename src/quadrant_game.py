@@ -26,8 +26,6 @@ directory = path.dirname(path.realpath(__file__))
 
 play = True
 
-INDENT = 50
-
 pygame.init()
 # midi.init()
 pygame.display.init()
@@ -140,11 +138,11 @@ class Side(object):
 
 
 sides = [
-    Side("bass", (INDENT, visual.SCREEN_SHAPE[1] / 2), math.pi / 2, visual.color_dict[0]),
-    Side("drums", (visual.SCREEN_SHAPE[0] - INDENT, visual.SCREEN_SHAPE[1] / 2), 1.5 * math.pi,
+    Side("bass", (config.INDENT, visual.SCREEN_SHAPE[1] / 2), math.pi / 2, visual.color_dict[0]),
+    Side("drums", (visual.SCREEN_SHAPE[0] - config.INDENT, visual.SCREEN_SHAPE[1] / 2), 1.5 * math.pi,
          visual.color_dict[1]),
-    Side("guitar", (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1] - INDENT), math.pi, visual.color_dict[2]),
-    Side("keys", (visual.SCREEN_SHAPE[0] / 2, INDENT), 2 * math.pi, visual.color_dict[3]),
+    Side("guitar", (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1] - config.INDENT), math.pi, visual.color_dict[2]),
+    Side("keys", (visual.SCREEN_SHAPE[0] / 2, config.INDENT), 2 * math.pi, visual.color_dict[3]),
 ]
 
 for side in sides:
