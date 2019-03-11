@@ -13,7 +13,7 @@ import music
 pygame.init()
 midi.init()
 
-mido.set_backend('mido.backends.pygame')
+mido.set_backend('mido.backends.rtmidi')
 
 path = os.path.realpath(__file__)
 dir_path = os.path.dirname(os.path.realpath(__file__))
