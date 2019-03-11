@@ -34,3 +34,5 @@ PLAYER_CURSOR = parser.get("visual", "PLAYER_CURSOR")
 screen_shape = tuple(map(int, parser.get("visual", "screen_shape").split(",")))
 FULLSCREEN = "t" in parser.get("visual", "FULLSCREEN").lower()
 DOUBLEBUF = "t" in parser.get("visual", "DOUBLEBUF").lower()
+
+mido_backend = parser.get("interface", "mido_backend")

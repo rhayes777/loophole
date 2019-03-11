@@ -3,6 +3,7 @@ import os
 from Queue import Queue
 from datetime import datetime
 from threading import Thread
+import config
 
 import mido
 import pygame
@@ -13,7 +14,7 @@ import music
 pygame.init()
 # midi.init()
 
-mido.set_backend('mido.backends.rtmidi_python')
+mido.set_backend(config.mido_backend)
 
 path = os.path.realpath(__file__)
 dir_path = os.path.dirname(os.path.realpath(__file__))
