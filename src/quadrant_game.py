@@ -5,7 +5,6 @@ from os import path
 from random import randint
 
 import pygame
-from pygame import midi
 
 import config
 import model
@@ -129,6 +128,7 @@ class Side(object):
     def add_note(self, side_note):
         if side_note.channel % 4 == self.state:
             model_instance.notes.add(self.generator.make_note(side_note, self.colour))
+            side_note.channel = self.output_channel
             track.channels[self.output_channel].send_message(side_note)
 
 
@@ -142,7 +142,7 @@ class Side(object):
 sides = [
     Side("bass", (INDENT, visual.SCREEN_SHAPE[1] / 2), math.pi / 2, visual.color_dict[0]),
     Side("drums", (visual.SCREEN_SHAPE[0] - INDENT, visual.SCREEN_SHAPE[1] / 2), 1.5 * math.pi,
-             visual.color_dict[1]),
+         visual.color_dict[1]),
     Side("guitar", (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1] - INDENT), math.pi, visual.color_dict[2]),
     Side("keys", (visual.SCREEN_SHAPE[0] / 2, INDENT), 2 * math.pi, visual.color_dict[3]),
 ]
