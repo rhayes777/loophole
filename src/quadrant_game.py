@@ -30,7 +30,7 @@ play = True
 INDENT = 50
 
 pygame.init()
-midi.init()
+# midi.init()
 pygame.display.init()
 clock = pygame.time.Clock()
 

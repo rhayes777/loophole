@@ -6,14 +6,14 @@ from threading import Thread
 
 import mido
 import pygame
-from pygame import midi
+# from pygame import midi
 
 import music
 
 pygame.init()
-midi.init()
+# midi.init()
 
-mido.set_backend('mido.backends.rtmidi')
+mido.set_backend('mido.backends.rtmidi_python')
 
 path = os.path.realpath(__file__)
 dir_path = os.path.dirname(os.path.realpath(__file__))
