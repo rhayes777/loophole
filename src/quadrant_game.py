@@ -5,6 +5,7 @@ from os import path
 from random import randint
 
 import pygame
+from pygame import midi
 
 import config
 import model
@@ -29,6 +30,7 @@ play = True
 INDENT = 50
 
 pygame.init()
+midi.init()
 pygame.display.init()
 clock = pygame.time.Clock()
 
