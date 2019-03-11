@@ -103,6 +103,7 @@ class Side(object):
         self.generator = model_quadrant_game.NoteGenerator(position, direction)
         self.position = position
         self.direction = direction
+        self.output_channel = int(config.parser.get(self.name, "output_channel"))
         self.colour = colour
         self.glow = visual.EnergyGlow(position, colour)
         self.scorer = model.Scorer()
@@ -128,19 +129,19 @@ class Side(object):
     def add_note(self, side_note):
         if side_note.channel % 4 == self.state:
             model_instance.notes.add(self.generator.make_note(side_note, self.colour))
-            track.channels[side_note.channel].send_message(side_note)
+            track.channels[self.output_channel].send_message(side_note)
 
 
-class DrumSide(Side):
-    def add_note(self, side_note):
-        if side_note.channel % 4 == self.state:
-            model_instance.notes.add(self.generator.make_note(side_note, self.colour))
-            track.channels[10].send_message(side_note)
+# class DrumSide(Side):
+#     def add_note(self, side_note):
+#         if side_note.channel % 4 == self.state:
+#             model_instance.notes.add(self.generator.make_note(side_note, self.colour))
+#             track.channels[10].send_message(side_note)
 
 
 sides = [
     Side("bass", (INDENT, visual.SCREEN_SHAPE[1] / 2), math.pi / 2, visual.color_dict[0]),
-    DrumSide("drums", (visual.SCREEN_SHAPE[0] - INDENT, visual.SCREEN_SHAPE[1] / 2), 1.5 * math.pi,
+    Side("drums", (visual.SCREEN_SHAPE[0] - INDENT, visual.SCREEN_SHAPE[1] / 2), 1.5 * math.pi,
              visual.color_dict[1]),
     Side("guitar", (visual.SCREEN_SHAPE[0] / 2, visual.SCREEN_SHAPE[1] - INDENT), math.pi, visual.color_dict[2]),
     Side("keys", (visual.SCREEN_SHAPE[0] / 2, INDENT), 2 * math.pi, visual.color_dict[3]),
