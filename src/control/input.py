@@ -48,6 +48,14 @@ class ArcadeController(AbstractController):
                             print "left"
                         else:
                             print "right"
+            elif event.type == 10:
+                if event.button == 0:
+                    print "primary button"
+                elif event.button == 1:
+                    print "secondary button"
+            elif event.type == 11:
+                # Button up
+                pass
 
 
 # Object representing a midi controller input (e.g. a dancemat)
