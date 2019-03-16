@@ -17,15 +17,29 @@ class Button(object):
     all = ['left', 'down', 'up', 'right', 'triangle', 'square', 'x', 'circle', 'select', 'start']
 
 
-# Object representing a midi controller input (e.g. a dancemat)
-class Controller:
+class AbstractController(object):
     def __init__(self, pygame, number=0):
+        self.pygame = pygame
         try:
-            self.pygame = pygame
             self.joystick = pygame.joystick.Joystick(number)
             self.joystick.init()
         except pygame.error:
-            logging.warn("Controller {} not found".format(number))
+            logging.warning("Controller {} not found".format(number))
+
+
+class ArcadeController(AbstractController):
+    def __init__(self, pygame):
+        super(ArcadeController, self).__init__(pygame)
+
+    def read(self):
+        for _ in self.pygame.event.get():
+            print self.pygame.key.get_pressed()
+
+
+# Object representing a midi controller input (e.g. a dancemat)
+class Controller(AbstractController):
+    def __init__(self, pygame, number=0):
+        super(Controller, self).__init__(pygame, number)
         self.button_listener = None
 
     # Read data and alert listeners
@@ -33,11 +47,13 @@ class Controller:
         for _ in self.pygame.event.get():
             if self.button_listener is not None:
                 try:
+                    print self.joystick.get_numbuttons()
                     button_dict = {Button.all[n]: self.joystick.get_button(n) == 1 for n in
                                    range(0, self.joystick.get_numbuttons())}
                 except AttributeError:
                     button_dict = {button: False for button in Button.all}
                 key = self.pygame.key.get_pressed()
+                print key
                 qwerty_input = {'x': key[self.pygame.K_q],
                                 'up': key[self.pygame.K_w],
                                 'circle': key[self.pygame.K_e],
