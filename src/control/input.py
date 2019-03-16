@@ -28,31 +28,32 @@ class AbstractController(object):
 
 
 class ArcadeController(AbstractController):
-    def __init__(self, pygame):
+    def __init__(self, pygame, button_listener):
         super(ArcadeController, self).__init__(pygame)
+        self.button_listener = button_listener
 
     def read(self):
         for event in self.pygame.event.get():
             if event.type == 7:
                 value = int(event.value)
                 if value == 0:
-                    print "centre"
+                    self.button_listener("centre")
                 else:
                     if event.axis == 1:
                         if value == -1:
-                            print "up"
+                            self.button_listener("up")
                         else:
-                            print "down"
+                            self.button_listener("down")
                     else:
                         if value == -1:
-                            print "left"
+                            self.button_listener("left")
                         else:
-                            print "right"
+                            self.button_listener("right")
             elif event.type == 10:
                 if event.button == 0:
-                    print "primary button"
+                    self.button_listener("primary button")
                 elif event.button == 1:
-                    print "secondary button"
+                    self.button_listener("secondary button")
             elif event.type == 11:
                 # Button up
                 pass

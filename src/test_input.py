@@ -1,12 +1,18 @@
 #!/usr/bin/env python
 
-from control import input
 import pygame
+
+from control import input
 
 pygame.init()
 clock = pygame.time.Clock()
 
-controller = input.ArcadeController(pygame)
+
+def button_listener(button):
+    print button
+
+
+controller = input.ArcadeController(pygame, button_listener)
 
 while True:
     controller.read()
