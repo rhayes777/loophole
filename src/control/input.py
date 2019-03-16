@@ -32,8 +32,22 @@ class ArcadeController(AbstractController):
         super(ArcadeController, self).__init__(pygame)
 
     def read(self):
-        for _ in self.pygame.event.get():
-            print self.joystick.get_pressed()
+        for event in self.pygame.event.get():
+            if event.type == 7:
+                value = int(event.value)
+                if value == 0:
+                    print "centre"
+                else:
+                    if event.axis == 1:
+                        if value == -1:
+                            print "up"
+                        else:
+                            print "down"
+                    else:
+                        if value == -1:
+                            print "left"
+                        else:
+                            print "right"
 
 
 # Object representing a midi controller input (e.g. a dancemat)
