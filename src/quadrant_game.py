@@ -34,8 +34,6 @@ clock = pygame.time.Clock()
 track = pl.Track("{}/media/audio/{}".format(directory, config.TRACK_NAME), is_looping=True,
                  message_read_listener=message_read_listener, play_notes=False)
 
-controller = input.Controller(pygame)
-
 player = model_quadrant_game.MassiveObject()
 
 model_instance = model_quadrant_game.Model(player, visual.SCREEN_SHAPE)
@@ -65,16 +63,13 @@ boost_dict = {'x': (-1, -1),
               'select': (0, 0)}
 
 
-def button_listener(button_dict):
-    global last_buttons
-    new_buttons = [button for button, is_on in button_dict.items() if is_on and not last_buttons[button]]
-    last_buttons = button_dict
-
-    if len(new_buttons) > 0:
-        model_instance.boost(boost_dict[new_buttons[0]])
+def button_listener(button):
+    if button == "centre":
+        return
+    model_instance.boost(boost_dict[button])
 
 
-controller.button_listener = button_listener
+controller = input.ArcadeController(pygame, button_listener)
 
 
 def rand_tuple():
