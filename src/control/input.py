@@ -33,7 +33,7 @@ class ArcadeController(AbstractController):
 
     def read(self):
         for _ in self.pygame.event.get():
-            print self.pygame.key.get_pressed()
+            print self.joystick.get_pressed()
 
 
 # Object representing a midi controller input (e.g. a dancemat)

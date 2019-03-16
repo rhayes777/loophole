@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python
 
 from control import input
 import pygame
@@ -6,7 +6,7 @@ import pygame
 pygame.init()
 clock = pygame.time.Clock()
 
-controller = input.ArcadeController()
+controller = input.ArcadeController(pygame)
 
 while True:
     controller.read()
