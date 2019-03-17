@@ -11,6 +11,11 @@ class Object(object):
         self.angle = angle
         self.rotation_speed = rotation_speed
 
+    @property
+    def is_out_of_bounds(self):
+        return self.position[0] > config.screen_shape[0] or self.position[0] < 0 or self.position[
+            1] > config.screen_shape or self.position[1] < 0
+
     def step_forward(self):
         self.velocity = tuple(sum(pair) for pair in zip(self.velocity, self.acceleration))
         self.position = tuple(sum(pair) for pair in zip(self.position, self.velocity))
@@ -39,4 +44,3 @@ class Scorer(object):
     def decay(self):
         self.score -= self.decay_rate
         self.score = max(self.score, 0)
-
