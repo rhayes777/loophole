@@ -39,4 +39,4 @@ DOUBLEBUF = "t" in parser.get("visual", "DOUBLEBUF").lower()
 mido_backend = parser.get("interface", "mido_backend")
 
 
-SPACE_FIGHTER_PLAYER_VELOCITY = 10
+SPACE_FIGHTER_PLAYER_VELOCITY = float(parser.get("space_fighter", "PLAYER_VELOCITY"))
