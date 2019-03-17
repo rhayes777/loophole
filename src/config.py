@@ -37,3 +37,6 @@ FULLSCREEN = "t" in parser.get("visual", "FULLSCREEN").lower()
 DOUBLEBUF = "t" in parser.get("visual", "DOUBLEBUF").lower()
 
 mido_backend = parser.get("interface", "mido_backend")
+
+
+SPACE_FIGHTER_PLAYER_VELOCITY = 10
