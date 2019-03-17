@@ -13,6 +13,7 @@ class User(model.Object):
     def __init__(self, screen_shape=config.screen_shape):
         super(User, self).__init__((screen_shape[0] / 2, screen_shape[1] - config.INDENT), rotation_speed=0.0)
         self.screen_shape = screen_shape
+        self.shots = list()
 
     def step_forward(self):
         super(User, self).step_forward()
@@ -20,6 +21,14 @@ class User(model.Object):
             self.position[0] = self.screen_shape
         elif self.position[0] < 0:
             self.position[0] = 0
+
+        for shot in self.shots:
+            shot.step_forward()
+            if shot.position[1] < 0:
+                self.shots.remove(shot)
+
+    def fire(self):
+        self.shots.append(model.Object(position=self.position, velocity=(0, -40)))
 
 
 class SpaceFighterModel(object):

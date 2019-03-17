@@ -51,9 +51,9 @@ class ArcadeController(AbstractController):
                             self.button_listener("right")
             elif event.type == 10:
                 if event.button == 0:
-                    self.button_listener("primary button")
+                    self.button_listener("a")
                 elif event.button == 1:
-                    self.button_listener("secondary button")
+                    self.button_listener("b")
             elif event.type == 11:
                 # Button up
                 pass
