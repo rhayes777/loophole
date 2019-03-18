@@ -32,7 +32,7 @@ class Player(model.Object):
 
 
 class SpaceFighterModel(object):
-    def __init__(self, screen_shape, notes_per_side):
+    def __init__(self, screen_shape=config.screen_shape, notes_per_side=144):
         self.screen_shape = screen_shape
         self.notes_per_side = notes_per_side
         self.aliens = list()
