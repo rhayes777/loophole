@@ -9,6 +9,13 @@ class MockNote(object):
         self.note = note
 
 
+class Shot(model.Object):
+    def is_in_range(self, other_object):
+        distance = ((self.position[0] - other_object.position[0]) ** 2 + (
+                    self.position[1] - other_object.position[1]) ** 2) ** 0.5
+        return distance < config.COLLISION_RADIUS
+
+
 class Player(model.Object):
     def __init__(self, screen_shape=config.screen_shape):
         super(Player, self).__init__((screen_shape[0] / 2, screen_shape[1] - config.INDENT), rotation_speed=0.0)
@@ -28,7 +35,7 @@ class Player(model.Object):
                 self.shots.remove(shot)
 
     def fire(self):
-        self.shots.append(model.Object(position=self.position, velocity=(0, -40)))
+        self.shots.append(Shot(position=self.position, velocity=(0, -40)))
 
 
 class SpaceFighterModel(object):
@@ -52,6 +59,17 @@ class SpaceFighterModel(object):
                 self.aliens.remove(alien)
         for player in self.players:
             player.step_forward()
+            for shot in player.shots:
+                for alien in self.aliens:
+                    if shot.is_in_range(alien):
+                        # try:
+                        #     player.shots.remove(shot)
+                        # except ValueError:
+                        #     pass
+                        try:
+                            self.aliens.remove(alien)
+                        except ValueError:
+                            pass
 
 
 class TestCase(object):
