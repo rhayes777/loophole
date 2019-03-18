@@ -51,7 +51,6 @@ track.start()
 
 if __name__ == "__main__":
     while play:
-        print("play")
         controller.read()
         clock.tick(24)
         model.step_forward()

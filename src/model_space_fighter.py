@@ -1,8 +1,6 @@
 import config
 import model
 
-VELOCITY = (10, 0)
-
 
 class MockNote(object):
     def __init__(self, note):
@@ -25,9 +23,9 @@ class Player(model.Object):
     def step_forward(self):
         super(Player, self).step_forward()
         if self.position[0] > self.screen_shape[0]:
-            self.position[0] = self.screen_shape
+            self.position = (self.screen_shape[0], self.position[1])
         elif self.position[0] < 0:
-            self.position[0] = 0
+            self.position = (0, self.position[1])
 
         for shot in self.shots:
             shot.step_forward()
@@ -35,7 +33,7 @@ class Player(model.Object):
                 self.shots.remove(shot)
 
     def fire(self):
-        self.shots.append(Shot(position=self.position, velocity=(0, -40)))
+        self.shots.append(Shot(position=self.position, velocity=(0, config.SHOT_SPEED)))
 
 
 class SpaceFighterModel(object):
