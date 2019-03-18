@@ -40,3 +40,5 @@ mido_backend = parser.get("interface", "mido_backend")
 
 
 SPACE_FIGHTER_PLAYER_VELOCITY = float(parser.get("space_fighter", "PLAYER_VELOCITY"))
+
+NOTES_PER_SIDE = int(parser.get("space_fighter", "NOTES_PER_SIDE"))
