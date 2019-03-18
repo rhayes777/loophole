@@ -43,7 +43,7 @@ class SpaceFighterModel(object):
 
     def add_note(self, note):
         x_position = (float(note.note % self.notes_per_side) / self.notes_per_side) * self.screen_shape[0]
-        self.aliens.append(model.NoteObject(note=note, velocity=(config.SPEED, 0), position=(x_position, 0)))
+        self.aliens.append(model.NoteObject(note=note, velocity=(0, config.SPEED), position=(x_position, 0)))
 
     def step_forward(self):
         for alien in self.aliens:

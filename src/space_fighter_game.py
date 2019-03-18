@@ -51,6 +51,7 @@ track.start()
 
 if __name__ == "__main__":
     while play:
+        print("play")
         controller.read()
         clock.tick(24)
         model.step_forward()
@@ -64,7 +65,7 @@ if __name__ == "__main__":
                 visual.Note(visual.sprite_sheet.image_for_angle(shot.angle), shot.position)
 
         for alien in model.aliens:
-            model.add_note(alien.note)
+            visual.Note(visual.sprite_sheet.image_for_angle(alien.angle), alien.position)
 
         visual.draw()
         visual.sprite_group_notes.empty()
