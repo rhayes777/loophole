@@ -33,7 +33,7 @@ class Player(object):
     def __init__(self, number):
         self.is_started = False
         self.number = number
-        self.controller = input.ArcadeController(pygame, self.button_listener)
+        self.controller = input.ArcadeController(self.button_listener)
         self.model_player = model_space_fighter.Player()
         self.cursor = None
         model.add_player(self.model_player)
@@ -42,7 +42,6 @@ class Player(object):
         return "<{} {}>".format(self.__class__.__name__, self.number)
 
     def button_listener(self, button):
-        print(button)
         if self.is_started:
             if button == "centre":
                 self.model_player.velocity = (0, 0)
@@ -55,7 +54,6 @@ class Player(object):
         elif button != "centre":
             self.is_started = True
             self.cursor = visual.PlayerCursor()
-            print("START")
 
     def step(self):
         self.controller.read()
