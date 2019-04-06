@@ -136,7 +136,7 @@ sprite_group_energy_glows = pygame.sprite.Group()
 
 class PlayerCursor(pygame.sprite.Sprite):
 
-    def __init__(self, image, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), alpha=255):
+    def __init__(self, image=image_player, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), alpha=255):
         pygame.sprite.Sprite.__init__(self, sprite_group_player)
 
         self.image = image.copy()
@@ -153,8 +153,6 @@ class PlayerCursor(pygame.sprite.Sprite):
 
         self.rect = (new_x, new_y)
 
-
-player_cursor_instance = PlayerCursor(image_player)
 
 circle_effects_list = []
 

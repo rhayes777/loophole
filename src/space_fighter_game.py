@@ -31,9 +31,11 @@ track = pl.Track("{}/media/audio/{}".format(directory, config.TRACK_NAME), is_lo
 
 class Player(object):
     def __init__(self, number):
+        self.is_started = False
         self.number = number
         self.controller = input.ArcadeController(pygame, self.button_listener)
         self.model_player = model_space_fighter.Player()
+        self.cursor = None
         model.add_player(self.model_player)
 
     def __repr__(self):
@@ -41,20 +43,26 @@ class Player(object):
 
     def button_listener(self, button):
         print(button)
-        if button == "centre":
-            self.model_player.velocity = (0, 0)
-        elif button == "left":
-            self.model_player.velocity = (-config.SPACE_FIGHTER_PLAYER_VELOCITY, 0)
-        elif button == "right":
-            self.model_player.velocity = (config.SPACE_FIGHTER_PLAYER_VELOCITY, 0)
-        elif button == "a":
-            self.model_player.fire()
+        if self.is_started:
+            if button == "centre":
+                self.model_player.velocity = (0, 0)
+            elif button == "left":
+                self.model_player.velocity = (-config.SPACE_FIGHTER_PLAYER_VELOCITY, 0)
+            elif button == "right":
+                self.model_player.velocity = (config.SPACE_FIGHTER_PLAYER_VELOCITY, 0)
+            elif button == "a":
+                self.model_player.fire()
+        elif button != "centre":
+            self.is_started = True
+            self.cursor = visual.PlayerCursor()
+            print("START")
 
     def step(self):
         self.controller.read()
-        visual.player_cursor_instance.draw(self.model_player.position)
-        for shot in self.model_player.shots:
-            visual.Note(visual.sprite_sheet.image_for_angle(shot.angle), shot.position)
+        if self.is_started:
+            self.cursor.draw(self.model_player.position)
+            for shot in self.model_player.shots:
+                visual.Note(visual.sprite_sheet.image_for_angle(shot.angle), shot.position)
 
 
 player = Player(0)
