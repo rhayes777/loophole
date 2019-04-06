@@ -54,7 +54,7 @@ class Notice(object):
         self.alpha = 255 * divide
 
         # iterate through each Letter in char_list
-        for i in range(len(self.char_list) - 1):
+        for i in range(len(self.char_list)):
             char_size_x, char_size_y = self.this_font.size("a")  # get size of characters in string
 
             text_width, text_height = self.this_font.size(self.words)  # get size of text
