@@ -19,6 +19,7 @@ class Player(model.Object):
         super(Player, self).__init__((screen_shape[0] / 2, screen_shape[1] - config.INDENT), rotation_speed=0.0)
         self.screen_shape = screen_shape
         self.shots = list()
+        self.score = 0
 
     def step_forward(self):
         super(Player, self).step_forward()
@@ -66,6 +67,7 @@ class SpaceFighterModel(object):
                         #     pass
                         try:
                             self.aliens.remove(alien)
+                            player.score += 1
                         except ValueError:
                             pass
 

@@ -38,6 +38,7 @@ class Player(object):
         self.cursor = None
         self.start_position = config.PLAYER_ONE_START if number == 0 else config.PLAYER_TWO_START
         self.model_player.position = self.start_position
+        self.color = visual.Color.WHITE
         model.add_player(self.model_player)
 
     def __repr__(self):
@@ -63,11 +64,10 @@ class Player(object):
         if self.is_started:
             self.cursor.draw(self.model_player.position)
             for shot in self.model_player.shots:
-                visual.Note(visual.sprite_sheet.image_for_angle(shot.angle), shot.position)
-
+                visual.Note(visual.sprite_sheet.image_for_angle(shot.angle), shot.position, colour=self.color)
+            visual.make_score_notice(self.model_player.score, self.start_position, 5, self.color)
         else:
-            visual.make_score_notice("Player {} start".format(self.number + 1), self.start_position, 5,
-                                     visual.Color.WHITE)
+            visual.make_score_notice("Player {} start".format(self.number + 1), self.start_position, 5, self.color)
 
 
 player = Player(0)
