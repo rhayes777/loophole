@@ -61,8 +61,8 @@ class ArcadeController(AbstractController):
 
 # Object representing a midi controller input (e.g. a dancemat)
 class Controller(AbstractController):
-    def __init__(self, pygame, number=0):
-        super(Controller, self).__init__(pygame, number)
+    def __init__(self, number=0):
+        super(Controller, self).__init__(number)
         self.button_listener = None
 
     # Read data and alert listeners
