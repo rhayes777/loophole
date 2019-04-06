@@ -1,4 +1,4 @@
-from audio import player, effect
+from audio import audio, effect
 import messaging
 import signal
 import input
@@ -14,7 +14,7 @@ def note_on_listener(msg):
 
 
 def create_track_and_combinator(track_path, configuration_path):
-    track = player.Track(track_path, is_looping=True)
+    track = audio.Track(track_path, is_looping=True)
     combinator = effect.Combinator(configuration_path, track)
     for channel in track.channels:
         channel.note_on_listener = note_on_listener
@@ -99,8 +99,8 @@ class Normal(State):
     def did_receive_new_on_buttons(self, buttons):
         super(Normal, self).did_receive_new_on_buttons(buttons)
         if len(buttons) > 0:
-            player.set_program(15, program=116)
-            player.play_note_for_channel_note_velocity(15, velocity=127)
+            audio.set_program(15, program=116)
+            audio.play_note_for_channel_note_velocity(15, velocity=127)
 
 
 class Accelerate(Normal):

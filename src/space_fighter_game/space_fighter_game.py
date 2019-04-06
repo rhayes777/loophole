@@ -5,7 +5,7 @@ import pygame
 
 import config
 import model_space_fighter
-from audio import player as pl
+from audio import audio as pl
 from control import input
 from visual import visual
 
@@ -54,6 +54,7 @@ class Player(object):
         elif button != "centre":
             self.is_started = True
             self.cursor = visual.PlayerCursor()
+            self.button_listener(button)
 
     def step(self):
         self.controller.read()

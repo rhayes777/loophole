@@ -9,8 +9,8 @@ import pygame
 import config
 import model
 import model_quadrant_game
-from audio import player as pl
-from audio.player import play_note
+from audio import audio as pl
+from audio.audio import play_note
 from control import input
 from visual import visual
 

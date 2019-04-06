@@ -1,5 +1,5 @@
 import json
-from audio import player
+from audio import audio
 import logging
 import os
 from threading import Thread
@@ -243,7 +243,7 @@ class PitchBend(ChannelEffect):
 
     def remove(self):
         for channel in self.channels:
-            channel.pitch_bend(player.PITCHWHEEL_DEFAULT)
+            channel.pitch_bend(audio.PITCHWHEEL_DEFAULT)
 
 
 class VolumeChange(ChannelEffect):
@@ -255,7 +255,7 @@ class VolumeChange(ChannelEffect):
 
     def remove(self):
         for channel in self.channels:
-            channel.volume = player.VOLUME_DEFAULT
+            channel.volume = audio.VOLUME_DEFAULT
 
 
 class Intervals(ChannelEffect):
@@ -317,7 +317,7 @@ class TempoShift(TrackEffect):
         self.track.tempo_shift = self.value
 
     def remove(self):
-        self.track.tempo_shift = player.TEMPO_SHIFT_DEFAULT
+        self.track.tempo_shift = audio.TEMPO_SHIFT_DEFAULT
 
 
 class Modulation(ChannelEffect):
