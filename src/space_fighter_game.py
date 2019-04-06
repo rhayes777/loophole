@@ -15,23 +15,6 @@ clock = pygame.time.Clock()
 
 directory = path.dirname(path.realpath(__file__))
 
-player = model_space_fighter.Player()
-model = model_space_fighter.SpaceFighterModel()
-model.add_player(player)
-
-
-def button_listener(button):
-    print(button)
-    if button == "centre":
-        player.velocity = (0, 0)
-    elif button == "left":
-        player.velocity = (-config.SPACE_FIGHTER_PLAYER_VELOCITY, 0)
-    elif button == "right":
-        player.velocity = (config.SPACE_FIGHTER_PLAYER_VELOCITY, 0)
-    elif button == "a":
-        player.fire()
-
-
 note_queue = Queue()
 
 
@@ -40,10 +23,41 @@ def message_read_listener(msg):
         note_queue.put(msg)
 
 
+model = model_space_fighter.SpaceFighterModel()
+
 track = pl.Track("{}/media/audio/{}".format(directory, config.TRACK_NAME), is_looping=True,
                  message_read_listener=message_read_listener, play_notes=False)
 
-controller = input.ArcadeController(pygame, button_listener)
+
+class Player(object):
+    def __init__(self, number):
+        self.number = number
+        self.controller = input.ArcadeController(pygame, self.button_listener)
+        self.model_player = model_space_fighter.Player()
+        model.add_player(self.model_player)
+
+    def __repr__(self):
+        return "<{} {}>".format(self.__class__.__name__, self.number)
+
+    def button_listener(self, button):
+        print(button)
+        if button == "centre":
+            self.model_player.velocity = (0, 0)
+        elif button == "left":
+            self.model_player.velocity = (-config.SPACE_FIGHTER_PLAYER_VELOCITY, 0)
+        elif button == "right":
+            self.model_player.velocity = (config.SPACE_FIGHTER_PLAYER_VELOCITY, 0)
+        elif button == "a":
+            self.model_player.fire()
+
+    def step(self):
+        self.controller.read()
+        visual.player_cursor_instance.draw(self.model_player.position)
+        for shot in self.model_player.shots:
+            visual.Note(visual.sprite_sheet.image_for_angle(shot.angle), shot.position)
+
+
+player = Player(0)
 
 play = True
 
@@ -51,17 +65,14 @@ track.start()
 
 if __name__ == "__main__":
     while play:
-        controller.read()
+
         clock.tick(24)
         model.step_forward()
 
         while not note_queue.empty():
             model.add_note(note_queue.get())
 
-        for player in model.players:
-            visual.player_cursor_instance.draw(player.position)
-            for shot in player.shots:
-                visual.Note(visual.sprite_sheet.image_for_angle(shot.angle), shot.position)
+        player.step()
 
         for alien in model.aliens:
             visual.Note(visual.sprite_sheet.image_for_angle(alien.angle), alien.position)

@@ -28,8 +28,9 @@ class AbstractController(object):
 
 
 class ArcadeController(AbstractController):
-    def __init__(self, pygame, button_listener):
-        super(ArcadeController, self).__init__(pygame)
+    def __init__(self, pygame, button_listener, number=0):
+        super(ArcadeController, self).__init__(pygame, number=number
+                                               )
         self.button_listener = button_listener
 
     def read(self):
