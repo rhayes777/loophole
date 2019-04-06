@@ -24,6 +24,7 @@ input_names = mido.get_output_names()
 
 REFACE = 'reface DX'
 MPX = 'MPX16'
+USB_MIDI = 'USB Midi'
 SIMPLE_SYNTH = 'SimpleSynth virtual input'
 
 CHANNEL_PARTITION = 8
@@ -135,8 +136,9 @@ def set_program(channel=0, program=0):
     keys_port.send(mido.Message('program_change', program=program, time=0, channel=channel))
 
 
-keys_port = make_port(REFACE)
-drum_port = make_port(MPX)
+# keys_port = make_port(REFACE)
+keys_port = mido.open_output("USB Midi ")
+# drum_port = make_port(MPX)
 
 
 class Intervals:
@@ -197,7 +199,8 @@ class Channel(object):
         self.listening_queue = None
         self.number = number
         # Decides which port output should be used depending on the channel number
-        self.port = keys_port if number < CHANNEL_PARTITION else drum_port
+        # self.port = keys_port if number < CHANNEL_PARTITION else drum_port
+        self.port = keys_port
         self.__volume = volume
         self.__volume_queue = Queue()
         self.fade_rate = fade_rate
