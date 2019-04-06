@@ -25,7 +25,7 @@ def message_read_listener(msg):
 
 model = model_space_fighter.SpaceFighterModel()
 
-track = pl.Track("{}/media/audio/{}".format(directory, config.TRACK_NAME), is_looping=True,
+track = pl.Track("{}/../media/audio/{}".format(directory, config.TRACK_NAME), is_looping=True,
                  message_read_listener=message_read_listener, play_notes=False)
 
 
