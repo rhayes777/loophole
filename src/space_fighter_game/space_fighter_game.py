@@ -33,9 +33,11 @@ class Player(object):
     def __init__(self, number):
         self.is_started = False
         self.number = number
-        self.controller = input.ArcadeController(self.button_listener)
+        self.controller = input.ArcadeController(self.button_listener, number)
         self.model_player = model_space_fighter.Player()
         self.cursor = None
+        self.start_position = config.PLAYER_ONE_START if number == 0 else config.PLAYER_TWO_START
+        self.model_player.position = self.start_position
         model.add_player(self.model_player)
 
     def __repr__(self):
@@ -62,6 +64,10 @@ class Player(object):
             self.cursor.draw(self.model_player.position)
             for shot in self.model_player.shots:
                 visual.Note(visual.sprite_sheet.image_for_angle(shot.angle), shot.position)
+
+        else:
+            visual.make_score_notice("Player {} start".format(self.number + 1), self.start_position, 5,
+                                     visual.Color.WHITE)
 
 
 player = Player(0)
