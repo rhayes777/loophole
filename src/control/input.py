@@ -40,7 +40,6 @@ class ArcadeController(AbstractController):
     @classmethod
     def read(cls):
         for event in pygame.event.get():
-            print(event)
             if hasattr(event, "joy"):
                 ArcadeController.controllers[event.joy].on_event(event)
 
