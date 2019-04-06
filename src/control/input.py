@@ -1,4 +1,5 @@
 import logging
+
 import pygame
 
 
@@ -21,6 +22,7 @@ class Button(object):
 class AbstractController(object):
     def __init__(self, number=0):
         try:
+            self.number = number
             self.joystick = pygame.joystick.Joystick(number)
             self.joystick.init()
         except pygame.error:
@@ -28,35 +30,44 @@ class AbstractController(object):
 
 
 class ArcadeController(AbstractController):
+    controllers = {}
+
     def __init__(self, button_listener, number=0):
         super(ArcadeController, self).__init__(number=number)
         self.button_listener = button_listener
+        ArcadeController.controllers[number] = self
 
-    def read(self):
+    @classmethod
+    def read(cls):
         for event in pygame.event.get():
-            if event.type == 7:
-                value = int(event.value)
-                if value == 0:
-                    self.button_listener("centre")
-                else:
-                    if event.axis == 1:
-                        if value == -1:
-                            self.button_listener("up")
-                        else:
-                            self.button_listener("down")
+            print(event)
+            if hasattr(event, "joy"):
+                ArcadeController.controllers[event.joy].on_event(event)
+
+    def on_event(self, event):
+        if event.type == 7:
+            value = int(event.value)
+            if value == 0:
+                self.button_listener("centre")
+            else:
+                if event.axis == 1:
+                    if value == -1:
+                        self.button_listener("up")
                     else:
-                        if value == -1:
-                            self.button_listener("left")
-                        else:
-                            self.button_listener("right")
-            elif event.type == 10:
-                if event.button == 0:
-                    self.button_listener("a")
-                elif event.button == 1:
-                    self.button_listener("b")
-            elif event.type == 11:
-                # Button up
-                pass
+                        self.button_listener("down")
+                else:
+                    if value == -1:
+                        self.button_listener("left")
+                    else:
+                        self.button_listener("right")
+        elif event.type == 10:
+            if event.button == 0:
+                self.button_listener("a")
+            elif event.button == 1:
+                self.button_listener("b")
+        elif event.type == 11:
+            # Button up
+            pass
 
 
 # Object representing a midi controller input (e.g. a dancemat)

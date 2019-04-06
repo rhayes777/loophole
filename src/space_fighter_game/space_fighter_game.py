@@ -60,7 +60,6 @@ class Player(object):
             self.button_listener(button)
 
     def step(self):
-        self.controller.read()
         if self.is_started:
             self.cursor.draw(self.model_player.position)
             for shot in self.model_player.shots:
@@ -70,7 +69,7 @@ class Player(object):
             visual.make_score_notice("Player {} start".format(self.number + 1), self.start_position, 5, self.color)
 
 
-player = Player(0)
+players = [Player(0), Player(1)]
 
 play = True
 
@@ -85,7 +84,9 @@ if __name__ == "__main__":
         while not note_queue.empty():
             model.add_note(note_queue.get())
 
-        player.step()
+        input.ArcadeController.read()
+        for player in players:
+            player.step()
 
         for alien in model.aliens:
             visual.Note(visual.sprite_sheet.image_for_angle(alien.angle), alien.position)
