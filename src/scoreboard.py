@@ -8,6 +8,24 @@ pygame.init()
 pygame.display.init()
 clock = pygame.time.Clock()
 
+letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
+           "W", "X", "Y", "Z"]
+
+
+class Score(object):
+    def __init__(self, name, value):
+        self.__name = name
+        self.value = value
+
+    @property
+    def name(self):
+        return self.__name
+
+    @classmethod
+    def from_string(cls, string):
+        name, value = string.split(",")
+        return Score(name, int(value))
+
 
 class Scoreboard(object):
     def __init__(self, score_path):
