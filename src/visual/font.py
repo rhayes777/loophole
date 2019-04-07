@@ -1,6 +1,7 @@
-import pygame
 import math
 from os import path
+
+import pygame
 
 # Init pygame font module
 pygame.font.init()
@@ -24,8 +25,6 @@ notices_list = []
 
 # notice class handles messages displayed to screen using fonts
 class Notice(object):
-    alpha = None  # type: int
-
     def __init__(self, words, position, color, size, this_font, life, rate=1):
         self.position = position
         self.words = words
@@ -36,6 +35,7 @@ class Notice(object):
         self.life = life
         self.timer = self.life
         self.rate = rate
+        self.alpha = 255
 
         # append each Letter instance to char_list
         for i in range(len(self.words)):
@@ -45,13 +45,12 @@ class Notice(object):
 
     # draw text
     def blit_text(self, this_surface):
-
-        if self.timer >= 0:
-            self.timer -= self.rate
-
-        divide = float(self.timer) / float(self.life)
-
-        self.alpha = 255 * divide
+        alpha = self.alpha
+        if self.life is not None:
+            if self.timer >= 0:
+                self.timer -= self.rate
+            divide = float(self.timer) / float(self.life)
+            alpha = 255 * divide
 
         # iterate through each Letter in char_list
         for i in range(len(self.char_list)):
@@ -62,7 +61,7 @@ class Notice(object):
 
             char_img = self.char_list[i].char_render.copy()
 
-            char_img.fill(self.color + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
+            char_img.fill(self.color + (alpha,), None, pygame.BLEND_RGBA_MULT)
 
             this_surface.blit(char_img,
                               (self.position[0] - start_x + (i * char_size_x),
