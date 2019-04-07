@@ -16,19 +16,19 @@ class Scoreboard(object):
             self.scores = list(map(lambda line: line.split(","), f.read().split("\n")))
 
     def show(self):
-        position = (config.screen_shape[0] / 2, config.GAP)
+        position = (config.screen_shape[0] / 2, 2 * config.GAP)
         visual.make_score_notice("High Scores", position, None, visual.Color.WHITE)
+        position = (position[0], position[1] + 2 * config.GAP)
         for score in self.scores:
+            visual.make_score_notice(" ".join(score), position, 5, visual.Color.WHITE)
             position = (position[0], position[1] + config.GAP)
-            print score
-            print position
-
-            visual.make_score_notice("{} {}".join(score), position, None, visual.Color.WHITE)
 
 
 if __name__ == "__main__":
-    Scoreboard("scores.txt").show()
+    scoreboard = Scoreboard("scores.txt")
+
     while True:
+        scoreboard.show()
         clock.tick(24)
 
         input.ArcadeController.read()
