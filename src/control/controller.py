@@ -50,7 +50,7 @@ class ArcadeController(AbstractController):
         for event in pygame.event.get():
             if hasattr(event, "joy"):
                 ArcadeController.controllers[event.joy].on_event(event)
-            if hasattr(event, "key"):
+            elif hasattr(event, "key"):
                 key_dict = {
                     (97, 2): (0, MockEvent(event_type=7, axis=0, value=-1)),
                     (97, 3): (0, MockEvent(event_type=7, axis=0, value=0)),
