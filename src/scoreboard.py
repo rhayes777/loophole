@@ -1,7 +1,7 @@
 import pygame
 
 import config
-from control import input
+from control import controller
 from visual import visual
 
 pygame.init()
@@ -49,6 +49,6 @@ if __name__ == "__main__":
         scoreboard.show()
         clock.tick(24)
 
-        input.ArcadeController.read()
+        controller.ArcadeController.read()
 
         visual.draw()

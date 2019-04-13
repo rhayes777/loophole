@@ -1,7 +1,7 @@
 from audio import audio, effect
 import messaging
 import signal
-import input
+import controller
 import logging
 
 logging.basicConfig()
@@ -81,13 +81,13 @@ class Normal(State):
 
     def did_receive_on_buttons(self, buttons):
         super(Normal, self).did_receive_on_buttons(buttons)
-        if input.Button.start in buttons:
+        if controller.Button.start in buttons:
             self.track_number += 1
             if self.track is not None:
                 self.track.stop()
             self.change_to_track_with_name(self.selected_track_name)
             self.track.start()
-        elif input.Button.select in buttons:
+        elif controller.Button.select in buttons:
             self.track_number -= 1
             if self.track is not None:
                 self.track.stop()

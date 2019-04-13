@@ -6,7 +6,7 @@ import pygame
 import config
 import model_space_fighter
 from audio import audio as pl
-from control import input
+from control import controller
 from visual import visual
 
 pygame.init()
@@ -33,7 +33,7 @@ class Player(object):
     def __init__(self, number):
         self.is_started = False
         self.number = number
-        self.controller = input.ArcadeController(self.button_listener, number)
+        self.controller = controller.ArcadeController(self.button_listener, number)
         self.model_player = model_space_fighter.Player()
         self.cursor = None
         self.start_position = config.PLAYER_ONE_START if number == 0 else config.PLAYER_TWO_START
@@ -84,7 +84,7 @@ if __name__ == "__main__":
         while not note_queue.empty():
             model.add_note(note_queue.get())
 
-        input.ArcadeController.read()
+        controller.ArcadeController.read()
         for player in players:
             player.step()
 

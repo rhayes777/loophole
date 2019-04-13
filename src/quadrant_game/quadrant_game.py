@@ -11,7 +11,7 @@ import model
 import model_quadrant_game
 from audio import audio as pl
 from audio.audio import play_note
-from control import input
+from control import controller
 from visual import visual
 
 note_queue = Queue()
@@ -69,7 +69,7 @@ def button_listener(button):
     model_instance.boost(boost_dict[button])
 
 
-controller = input.ArcadeController(pygame, button_listener)
+controller = controller.ArcadeController(pygame, button_listener)
 
 
 def rand_tuple():
