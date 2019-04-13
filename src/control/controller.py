@@ -29,6 +29,13 @@ class AbstractController(object):
             logging.warning("Controller {} not found".format(number))
 
 
+class MockEvent(object):
+    def __init__(self, event_type, axis=None, value=None):
+        self.type = event_type
+        self.axis = axis
+        self.value = value
+
+
 class ArcadeController(AbstractController):
     controllers = {}
 
@@ -42,6 +49,27 @@ class ArcadeController(AbstractController):
         for event in pygame.event.get():
             if hasattr(event, "joy"):
                 ArcadeController.controllers[event.joy].on_event(event)
+            if hasattr(event, "key"):
+                key_dict = {
+                    (97, 2): "a down",
+                    (97, 3): "a up",
+                    (115, 2): "s down",
+                    (115, 3): "s up",
+                    (100, 2): "d down",
+                    (100, 3): "d up",
+                    (102, 2): "f down",
+                    (102, 3): "f up",
+                    (104, 2): "h down",
+                    (104, 3): "h up",
+                    (106, 2): "j down",
+                    (106, 3): "j up",
+                    (107, 2): "k down",
+                    (107, 3): "k up",
+                    (108, 2): "l down",
+                    (108, 3): "l up",
+                }
+                print key_dict[(event.key, event.type)]
+                # print dir(event)
 
     def on_event(self, event):
         if event.type == 7:
