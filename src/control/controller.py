@@ -56,6 +56,10 @@ class ArcadeController(AbstractController):
                     (97, 3): (0, MockEvent(event_type=7, axis=0, value=0)),
                     (115, 2): (0, MockEvent(event_type=7, axis=0, value=1)),
                     (115, 3): (0, MockEvent(event_type=7, axis=0, value=0)),
+                    (119, 2): (0, MockEvent(event_type=7, axis=1, value=-1)),
+                    (119, 3): (0, MockEvent(event_type=7, axis=1, value=0)),
+                    (120, 2): (0, MockEvent(event_type=7, axis=1, value=1)),
+                    (120, 3): (0, MockEvent(event_type=7, axis=1, value=0)),
                     (100, 2): (0, MockEvent(event_type=10, button=0)),
                     (100, 3): (0, MockEvent(event_type=11, button=0)),
                     (102, 2): (0, MockEvent(event_type=10, button=1)),
@@ -64,6 +68,10 @@ class ArcadeController(AbstractController):
                     (104, 3): (1, MockEvent(event_type=7, axis=0, value=0)),
                     (106, 2): (1, MockEvent(event_type=7, axis=0, value=1)),
                     (106, 3): (1, MockEvent(event_type=7, axis=0, value=0)),
+                    (117, 2): (1, MockEvent(event_type=7, axis=1, value=-1)),
+                    (117, 3): (1, MockEvent(event_type=7, axis=1, value=0)),
+                    (109, 2): (1, MockEvent(event_type=7, axis=1, value=1)),
+                    (109, 3): (1, MockEvent(event_type=7, axis=1, value=0)),
                     (107, 2): (1, MockEvent(event_type=10, button=0)),
                     (107, 3): (1, MockEvent(event_type=11, button=0)),
                     (108, 2): (1, MockEvent(event_type=10, button=1)),
@@ -74,7 +82,6 @@ class ArcadeController(AbstractController):
                     ArcadeController.controllers[value[0]].on_event(value[1])
                 except KeyError:
                     pass
-                # print dir(event)
 
     def on_event(self, event):
         if event.type == 7:
