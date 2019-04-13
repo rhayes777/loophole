@@ -30,10 +30,11 @@ class AbstractController(object):
 
 
 class MockEvent(object):
-    def __init__(self, event_type, axis=None, value=None):
+    def __init__(self, event_type, axis=None, value=None, button=None):
         self.type = event_type
         self.axis = axis
         self.value = value
+        self.button = button
 
 
 class ArcadeController(AbstractController):
@@ -51,24 +52,28 @@ class ArcadeController(AbstractController):
                 ArcadeController.controllers[event.joy].on_event(event)
             if hasattr(event, "key"):
                 key_dict = {
-                    (97, 2): "a down",
-                    (97, 3): "a up",
-                    (115, 2): "s down",
-                    (115, 3): "s up",
-                    (100, 2): "d down",
-                    (100, 3): "d up",
-                    (102, 2): "f down",
-                    (102, 3): "f up",
-                    (104, 2): "h down",
-                    (104, 3): "h up",
-                    (106, 2): "j down",
-                    (106, 3): "j up",
-                    (107, 2): "k down",
-                    (107, 3): "k up",
-                    (108, 2): "l down",
-                    (108, 3): "l up",
+                    (97, 2): (0, MockEvent(event_type=7, axis=0, value=-1)),
+                    (97, 3): (0, MockEvent(event_type=7, axis=0, value=0)),
+                    (115, 2): (0, MockEvent(event_type=7, axis=0, value=1)),
+                    (115, 3): (0, MockEvent(event_type=7, axis=0, value=0)),
+                    (100, 2): (0, MockEvent(event_type=10, button=0)),
+                    (100, 3): (0, MockEvent(event_type=11, button=0)),
+                    (102, 2): (0, MockEvent(event_type=10, button=1)),
+                    (102, 3): (0, MockEvent(event_type=11, button=1)),
+                    (104, 2): (1, MockEvent(event_type=7, axis=0, value=-1)),
+                    (104, 3): (1, MockEvent(event_type=7, axis=0, value=0)),
+                    (106, 2): (1, MockEvent(event_type=7, axis=0, value=1)),
+                    (106, 3): (1, MockEvent(event_type=7, axis=0, value=0)),
+                    (107, 2): (1, MockEvent(event_type=10, button=0)),
+                    (107, 3): (1, MockEvent(event_type=11, button=0)),
+                    (108, 2): (1, MockEvent(event_type=10, button=1)),
+                    (108, 3): (1, MockEvent(event_type=11, button=1)),
                 }
-                print key_dict[(event.key, event.type)]
+                try:
+                    value = key_dict[(event.key, event.type)]
+                    ArcadeController.controllers[value[0]].on_event(value[1])
+                except KeyError:
+                    pass
                 # print dir(event)
 
     def on_event(self, event):
