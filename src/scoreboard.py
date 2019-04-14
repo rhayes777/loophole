@@ -68,6 +68,10 @@ class Scoreboard(object):
         with open(self.score_path) as f:
             self.scores = list(map(lambda line: Score(*line.split(",")), f.read().split("\n")))
 
+    def save(self):
+        with open(self.score_path, "w") as f:
+            f.write("\n".join(map(lambda score: "{},{}".format(score.name, score.value), self.scores)))
+
     def show(self):
         position = (config.screen_shape[0] / 2, 2 * config.GAP)
         visual.make_score_notice("High Scores", position, None, visual.Color.WHITE)
@@ -81,6 +85,7 @@ class Scoreboard(object):
 
 
 scoreboard = Scoreboard("scores.txt")
+players = []
 
 
 class Player(object):
@@ -88,28 +93,34 @@ class Player(object):
         self.number = number
         self.controller = controller.ArcadeController(self.button_listener, number)
         self.score = score
+        self.is_active = True
 
     def __repr__(self):
         return "<{} {}>".format(self.__class__.__name__, self.number)
 
     def button_listener(self, button):
-        if button == "up":
-            self.score.move_up()
-        elif button == "down":
-            self.score.move_down()
-        elif button == "left":
-            self.score.move_left()
-        elif button == "right":
-            self.score.move_right()
-        elif button == "a":
-            pass
+        if self.is_active:
+            if button == "up":
+                self.score.move_up()
+            elif button == "down":
+                self.score.move_down()
+            elif button == "left":
+                self.score.move_left()
+            elif button == "right":
+                self.score.move_right()
+            elif button == "a":
+                scoreboard.save()
+                self.is_active = False
 
 
 def show_scoreboard(player_one_score=None, player_two_score=None):
+    global players
+    players = []
+
     def add_player(number, score):
         new_score = NewScore(score)
         scoreboard.add_score(new_score)
-        Player(number, new_score)
+        players.append(Player(number, new_score))
 
     if player_one_score is not None:
         add_player(0, player_one_score)
