@@ -80,26 +80,42 @@ class Scoreboard(object):
         self.scores = list(sorted(self.scores + [new_score], reverse=True))
 
 
-if __name__ == "__main__":
-    scoreboard = Scoreboard("scores.txt")
-    new_score = NewScore(1234)
-    scoreboard.add_score(new_score)
+scoreboard = Scoreboard("scores.txt")
 
 
-    def button_listener(button):
+class Player(object):
+    def __init__(self, number, score):
+        self.number = number
+        self.controller = controller.ArcadeController(self.button_listener, number)
+        self.score = score
+
+    def __repr__(self):
+        return "<{} {}>".format(self.__class__.__name__, self.number)
+
+    def button_listener(self, button):
         if button == "up":
-            new_score.move_up()
+            self.score.move_up()
         elif button == "down":
-            new_score.move_down()
+            self.score.move_down()
         elif button == "left":
-            new_score.move_left()
+            self.score.move_left()
         elif button == "right":
-            new_score.move_right()
+            self.score.move_right()
         elif button == "a":
             pass
 
 
-    cont = controller.ArcadeController(button_listener)
+def show_scoreboard(player_one_score=None, player_two_score=None):
+    def add_player(number, score):
+        new_score = NewScore(score)
+        scoreboard.add_score(new_score)
+        Player(number, new_score)
+
+    if player_one_score is not None:
+        add_player(0, player_one_score)
+
+    if player_two_score is not None:
+        add_player(1, player_two_score)
 
     while True:
         scoreboard.show()
@@ -108,3 +124,7 @@ if __name__ == "__main__":
         controller.ArcadeController.read()
 
         visual.draw()
+
+
+if __name__ == "__main__":
+    show_scoreboard(1234, 5678)
