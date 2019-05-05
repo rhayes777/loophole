@@ -21,8 +21,14 @@ def run_game(game):
         visual.sprite_group_notes.empty()
 
     game.stop()
-    scoreboard.show_scoreboard(*game.scores)
+
+
+def main():
+    while True:
+        game = space_fighter_game.SpaceFighterGame()
+        run_game(game)
+        scoreboard.show_scoreboard(*game.scores)
 
 
 if __name__ == "__main__":
-    run_game(space_fighter_game.SpaceFighterGame())
+    main()

@@ -97,6 +97,7 @@ class Player(object):
         self.controller = controller.ArcadeController(self.button_listener, number)
         self.score = score
         self.is_active = True
+        self.is_bored = False
 
     def __repr__(self):
         return "<{} {}>".format(self.__class__.__name__, self.number)
@@ -115,7 +116,8 @@ class Player(object):
                 if cycle > wait_cycles:
                     scoreboard.save()
                     self.is_active = False
-
+        elif button == "a":
+            self.is_bored = True
 
 
 def show_scoreboard(player_one_score=None, player_two_score=None):
@@ -143,6 +145,14 @@ def show_scoreboard(player_one_score=None, player_two_score=None):
         controller.ArcadeController.read()
 
         visual.draw()
+
+        print "checking"
+        print "is_bored = {}".format(any(player.is_bored for player in players))
+        print "is_active = {}".format(any(player.is_active for player in players))
+        if any(player.is_bored for player in players) and not any(player.is_active for player in players):
+            print "breaking"
+            break
+    print "done"
 
 
 if __name__ == "__main__":

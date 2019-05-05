@@ -447,6 +447,7 @@ class Track(Thread):
     def run(self):
         """Play the midi file (call start() to run on new thread)"""
         self.is_stopping = False
+        self.stop_all_notes()
         play = self.mid.play(meta_messages=True)
 
         while True:
