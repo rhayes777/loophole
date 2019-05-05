@@ -69,7 +69,7 @@ class Scoreboard(object):
     def __init__(self, score_path):
         self.score_path = score_path
         with open(self.score_path) as f:
-            self.scores = list(map(lambda line: Score(*line.split(",")), f.read().split("\n")))
+            self.scores = list(map(lambda line: Score(*line.split(",")), f.read().split("\n")))[:config.NUMBER_OF_SCORES]
 
     def save(self):
         with open(self.score_path, "w") as f:
