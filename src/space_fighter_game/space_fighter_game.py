@@ -16,12 +16,46 @@ clock = pygame.time.Clock()
 
 directory = path.dirname(path.realpath(__file__))
 
-note_queue = Queue()
 
+class SpaceFighterGame(object):
+    def __init__(self):
+        self.note_queue = Queue()
+        self.model = model_space_fighter.SpaceFighterModel()
+        self.players = [Player(n, self.model.new_player()) for n in range(2)]
 
-def message_read_listener(msg):
-    if msg.type == "note_on":
-        note_queue.put(msg)
+        self.track = pl.Track("{}/../media/audio/{}".format(directory, config.TRACK_NAME), is_looping=True,
+                              message_read_listener=self.message_read_listener, play_notes=True)
+
+    def message_read_listener(self, msg):
+        if msg.type == "note_on":
+            self.note_queue.put(msg)
+
+    def start(self):
+        self.track.start()
+
+    def stop(self):
+        self.track.stop()
+
+    def step_forward(self):
+        self.model.step_forward()
+
+        while not self.note_queue.empty():
+            self.model.add_note(self.note_queue.get())
+
+        controller.ArcadeController.read()
+        for player in self.players:
+            player.step()
+
+        for alien in self.model.aliens:
+            visual.Note(visual.sprite_sheet.image_for_angle(alien.angle), alien.position)
+
+    @property
+    def should_continue(self):
+        return not any(player.model_player.score == 50 for player in self.players)
+
+    @property
+    def scores(self):
+        return (player.model_player.score for player in self.players)
 
 
 class Player(object):
@@ -63,37 +97,19 @@ class Player(object):
             visual.make_score_notice("Player {} start".format(self.number + 1), self.start_position, 5, self.color)
 
 
-model = model_space_fighter.SpaceFighterModel()
-players = [Player(n, model.new_player()) for n in range(2)]
-
-track = pl.Track("{}/../media/audio/{}".format(directory, config.TRACK_NAME), is_looping=True,
-                 message_read_listener=message_read_listener, play_notes=True)
-
 play = True
 
-track.start()
+game = SpaceFighterGame()
+game.start()
 
 if __name__ == "__main__":
-    while play:
-
+    while game.should_continue:
         clock.tick(24)
-        model.step_forward()
 
-        while not note_queue.empty():
-            model.add_note(note_queue.get())
-
-        controller.ArcadeController.read()
-        for player in players:
-            player.step()
-
-        for alien in model.aliens:
-            visual.Note(visual.sprite_sheet.image_for_angle(alien.angle), alien.position)
+        game.step_forward()
 
         visual.draw()
         visual.sprite_group_notes.empty()
 
-        if any(player.model_player.score == 50 for player in players):
-            play = False
-
-    track.stop()
-    scoreboard.show_scoreboard(*(player.model_player.score for player in players))
+    game.stop()
+    scoreboard.show_scoreboard(*game.scores)
