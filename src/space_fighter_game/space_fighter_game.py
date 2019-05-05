@@ -2,6 +2,7 @@ from Queue import Queue
 from os import path
 
 import pygame
+import scoreboard
 
 import config
 import model_space_fighter
@@ -26,7 +27,7 @@ def message_read_listener(msg):
 model = model_space_fighter.SpaceFighterModel()
 
 track = pl.Track("{}/../media/audio/{}".format(directory, config.TRACK_NAME), is_looping=True,
-                 message_read_listener=message_read_listener, play_notes=False)
+                 message_read_listener=message_read_listener, play_notes=True)
 
 
 class Player(object):
@@ -93,3 +94,9 @@ if __name__ == "__main__":
 
         visual.draw()
         visual.sprite_group_notes.empty()
+
+        if any(player.model_player.score == 50 for player in players):
+            play = False
+
+    track.stop()
+    scoreboard.show_scoreboard(*(player.model_player.score for player in players))
