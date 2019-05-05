@@ -2,10 +2,10 @@ from Queue import Queue
 from os import path
 
 import pygame
-import scoreboard
 
 import config
 import model_space_fighter
+import scoreboard
 from audio import audio as pl
 from control import controller
 from visual import visual
@@ -24,23 +24,16 @@ def message_read_listener(msg):
         note_queue.put(msg)
 
 
-model = model_space_fighter.SpaceFighterModel()
-
-track = pl.Track("{}/../media/audio/{}".format(directory, config.TRACK_NAME), is_looping=True,
-                 message_read_listener=message_read_listener, play_notes=True)
-
-
 class Player(object):
-    def __init__(self, number):
+    def __init__(self, number, model_player):
         self.is_started = False
         self.number = number
         self.controller = controller.ArcadeController(self.button_listener, number)
-        self.model_player = model_space_fighter.Player()
+        self.model_player = model_player
         self.cursor = None
         self.start_position = config.PLAYER_ONE_START if number == 0 else config.PLAYER_TWO_START
         self.model_player.position = self.start_position
         self.color = visual.Color.WHITE
-        model.add_player(self.model_player)
 
     def __repr__(self):
         return "<{} {}>".format(self.__class__.__name__, self.number)
@@ -70,7 +63,11 @@ class Player(object):
             visual.make_score_notice("Player {} start".format(self.number + 1), self.start_position, 5, self.color)
 
 
-players = [Player(0), Player(1)]
+model = model_space_fighter.SpaceFighterModel()
+players = [Player(n, model.new_player()) for n in range(2)]
+
+track = pl.Track("{}/../media/audio/{}".format(directory, config.TRACK_NAME), is_looping=True,
+                 message_read_listener=message_read_listener, play_notes=True)
 
 play = True
 

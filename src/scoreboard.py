@@ -8,6 +8,9 @@ pygame.init()
 pygame.display.init()
 clock = pygame.time.Clock()
 
+wait_cycles = 10
+cycle = 0
+
 letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
            "V",
            "W", "X", "Y", "Z"]
@@ -109,12 +112,15 @@ class Player(object):
             elif button == "right":
                 self.score.move_right()
             elif button == "a":
-                scoreboard.save()
-                self.is_active = False
+                if cycle > wait_cycles:
+                    scoreboard.save()
+                    self.is_active = False
+
 
 
 def show_scoreboard(player_one_score=None, player_two_score=None):
     global players
+    global cycle
     players = []
 
     def add_player(number, score):
@@ -131,6 +137,8 @@ def show_scoreboard(player_one_score=None, player_two_score=None):
     while True:
         scoreboard.show()
         clock.tick(24)
+
+        cycle += 1
 
         controller.ArcadeController.read()
 

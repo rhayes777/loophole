@@ -47,6 +47,11 @@ class SpaceFighterModel(object):
     def add_player(self, player):
         self.players.append(player)
 
+    def new_player(self):
+        player = Player()
+        self.add_player(player)
+        return player
+
     def add_note(self, note):
         x_position = (float(note.note % self.notes_per_side) / self.notes_per_side) * self.screen_shape[0]
         self.aliens.append(model.NoteObject(note=note, velocity=(0, config.SPEED), position=(x_position, 0)))
