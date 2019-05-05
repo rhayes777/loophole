@@ -1,18 +1,11 @@
 from Queue import Queue
 from os import path
 
-import pygame
-
 import config
 import model_space_fighter
-import scoreboard
 from audio import audio as pl
 from control import controller
 from visual import visual
-
-pygame.init()
-pygame.display.init()
-clock = pygame.time.Clock()
 
 directory = path.dirname(path.realpath(__file__))
 
@@ -95,21 +88,3 @@ class Player(object):
             visual.make_score_notice(self.model_player.score, self.start_position, 5, self.color)
         else:
             visual.make_score_notice("Player {} start".format(self.number + 1), self.start_position, 5, self.color)
-
-
-play = True
-
-game = SpaceFighterGame()
-game.start()
-
-if __name__ == "__main__":
-    while game.should_continue:
-        clock.tick(24)
-
-        game.step_forward()
-
-        visual.draw()
-        visual.sprite_group_notes.empty()
-
-    game.stop()
-    scoreboard.show_scoreboard(*game.scores)
