@@ -69,7 +69,8 @@ class Scoreboard(object):
     def __init__(self, score_path):
         self.score_path = score_path
         with open(self.score_path) as f:
-            self.scores = list(map(lambda line: Score(*line.split(",")), f.read().split("\n")))[:config.NUMBER_OF_SCORES]
+            self.scores = list(map(lambda line: Score(*line.split(",")), f.read().split("\n")))[
+                          :config.NUMBER_OF_SCORES]
 
     def save(self):
         with open(self.score_path, "w") as f:
@@ -146,13 +147,8 @@ def show_scoreboard(player_one_score=None, player_two_score=None):
 
         visual.draw()
 
-        print "checking"
-        print "is_bored = {}".format(any(player.is_bored for player in players))
-        print "is_active = {}".format(any(player.is_active for player in players))
         if any(player.is_bored for player in players) and not any(player.is_active for player in players):
-            print "breaking"
             break
-    print "done"
 
 
 if __name__ == "__main__":

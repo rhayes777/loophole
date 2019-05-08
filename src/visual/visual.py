@@ -153,6 +153,9 @@ class PlayerCursor(pygame.sprite.Sprite):
 
         self.rect = (new_x, new_y)
 
+    def remove(self):
+        super(PlayerCursor, self).remove(sprite_group_player)
+
 
 circle_effects_list = []
 

@@ -43,8 +43,14 @@ class SpaceFighterGame(object):
             visual.Note(visual.sprite_sheet.image_for_angle(alien.angle), alien.position)
 
     @property
+    def started_players(self):
+        return [player for player in self.players if player.is_started]
+
+    @property
     def should_continue(self):
-        return not any(player.model_player.score == 50 for player in self.players)
+        if len(self.started_players) == 0:
+            return True
+        return not all(player.is_dead for player in self.started_players)
 
     @property
     def scores(self):
@@ -53,7 +59,6 @@ class SpaceFighterGame(object):
 
 class Player(object):
     def __init__(self, number, model_player):
-        self.is_started = False
         self.number = number
         self.controller = controller.ArcadeController(self.button_listener, number)
         self.model_player = model_player
@@ -63,8 +68,20 @@ class Player(object):
         self.color = visual.Color.WHITE
 
     @property
+    def is_started(self):
+        return self.model_player.is_started
+
+    @is_started.setter
+    def is_started(self, is_started):
+        self.model_player.is_started = is_started
+
+    @property
     def lives_position(self):
         return self.start_position[0] + config.LIVES_OFFSET, self.start_position[1]
+
+    @property
+    def is_dead(self):
+        return self.model_player.lives <= 0
 
     def __repr__(self):
         return "<{} {}>".format(self.__class__.__name__, self.number)
@@ -85,7 +102,10 @@ class Player(object):
             self.button_listener(button)
 
     def step(self):
-        if self.is_started:
+        if self.is_dead:
+            visual.make_score_notice("DEAD", self.lives_position, 5, visual.Color.RED)
+            self.cursor.remove()
+        elif self.is_started:
             self.cursor.draw(self.model_player.position)
             for shot in self.model_player.shots:
                 visual.Note(visual.sprite_sheet.image_for_angle(shot.angle), shot.position, colour=self.color)

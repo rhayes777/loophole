@@ -14,6 +14,7 @@ class Player(model.Object):
         self.shots = list()
         self.score = 0
         self.lives = 3
+        self.is_started = False
 
     def step_forward(self):
         super(Player, self).step_forward()
@@ -56,21 +57,19 @@ class SpaceFighterModel(object):
             if alien.is_out_of_bounds:
                 self.aliens.remove(alien)
         for player in self.players:
-            player.step_forward()
-            for alien in self.aliens:
-                if alien.is_in_range(player):
-                    player.lives = max(player.lives - 1, 0)
-                for shot in player.shots:
-                    if shot.is_in_range(alien):
-                        # try:
-                        #     player.shots.remove(shot)
-                        # except ValueError:
-                        #     pass
-                        try:
-                            self.aliens.remove(alien)
-                            player.score += 1
-                        except ValueError:
-                            pass
+            if player.is_started:
+                player.step_forward()
+                for alien in self.aliens:
+                    if alien.is_in_range(player):
+                        player.lives = max(player.lives - 1, 0)
+                        self.aliens.remove(alien)
+                    for shot in player.shots:
+                        if shot.is_in_range(alien):
+                            try:
+                                self.aliens.remove(alien)
+                                player.score += 1
+                            except ValueError:
+                                pass
 
 
 class TestCase(object):
