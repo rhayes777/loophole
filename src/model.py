@@ -11,6 +11,11 @@ class Object(object):
         self.angle = angle
         self.rotation_speed = rotation_speed
 
+    def is_in_range(self, other_object):
+        distance = ((self.position[0] - other_object.position[0]) ** 2 + (
+                    self.position[1] - other_object.position[1]) ** 2) ** 0.5
+        return distance < config.COLLISION_RADIUS
+
     @property
     def is_out_of_bounds(self):
         return self.position[0] > config.screen_shape[0] or self.position[0] < 0 or self.position[

@@ -62,6 +62,10 @@ class Player(object):
         self.model_player.position = self.start_position
         self.color = visual.Color.WHITE
 
+    @property
+    def lives_position(self):
+        return self.start_position[0] + config.LIVES_OFFSET, self.start_position[1]
+
     def __repr__(self):
         return "<{} {}>".format(self.__class__.__name__, self.number)
 
@@ -86,5 +90,6 @@ class Player(object):
             for shot in self.model_player.shots:
                 visual.Note(visual.sprite_sheet.image_for_angle(shot.angle), shot.position, colour=self.color)
             visual.make_score_notice(self.model_player.score, self.start_position, 5, self.color)
+            visual.make_score_notice(self.model_player.lives, self.lives_position, 5, visual.Color.RED)
         else:
             visual.make_score_notice("Player {} start".format(self.number + 1), self.start_position, 5, self.color)
