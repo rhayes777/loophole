@@ -54,7 +54,7 @@ class SpaceFighterGame(object):
 
     @property
     def scores(self):
-        return (player.model_player.score for player in self.players)
+        return (player.model_player.score for player in self.started_players)
 
 
 class Player(object):
