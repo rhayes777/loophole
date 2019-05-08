@@ -57,6 +57,14 @@ class Color(object):
     ORANGE_MID = (94, 58, 0)
     ORANGE_LIGHT = (200, 184, 0)
 
+    APPLIANCE_WHITE = (238, 244, 44)
+    FLIRT = (234, 68, 152)
+    KEEN = (219, 196, 0)
+    VINO = (121, 73, 107)
+    VENOM = (90, 32, 73)
+    SHAKA = (0, 119, 139)
+    LIGHTNING = (0, 181, 204)
+
 
 SCREEN_SHAPE = config.screen_shape
 

@@ -65,7 +65,7 @@ class Player(object):
         self.cursor = None
         self.start_position = config.PLAYER_ONE_START if number == 0 else config.PLAYER_TWO_START
         self.model_player.position = self.start_position
-        self.color = visual.Color.WHITE
+        self.color = visual.Color.KEEN if number == 0 else visual.Color.FLIRT
 
     @property
     def is_started(self):
