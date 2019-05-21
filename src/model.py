@@ -33,8 +33,8 @@ class Object(object):
 
 
 class NoteObject(Object):
-    def __init__(self, position=(0., 0.), velocity=(0., 0.), acceleration=(0., 0.), note=None):
-        super(NoteObject, self).__init__(position, velocity, acceleration)
+    def __init__(self, position=(0., 0.), velocity=(0., 0.), acceleration=(0., 0.), note=None, rotation_speed=0.5):
+        super(NoteObject, self).__init__(position, velocity, acceleration, rotation_speed)
         self.note = note
 
 
