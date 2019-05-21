@@ -9,6 +9,8 @@ from visual import visual
 
 directory = path.dirname(path.realpath(__file__))
 
+COLORS = [visual.Color.FLIRT, visual.Color.KEEN, visual.Color.LIGHTNING, visual.Color.SHAKA]
+
 
 class SpaceFighterGame(object):
     def __init__(self):
@@ -40,7 +42,8 @@ class SpaceFighterGame(object):
             player.step()
 
         for alien in self.model.aliens:
-            visual.Note(visual.sprite_sheet.image_for_angle(alien.angle), alien.position)
+            visual.Note(visual.sprite_sheet.image_for_angle(alien.angle), alien.position,
+                        colour=COLORS[alien.note.channel % 4])
 
     @property
     def started_players(self):
