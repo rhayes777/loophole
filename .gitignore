@@ -178,3 +178,4 @@ xcuserdata/
 python2.7
 .idea
 .pytest_cache
+src/scores.txt
