@@ -13,7 +13,7 @@ class Player(model.Object):
         self.screen_shape = screen_shape
         self.shots = list()
         self.score = 0
-        self.lives = 3
+        self.lives = config.PLAYER_LIVES
         self.is_started = False
 
     def step_forward(self):

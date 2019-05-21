@@ -47,6 +47,7 @@ SHOT_SPEED = int(parser.get("space_fighter", "SHOT_SPEED"))
 
 PLAYER_ONE_START = tuple(map(int, parser.get("space_fighter", "PLAYER_ONE_START").split(",")))
 PLAYER_TWO_START = tuple(map(int, parser.get("space_fighter", "PLAYER_TWO_START").split(",")))
+PLAYER_LIVES = int(parser.get("space_fighter", "player_lives"))
 
 LIVES_OFFSET = int(parser.get("space_fighter", "LIVES_OFFSET"))
 
