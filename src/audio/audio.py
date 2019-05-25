@@ -10,9 +10,10 @@ import pygame
 # from pygame import midi
 
 import music
+from pygame import midi
 
 pygame.init()
-# midi.init()
+midi.init()
 
 print "using midi backend {}".format(config.mido_backend)
 mido.set_backend(config.mido_backend)
