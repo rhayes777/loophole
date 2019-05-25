@@ -146,7 +146,7 @@ try:
 except IOError as e:
     logging.exception(e)
     try:
-        keys_port = mido.open_output("USB Midi")
+        keys_port = mido.open_output("USB Midi MIDI 1")
     except IOError as e:
         logging.exception(e)
         keys_port = make_port(REFACE)
