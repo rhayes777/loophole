@@ -91,14 +91,14 @@ class ArcadeController(AbstractController):
             else:
                 if event.axis == 1:
                     if value == -1:
-                        self.button_listener("up")
-                    else:
-                        self.button_listener("down")
-                else:
-                    if value == -1:
                         self.button_listener("left")
                     else:
                         self.button_listener("right")
+                else:
+                    if value == -1:
+                        self.button_listener("down")
+                    else:
+                        self.button_listener("up")
         elif event.type == 10:
             if event.button == 0:
                 self.button_listener("a")
