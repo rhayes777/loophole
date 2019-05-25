@@ -138,17 +138,16 @@ def set_program(channel=0, program=0):
     keys_port.send(mido.Message('program_change', program=program, time=0, channel=channel))
 
 
-# keys_port = make_port(REFACE)
-print mido.get_output_names()
+# print mido.get_output_names()
 try:
     keys_port = mido.open_output("USB Midi ")
     print "Using USB Midi port"
 except IOError as e:
-    logging.exception(e)
+    # logging.exception(e)
     try:
         keys_port = mido.open_output("USB Midi MIDI 1")
     except IOError as e:
-        logging.exception(e)
+        # logging.exception(e)
         keys_port = make_port(REFACE)
         print "Using REFACE port"
 # drum_port = make_port(MPX)
