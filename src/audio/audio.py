@@ -10,9 +10,10 @@ import pygame
 # from pygame import midi
 
 import music
+from pygame import midi
 
 pygame.init()
-# midi.init()
+midi.init()
 
 print "using midi backend {}".format(config.mido_backend)
 mido.set_backend(config.mido_backend)
@@ -141,10 +142,12 @@ def set_program(channel=0, program=0):
 try:
     keys_port = mido.open_output("USB Midi ")
     print "Using USB Midi port"
-except IOError:
+except IOError as e:
+    logging.exception(e)
     try:
         keys_port = mido.open_output("USB Midi")
-    except IOError:
+    except IOError as e:
+        logging.exception(e)
         keys_port = make_port(REFACE)
         print "Using REFACE port"
 # drum_port = make_port(MPX)
