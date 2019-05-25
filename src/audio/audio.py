@@ -139,8 +139,10 @@ def set_program(channel=0, program=0):
 # keys_port = make_port(REFACE)
 try:
     keys_port = mido.open_output("USB Midi ")
+    print "Using USB Midi port"
 except IOError:
     keys_port = make_port(REFACE)
+    print "Using REFACE port"
 # drum_port = make_port(MPX)
 
 
