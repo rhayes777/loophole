@@ -139,6 +139,7 @@ def set_program(channel=0, program=0):
 
 
 # keys_port = make_port(REFACE)
+print mido.get_output_names()
 try:
     keys_port = mido.open_output("USB Midi ")
     print "Using USB Midi port"
