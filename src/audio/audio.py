@@ -14,6 +14,7 @@ import music
 pygame.init()
 # midi.init()
 
+print "using midi backend {}".format(config.mido_backend)
 mido.set_backend(config.mido_backend)
 
 path = os.path.realpath(__file__)
