@@ -27,16 +27,15 @@ notices_list = []
 
 # notice class handles messages displayed to screen using fonts
 class Notice(object):
-    def __init__(self, text, position, color=Color.WHITE, size=40, this_font=font_arcade, should_blit=True):
+    def __init__(self, text, position, color=Color.WHITE, size=40, this_font=font_arcade, should_blit=True, alpha=255):
         self.position = position
         self.color = color
+        self.alpha = alpha
         self.size = size  # size (Font size)
         self.this_font = this_font  # font
 
         self.char_list = []
         self.text = text
-
-        self.alpha = 255
 
         notices_list.append(self)
 
@@ -49,6 +48,8 @@ class Notice(object):
     @text.setter
     def text(self, text):
         self.char_list = [Letter(character, self.color, self.size, self.this_font) for character in text]
+        for char in self.char_list:
+            char.char_render.fill(self.color + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
 
     # draw text
     def blit_text(self, this_surface):
@@ -59,9 +60,7 @@ class Notice(object):
             text_width, text_height = self.this_font.size(self.text)  # get size of text
             start_x = text_width / 2  # get x-offset (coordinate to start drawing Letters from)
 
-            char_img = self.char_list[i].char_render.copy()
-
-            char_img.fill(self.color + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
+            char_img = self.char_list[i].char_render
 
             this_surface.blit(char_img,
                               (self.position[0] - start_x + (i * char_size_x),
