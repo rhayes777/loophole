@@ -65,9 +65,9 @@ class SpaceFighterGame(object):
 
         for mapper in self.track.channel_mappers:
             mapper.mode = self.mode
-            self.track.tempo_shift = [1, 1.1, 1.5, 2][self.mode]
+            self.track.tempo_shift = config.TEMPO[self.mode]
             for channel in self.track.channels:
-                channel.pitch_bend = [1, 1.1, 1.3, 1.5]
+                channel.pitch_bend = config.PITCH[self.mode]
 
     @property
     def mode(self):

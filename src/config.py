@@ -57,6 +57,9 @@ LIVES_OFFSET = int(parser.get("space_fighter", "LIVES_OFFSET"))
 
 NUMBER_OF_SCORES = int(parser.get("scoreboard", "NUMBER_OF_SCORES"))
 
+TEMPO = list(map(float, parser.get("mode", "TEMPO").split(",")))
+PITCH = list(map(float, parser.get("mode", "PITCH").split(",")))
+
 
 class ChannelMapper(object):
     def __init__(self, name):
