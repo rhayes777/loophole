@@ -53,6 +53,7 @@ image_crotchet = pygame.image.load(os.path.join(image_directory, config.CROTCHET
 image_quaver = pygame.image.load(os.path.join(image_directory, config.QUAVER))
 image_semiquaver = pygame.image.load(os.path.join(image_directory, config.SEMIQUAVER))
 image_crotchet_rotation = pygame.image.load(os.path.join(image_directory, config.CROTCHET_GLOW_ROTATION))
+image_bullet = pygame.image.load(os.path.join(image_directory), config.BULLET)
 
 # load energy glow
 image_energy_glow = pygame.image.load(os.path.join(image_directory, config.ENERGY_GLOW))
@@ -242,7 +243,9 @@ class SpriteSheet(object):
         return self.get_image(self.frame_number_for_angle(angle))
 
 
-sprite_sheet = SpriteSheet(image_crotchet_rotation, (65, 65), 15, Color.BLACK)
+note_sprite_sheet = SpriteSheet(image_crotchet_rotation, (65, 65), 15, Color.BLACK)
+
+bullet_sprite_sheet = SpriteSheet(image_bullet, (40, 40), 4, Color.BLACK)
 
 
 def make_score_notice(text, position, life, colour):

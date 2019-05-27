@@ -6,9 +6,9 @@ import model_space_fighter
 import visual.color
 from audio import audio as pl
 from control import controller
+from visual import color
 from visual import font
 from visual import visual
-from visual import color
 
 directory = path.dirname(path.realpath(__file__))
 
@@ -47,7 +47,7 @@ class SpaceFighterGame(object):
             player.step()
 
         for alien in self.model.aliens:
-            visual.Note(visual.sprite_sheet.image_for_angle(alien.angle), alien.position,
+            visual.Note(visual.note_sprite_sheet.image_for_angle(alien.angle), alien.position,
                         colour=COLORS[self.track.output_channels.index(alien.note.channel)])
 
     @property
@@ -130,6 +130,6 @@ class Player(object):
         elif self.is_started:
             self.cursor.draw(self.model_player.position)
             for shot in self.model_player.shots:
-                visual.Note(visual.sprite_sheet.image_for_angle(shot.angle), shot.position, colour=self.color)
+                visual.Note(visual.bullet_sprite_sheet.image_for_angle(shot.angle), shot.position, colour=self.color)
             self.score_notice.text = str(self.model_player.score)
             self.lives_notice.text = str(self.model_player.lives)

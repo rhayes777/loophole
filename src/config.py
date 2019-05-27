@@ -33,6 +33,8 @@ CROTCHET_GLOW_ROTATION = parser.get("visual", "CROTCHET_GLOW_ROTATION")
 ENERGY_GLOW = parser.get("visual", "ENERGY_GLOW")
 PLAYER_CURSOR = parser.get("visual", "PLAYER_CURSOR")
 INDENT = int(parser.get("visual", "INDENT"))
+BULLET = parser.get("visual", "BULLET")
+PLAYER_EXPLOSION = parser.get("visual", "PLAYER_EXPLOSION")
 
 GAP = int(parser.get("scoreboard", "GAP"))
 
