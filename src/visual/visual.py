@@ -245,7 +245,7 @@ class SpriteSheet(object):
 
 note_sprite_sheet = SpriteSheet(image_crotchet_rotation, (65, 65), 15, Color.BLACK)
 
-bullet_sprite_sheet = SpriteSheet(image_bullet, (40, 40), 4, Color.BLACK)
+bullet_sprite_sheet = SpriteSheet(image_bullet, (100, 100), 4, Color.BLACK)
 
 
 def make_score_notice(text, position, life, colour):
