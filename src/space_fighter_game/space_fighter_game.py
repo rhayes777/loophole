@@ -19,11 +19,13 @@ class SpaceFighterGame(object):
         self.players = [Player(n, self.model.new_player()) for n in range(2)]
 
         self.track = pl.Track("{}/../media/audio/{}".format(directory, config.TRACK_NAME), is_looping=True,
-                              message_read_listener=self.message_read_listener, play_notes=True)
+                              message_read_listener=self.message_read_listener, play_notes=False)
 
     def message_read_listener(self, msg):
-        if msg.type == "note_on":
+        if msg.type == "note_on" and msg in self.track.current_channels:
             self.note_queue.put(msg)
+        for channel_mapper in self.track.channel_mappers:
+            channel_mapper.send_message(msg)
 
     def start(self):
         self.track.start()

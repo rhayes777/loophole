@@ -52,3 +52,10 @@ PLAYER_LIVES = int(parser.get("space_fighter", "player_lives"))
 LIVES_OFFSET = int(parser.get("space_fighter", "LIVES_OFFSET"))
 
 NUMBER_OF_SCORES = int(parser.get("scoreboard", "NUMBER_OF_SCORES"))
+
+
+class ChannelMapper(object):
+    def __init__(self, name):
+        self.name = name
+        self.input_channels = parser.get(name, "channels")
+        self.output_channel = parser.get(name, "output_channel")

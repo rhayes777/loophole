@@ -3,14 +3,15 @@ import os
 from Queue import Queue
 from datetime import datetime
 from threading import Thread
-import config
 
 import mido
 import pygame
-# from pygame import midi
-
-import music
 from pygame import midi
+
+import config
+import music
+
+# from pygame import midi
 
 pygame.init()
 midi.init()
@@ -47,6 +48,26 @@ simple_port = None
 
 # TODO: Consider passing the key tracker only into select tracks
 key_tracker = music.KeyTracker()
+
+
+class ChannelMapper(config.ChannelMapper):
+    def __init__(self, name, track):
+        super(ChannelMapper, self).__init__(name)
+        self.track = track
+        self.mode = 0
+
+    def is_on_input_channel(self, message):
+        return message.channel in self.input_channels
+
+    @property
+    def current_channel(self):
+        return self.input_channels[self.mode % len(self.input_channels)]
+
+    def send_message(self, message):
+        if message.channel in self.input_channels:
+            if message.channel == self.current_channel or message.type != note_on:
+                message.channel = self.output_channel
+                self.track.send_message(message)
 
 
 # noinspection PyClassHasNoInit
@@ -150,6 +171,8 @@ except IOError as e:
         # logging.exception(e)
         keys_port = make_port(REFACE)
         print "Using REFACE port"
+
+
 # drum_port = make_port(MPX)
 
 
@@ -419,6 +442,16 @@ class Track(Thread):
         self.__tempo_shift = TEMPO_SHIFT_DEFAULT
         self.__tempo_shift_queue = Queue()
         self.message_read_listener = message_read_listener
+        self.channel_mappers = [
+            ChannelMapper("drums", self),
+            ChannelMapper("guitar", self),
+            ChannelMapper("keys", self),
+            ChannelMapper("bass", self),
+        ]
+
+    @property
+    def current_channels(self):
+        return [mapper.current_channel for mapper in self.channel_mappers]
 
     @property
     def tempo_shift(self):
