@@ -114,13 +114,10 @@ class Scoreboard(object):
         self.set_positions()
 
 
-scoreboard = Scoreboard("scores.txt")
-players = []
-
-
 class Player(object):
-    def __init__(self, number, score):
+    def __init__(self, number, score, scoreboard):
         self.number = number
+        self.scoreboard = scoreboard
         self.controller = controller.ArcadeController(self.button_listener, number)
         self.score = score
         self.is_active = True
@@ -141,7 +138,7 @@ class Player(object):
                 self.score.move_right()
             elif button == "a":
                 if cycle > wait_cycles:
-                    scoreboard.save()
+                    self.scoreboard.save()
                     self.is_active = False
         elif button == "a":
             self.is_bored = True
@@ -150,12 +147,13 @@ class Player(object):
 def show_scoreboard(player_one_score=None, player_two_score=None):
     global players
     global cycle
+    scoreboard = Scoreboard("scores.txt")
     players = []
 
     def add_player(number, score):
         new_score = NewScore(score)
         scoreboard.add_score(new_score)
-        players.append(Player(number, new_score))
+        players.append(Player(number, new_score, scoreboard))
 
     if player_one_score is not None:
         add_player(0, player_one_score)
