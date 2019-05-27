@@ -97,7 +97,8 @@ sprite_group_energy_glows = pygame.sprite.Group()
 
 class PlayerCursor(pygame.sprite.Sprite):
 
-    def __init__(self, image=image_player, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), alpha=255):
+    def __init__(self, image=image_player, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), alpha=255,
+                 color=Color.WHITE):
         pygame.sprite.Sprite.__init__(self, sprite_group_player)
 
         self.image = image.copy()
@@ -105,6 +106,9 @@ class PlayerCursor(pygame.sprite.Sprite):
         self.rect = position
 
         self.alpha = alpha
+        self.color = color
+
+        self.image.fill(self.color + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
 
         self.image.set_colorkey(Color.BLACK)
 

@@ -157,7 +157,7 @@ class Player(object):
                     mido.Message("note_on", channel=config.SOUND_EFFECTS_CHANNEL, note=0, velocity=80))
         elif button != "centre":
             self.is_started = True
-            self.cursor = visual.PlayerCursor()
+            self.cursor = visual.PlayerCursor(color=self.color)
             self.button_listener(button)
 
     def step(self):
