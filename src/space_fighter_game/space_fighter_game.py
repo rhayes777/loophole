@@ -14,12 +14,12 @@ COLORS = [visual.Color.FLIRT, visual.Color.KEEN, visual.Color.LIGHTNING, visual.
 
 
 class SpaceFighterGame(object):
-    def __init__(self):
+    def __init__(self, track_name):
         self.note_queue = Queue()
         self.model = model_space_fighter.SpaceFighterModel()
         self.players = [Player(n, self.model.new_player()) for n in range(2)]
 
-        self.track = pl.Track("{}/../media/audio/{}".format(directory, config.TRACK_NAME), is_looping=True,
+        self.track = pl.Track("{}/../media/audio/{}".format(directory, track_name), is_looping=True,
                               message_read_listener=self.message_read_listener, play_notes=False)
 
     def message_read_listener(self, msg):
