@@ -45,7 +45,7 @@ class SpaceFighterGame(object):
 
         for alien in self.model.aliens:
             visual.Note(visual.sprite_sheet.image_for_angle(alien.angle), alien.position,
-                        colour=COLORS[alien.note.channel % 4])
+                        colour=COLORS[self.track.output_channels.index(alien.note.channel)])
 
     @property
     def started_players(self):

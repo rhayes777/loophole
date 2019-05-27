@@ -454,6 +454,10 @@ class Track(Thread):
         return [mapper.current_channel for mapper in self.channel_mappers]
 
     @property
+    def output_channels(self):
+        return [mapper.output_channel for mapper in self.channel_mappers]
+
+    @property
     def tempo_shift(self):
         return self.__tempo_shift
 
