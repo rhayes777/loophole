@@ -9,6 +9,7 @@ import pygame
 import config
 import model
 import model_quadrant_game
+import visual.color
 from audio import audio as pl
 from audio.audio import play_note
 from control import controller
@@ -116,7 +117,7 @@ class Side(object):
         visual.make_score_notice(self.scorer.score, self.position, 5, self.colour)
         self.glow.set_alpha(min(255, self.scorer.score))
         if debug:
-            visual.make_score_notice(10 * self.state, self.position, 5, visual.Color.WHITE)
+            visual.make_score_notice(10 * self.state, self.position, 5, visual.color.Color.WHITE)
 
     def add_note(self, side_note):
         if side_note.channel == self.channels[self.state]:
@@ -172,7 +173,7 @@ while play:
                 side.scorer.add_points(config.POINTS_PER_NOTE)
 
         visual.make_score_notice(config.POINTS_PER_NOTE, note.position, 30, note.colour)
-        visual.make_circle_explosion(visual.Color.GREY, 5, note.position)
+        visual.make_circle_explosion(visual.color.Color.GREY, 5, note.position)
 
         midi_note = copy.copy(note.note)
         midi_note.channel = 9

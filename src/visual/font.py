@@ -3,6 +3,8 @@ from os import path
 
 import pygame
 
+from color import Color
+
 # Init pygame font module
 pygame.font.init()
 
@@ -12,20 +14,20 @@ dirname = path.dirname(path.realpath(__file__))
 font_arcade = pygame.font.Font("{}/fonts/arcadeclassic.ttf".format(dirname), 46)
 
 # Colour Constants
-
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-RED = (180, 60, 30)
-GREEN = (46, 190, 60)
-BLUE = (30, 48, 180)
-PINK_MASK = (255, 0, 255)
+colors = [Color.APPLIANCE_WHITE,
+          Color.FLIRT,
+          Color.KEEN,
+          Color.VINO,
+          Color.VENOM,
+          Color.SHAKA,
+          Color.LIGHTNING]
 
 notices_list = []
 
 
 # notice class handles messages displayed to screen using fonts
 class Notice(object):
-    def __init__(self, text, position, color=WHITE, size=40, this_font=font_arcade, should_blit=True):
+    def __init__(self, text, position, color=Color.WHITE, size=40, this_font=font_arcade, should_blit=True):
         self.position = position
         self.color = color
         self.size = size  # size (Font size)
@@ -60,6 +62,36 @@ class Notice(object):
             char_img = self.char_list[i].char_render.copy()
 
             char_img.fill(self.color + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
+
+            this_surface.blit(char_img,
+                              (self.position[0] - start_x + (i * char_size_x),
+                               self.position[1]))
+
+
+class HighScoreNotice(Notice):
+    def __init__(self, text, position):
+        super(HighScoreNotice, self).__init__(text, position)
+        self.highlighted_character = None
+        self.cycle = 0
+
+    # draw text
+    def blit_text(self, this_surface):
+        # iterate through each Letter in char_list
+        for i in range(len(self.char_list)):
+            char_size_x, char_size_y = self.this_font.size("a")  # get size of characters in string
+
+            text_width, text_height = self.this_font.size(self.text)  # get size of text
+            start_x = text_width / 2  # get x-offset (coordinate to start drawing Letters from)
+
+            char_img = self.char_list[i].char_render.copy()
+
+            if i == self.highlighted_character:
+                color = colors[self.cycle]
+                self.cycle = (self.cycle + 1) % len(colors)
+            else:
+                color = self.color
+
+            char_img.fill(color + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
 
             this_surface.blit(char_img,
                               (self.position[0] - start_x + (i * char_size_x),

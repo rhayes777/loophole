@@ -2,8 +2,8 @@ import pygame
 
 import config
 from control import controller
-from visual import visual
 from visual import font
+from visual import visual
 
 pygame.init()
 pygame.display.init()
@@ -20,7 +20,7 @@ letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
 class AbstractScore(object):
     def __init__(self, value):
         self.value = int(value)
-        self.title = font.Notice(str(self), 0)
+        self.title = font.HighScoreNotice(str(self), 0)
 
     @property
     def position(self):
@@ -59,8 +59,16 @@ class NewScore(AbstractScore):
 
     def __init__(self, value):
         self.characters = [0, 0, 0, 0]
-        self.current_index = 0
         super(NewScore, self).__init__(value)
+        self.current_index = 0
+
+    @property
+    def current_index(self):
+        return self.title.highlighted_character
+
+    @current_index.setter
+    def current_index(self, current_index):
+        self.title.highlighted_character = current_index
 
     def move_right(self):
         self.current_index = (self.current_index + 1) % len(self.characters)
@@ -70,9 +78,11 @@ class NewScore(AbstractScore):
 
     def move_up(self):
         self.characters[self.current_index] = (self.characters[self.current_index] + 1) % len(letters)
+        self.title.text = str(self)
 
     def move_down(self):
         self.characters[self.current_index] = (self.characters[self.current_index] - 1) % len(letters)
+        self.title.text = str(self)
 
 
 class Scoreboard(object):
