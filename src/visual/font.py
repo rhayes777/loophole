@@ -25,13 +25,14 @@ notices_list = []
 
 # notice class handles messages displayed to screen using fonts
 class Notice(object):
-    def __init__(self, words, position, color=WHITE, size=40, this_font=font_arcade, should_blit=True):
+    def __init__(self, text, position, color=WHITE, size=40, this_font=font_arcade, should_blit=True):
         self.position = position
-        self.words = words
         self.color = color
         self.size = size  # size (Font size)
         self.this_font = this_font  # font
-        self.char_list = [Letter(word, self.color, self.size, self.this_font) for word in words]
+
+        self.char_list = []
+        self.text = text
 
         self.alpha = 255
 
@@ -39,13 +40,21 @@ class Notice(object):
 
         self.should_blit = should_blit
 
+    @property
+    def text(self):
+        return "".join(character.char for character in self.char_list)
+
+    @text.setter
+    def text(self, text):
+        self.char_list = [Letter(character, self.color, self.size, self.this_font) for character in text]
+
     # draw text
     def blit_text(self, this_surface):
         # iterate through each Letter in char_list
         for i in range(len(self.char_list)):
             char_size_x, char_size_y = self.this_font.size("a")  # get size of characters in string
 
-            text_width, text_height = self.this_font.size(self.words)  # get size of text
+            text_width, text_height = self.this_font.size(self.text)  # get size of text
             start_x = text_width / 2  # get x-offset (coordinate to start drawing Letters from)
 
             char_img = self.char_list[i].char_render.copy()
@@ -59,8 +68,8 @@ class Notice(object):
 
 # notice class handles messages displayed to screen using fonts
 class TransientNotice(Notice):
-    def __init__(self, words, position, color, size, this_font, life, rate=1):
-        super(TransientNotice, self).__init__(words, position, color, size, this_font)
+    def __init__(self, text, position, color, size, this_font, life, rate=1):
+        super(TransientNotice, self).__init__(text, position, color, size, this_font)
 
         self.life = life
         self.timer = self.life
@@ -82,7 +91,7 @@ class TransientNotice(Notice):
         for i in range(len(self.char_list)):
             char_size_x, char_size_y = self.this_font.size("a")  # get size of characters in string
 
-            text_width, text_height = self.this_font.size(self.words)  # get size of text
+            text_width, text_height = self.this_font.size(self.text)  # get size of text
             start_x = text_width / 2  # get x-offset (coordinate to start drawing Letters from)
 
             char_img = self.char_list[i].char_render.copy()
@@ -107,28 +116,28 @@ class Letter(object):
 
 # Score class for whenever player gains some points
 class Score(TransientNotice):
-    def __init__(self, words, position, color, size, this_font, life):
-        super(Score, self).__init__(str(words), position, color, size, this_font, life)
+    def __init__(self, text, position, color, size, this_font, life):
+        super(Score, self).__init__(str(text), position, color, size, this_font, life)
 
 
 class Wave(TransientNotice):
-    def __init__(self, words, color, size, this_font, life, shrink=False):
-        super(Wave, self).__init__(words, size, color, this_font, life)
+    def __init__(self, text, color, size, this_font, life, shrink=False):
+        super(Wave, self).__init__(text, size, color, this_font, life)
         self.char_list = []
         self.wave_timer = 0
         self.shrink = shrink  # shrinking effect
 
         if self.shrink is False:
 
-            for i in range(len(self.words)):
+            for i in range(len(self.text)):
                 self.char_list.append(
-                    Letter(self.words[i], self.color, self.size, self.this_font))  # Use normal letters
+                    Letter(self.text[i], self.color, self.size, self.this_font))  # Use normal letters
 
         else:
 
-            for i in range(len(self.words)):
+            for i in range(len(self.text)):
                 self.char_list.append(
-                    ShrinkLetter(self.words[i], self.color, self.size, self.this_font))  # Use ShrinkLetters
+                    ShrinkLetter(self.text[i], self.color, self.size, self.this_font))  # Use ShrinkLetters
 
     def blit_text(self, this_surface, drop=False):
 
@@ -140,7 +149,7 @@ class Wave(TransientNotice):
         for i in range(len(self.char_list)):
             char_size_x, char_size_y = self.this_font.size("a")
 
-            text_width, text_height = self.this_font.size(self.words)
+            text_width, text_height = self.this_font.size(self.text)
             start_x = text_width / 2
 
             wave_add = 10 * (math.sin((i * 10) + self.wave_timer))  # multiply by sin to get wavy variable
