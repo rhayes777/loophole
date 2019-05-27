@@ -23,6 +23,7 @@ DECAY_RATE = int(parser.get("physics", "DECAY_RATE"))
 ROTATION_SPEED = int(parser.get("physics", "ROTATION_SPEED"))
 
 TRACK_NAMES = [n.strip() for n in parser.get("music", "TRACK_NAMES").split(",")]
+HIGH_SCORE_TRACK = parser.get("music", "HIGH_SCORE_TRACK")
 
 MINIM = parser.get("visual", "MINIM")
 CROTCHET = parser.get("visual", "CROTCHET")

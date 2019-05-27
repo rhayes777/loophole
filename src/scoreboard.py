@@ -1,6 +1,9 @@
+from os import path
+
 import pygame
 
 import config
+from audio import audio
 from control import controller
 from visual import font
 from visual import visual
@@ -15,6 +18,8 @@ cycle = 0
 letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
            "V",
            "W", "X", "Y", "Z"]
+
+directory = path.dirname(path.realpath(__file__))
 
 
 class AbstractScore(object):
@@ -146,9 +151,18 @@ class Player(object):
 
 
 def show_scoreboard(player_one_score=None, player_two_score=None):
-    global players
     global cycle
     scoreboard = Scoreboard("scores.txt")
+
+    track = audio.Track("{}/media/audio/{}".format(directory, config.HIGH_SCORE_TRACK), is_looping=True,
+                        play_notes=False)
+
+    def message_read_listener(msg):
+        for channel_mapper in track.channel_mappers:
+            channel_mapper.send_message(msg)
+
+    track.message_read_listener = message_read_listener
+    track.start()
     players = []
 
     def add_player(number, score):
