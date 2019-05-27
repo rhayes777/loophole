@@ -158,7 +158,7 @@ while play:
     model_instance.step_forward()
     visual.player_cursor_instance.draw(player.position)
     for note in model_instance.notes:
-        visual.Note(visual.sprite_sheet.image_for_angle(note.angle), note.position, note.colour, 255)
+        visual.Note(visual.note_sprite_sheet.image_for_angle(note.angle), note.position, note.colour, 255)
 
     while not note_queue.empty():
         note = note_queue.get()

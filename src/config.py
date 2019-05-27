@@ -23,6 +23,7 @@ DECAY_RATE = int(parser.get("physics", "DECAY_RATE"))
 ROTATION_SPEED = int(parser.get("physics", "ROTATION_SPEED"))
 
 TRACK_NAMES = [n.strip() for n in parser.get("music", "TRACK_NAMES").split(",")]
+HIGH_SCORE_TRACK = parser.get("music", "HIGH_SCORE_TRACK")
 
 MINIM = parser.get("visual", "MINIM")
 CROTCHET = parser.get("visual", "CROTCHET")
@@ -32,6 +33,8 @@ CROTCHET_GLOW_ROTATION = parser.get("visual", "CROTCHET_GLOW_ROTATION")
 ENERGY_GLOW = parser.get("visual", "ENERGY_GLOW")
 PLAYER_CURSOR = parser.get("visual", "PLAYER_CURSOR")
 INDENT = int(parser.get("visual", "INDENT"))
+BULLET = parser.get("visual", "BULLET")
+PLAYER_EXPLOSION = parser.get("visual", "PLAYER_EXPLOSION")
 
 GAP = int(parser.get("scoreboard", "GAP"))
 
