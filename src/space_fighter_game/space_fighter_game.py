@@ -55,6 +55,13 @@ class SpaceFighterGame(object):
                 ),
                 colour=COLORS[self.track.output_channels.index(alien.note.channel)]
             )
+        for alien in self.model.dead_aliens:
+            visual.make_circle_explosion(
+                position=(
+                    alien.position[0] - visual.note_sprite_sheet.shape[0] / 2,
+                    alien.position[1] - visual.note_sprite_sheet.shape[1] / 2
+                )
+            )
 
         for mapper in self.track.channel_mappers:
             mapper.mode = self.mode

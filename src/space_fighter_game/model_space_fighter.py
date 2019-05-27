@@ -39,6 +39,7 @@ class SpaceFighterModel(object):
         self.screen_shape = screen_shape
         self.notes_per_side = notes_per_side
         self.aliens = list()
+        self.dead_aliens = list()
         self.players = list()
 
     def add_player(self, player):
@@ -56,6 +57,7 @@ class SpaceFighterModel(object):
                              rotation_speed=config.ROTATION_SPEED * random() - config.ROTATION_SPEED / 2))
 
     def step_forward(self):
+        self.dead_aliens = list()
         for alien in self.aliens:
             alien.step_forward()
             if alien.is_out_of_bounds:
@@ -67,10 +69,12 @@ class SpaceFighterModel(object):
                     if alien.is_in_range(player):
                         player.lives = max(player.lives - 1, 0)
                         self.aliens.remove(alien)
+                        self.dead_aliens.append(alien)
                     for shot in player.shots:
                         if shot.is_in_range(alien):
                             try:
                                 self.aliens.remove(alien)
+                                self.dead_aliens.append(alien)
                                 player.score += 1
                             except ValueError:
                                 pass
