@@ -155,13 +155,7 @@ def show_scoreboard(player_one_score=None, player_two_score=None):
     scoreboard = Scoreboard("scores.txt")
 
     track = audio.Track("{}/media/audio/{}".format(directory, config.HIGH_SCORE_TRACK), is_looping=True,
-                        play_notes=False)
-
-    def message_read_listener(msg):
-        for channel_mapper in track.channel_mappers:
-            channel_mapper.send_message(msg)
-
-    track.message_read_listener = message_read_listener
+                        play_notes=True)
     track.start()
     players = []
 
