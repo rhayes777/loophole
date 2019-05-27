@@ -37,6 +37,10 @@ class MockEvent(object):
         self.button = button
 
 
+class QuitException(Exception):
+    pass
+
+
 class ArcadeController(AbstractController):
     controllers = {}
 
@@ -51,6 +55,8 @@ class ArcadeController(AbstractController):
             if hasattr(event, "joy"):
                 ArcadeController.controllers[event.joy].on_event(event)
             elif hasattr(event, "key"):
+                if event.key == 27:
+                    raise QuitException()
                 key_dict = {
                     (97, 2): (0, MockEvent(event_type=7, axis=1, value=-1)),
                     (97, 3): (0, MockEvent(event_type=7, axis=1, value=0)),

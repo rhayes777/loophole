@@ -1,6 +1,9 @@
+import sys
+
 import pygame
 
 import scoreboard
+from control import controller
 from space_fighter_game import space_fighter_game
 from visual import font
 from visual import visual
@@ -22,11 +25,8 @@ def run_game(game):
 
     while game.should_continue:
         clock.tick(24)
-
         game.step_forward()
-
         # print_sprites()
-
         visual.draw()
         visual.sprite_group_notes.empty()
 
@@ -34,10 +34,15 @@ def run_game(game):
 
 
 def main():
-    while True:
-        game = space_fighter_game.SpaceFighterGame()
-        run_game(game)
-        scoreboard.show_scoreboard(*game.scores)
+    try:
+        while True:
+            game = space_fighter_game.SpaceFighterGame()
+            run_game(game)
+            scoreboard.show_scoreboard(*game.scores)
+
+    except controller.QuitException:
+        pygame.display.quit()
+        pygame.quit()
 
 
 if __name__ == "__main__":
