@@ -47,8 +47,14 @@ class SpaceFighterGame(object):
             player.step()
 
         for alien in self.model.aliens:
-            visual.Note(visual.note_sprite_sheet.image_for_angle(alien.angle), alien.position,
-                        colour=COLORS[self.track.output_channels.index(alien.note.channel)])
+            visual.Note(
+                visual.note_sprite_sheet.image_for_angle(alien.angle),
+                (
+                    alien.position[0] - visual.note_sprite_sheet.shape[0] / 2,
+                    alien.position[1] - visual.note_sprite_sheet.shape[1] / 2
+                ),
+                colour=COLORS[self.track.output_channels.index(alien.note.channel)]
+            )
 
         for mapper in self.track.channel_mappers:
             mapper.mode = self.mode
