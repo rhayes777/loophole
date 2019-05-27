@@ -448,6 +448,9 @@ class Track(Thread):
             ChannelMapper("keys", self),
             ChannelMapper("bass", self),
         ]
+        self.sound_effects_channel = self.channels[config.SOUND_EFFECTS_CHANNEL]
+        self.sound_effects_channel.instrument_type = InstrumentType.synth_effects
+        self.sound_effects_channel.instrument_version = 2
 
     @property
     def current_channels(self):

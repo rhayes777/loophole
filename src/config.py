@@ -61,6 +61,8 @@ TEMPO = list(map(float, parser.get("mode", "TEMPO").split(",")))
 PITCH = list(map(float, parser.get("mode", "PITCH").split(",")))
 LIMITS = list(map(int, parser.get("mode", "LIMITS").split(",")))
 
+SOUND_EFFECTS_CHANNEL = int(parser.get("sound_effects", "output_channel"))
+
 
 class ChannelMapper(object):
     def __init__(self, name):

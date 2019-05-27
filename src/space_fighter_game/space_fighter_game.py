@@ -1,6 +1,8 @@
 from Queue import Queue
 from os import path
 
+import mido
+
 import config
 import model_space_fighter
 import visual.color
@@ -56,6 +58,8 @@ class SpaceFighterGame(object):
                 colour=COLORS[self.track.output_channels.index(alien.note.channel)]
             )
         for alien in self.model.dead_aliens:
+            self.track.sound_effects_channel.send_message(
+                mido.Message("note_on", channel=config.SOUND_EFFECTS_CHANNEL, note=alien.note.note, velocity=80))
             visual.make_circle_explosion(
                 position=(
                     alien.position[0] - visual.note_sprite_sheet.shape[0] / 2,
