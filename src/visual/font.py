@@ -194,7 +194,7 @@ class FontFrame(object):
 
 def render_notices(surface):
     for notice in list(notices_list):
-        if notice.should_blit:
-            notice.blit_text(surface)
         if hasattr(notice, "timer") and notice.timer <= 0:
             notices_list.remove(notice)
+        elif notice.should_blit:
+            notice.blit_text(surface)
