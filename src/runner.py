@@ -25,7 +25,7 @@ def run_game(game):
 
         game.step_forward()
 
-        print_sprites()
+        # print_sprites()
 
         visual.draw()
         visual.sprite_group_notes.empty()

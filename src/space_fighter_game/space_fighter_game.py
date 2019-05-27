@@ -22,7 +22,7 @@ class SpaceFighterGame(object):
                               message_read_listener=self.message_read_listener, play_notes=False)
 
     def message_read_listener(self, msg):
-        if msg.type == "note_on" and msg in self.track.current_channels:
+        if msg.type == "note_on" and msg.channel in self.track.current_channels:
             self.note_queue.put(msg)
         for channel_mapper in self.track.channel_mappers:
             channel_mapper.send_message(msg)

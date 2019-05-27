@@ -57,5 +57,5 @@ NUMBER_OF_SCORES = int(parser.get("scoreboard", "NUMBER_OF_SCORES"))
 class ChannelMapper(object):
     def __init__(self, name):
         self.name = name
-        self.input_channels = parser.get(name, "channels")
-        self.output_channel = parser.get(name, "output_channel")
+        self.input_channels = tuple(map(int, parser.get(name, "channels").split(",")))
+        self.output_channel = int(parser.get(name, "output_channel"))

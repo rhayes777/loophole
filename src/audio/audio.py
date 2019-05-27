@@ -64,7 +64,7 @@ class ChannelMapper(config.ChannelMapper):
         return self.input_channels[self.mode % len(self.input_channels)]
 
     def send_message(self, message):
-        if message.channel in self.input_channels:
+        if hasattr(message, "channel") and message.channel in self.input_channels:
             if message.channel == self.current_channel or message.type != note_on:
                 message.channel = self.output_channel
                 self.track.send_message(message)
