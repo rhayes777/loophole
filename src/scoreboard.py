@@ -3,6 +3,7 @@ import pygame
 import config
 from control import controller
 from visual import visual
+from visual import font
 
 pygame.init()
 pygame.display.init()
@@ -19,6 +20,15 @@ letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
 class AbstractScore(object):
     def __init__(self, value):
         self.value = int(value)
+        self.title = font.Notice(str(self), 0)
+
+    @property
+    def position(self):
+        return self.title.position
+
+    @position.setter
+    def position(self, position):
+        self.title.position = position
 
     @property
     def name(self):
@@ -33,8 +43,8 @@ class AbstractScore(object):
 
 class Score(AbstractScore):
     def __init__(self, name, value):
-        super(Score, self).__init__(value)
         self.__name = name
+        super(Score, self).__init__(value)
 
     @property
     def name(self):
@@ -48,9 +58,9 @@ class NewScore(AbstractScore):
         return "".join([letters[character] for character in self.characters])
 
     def __init__(self, value):
-        super(NewScore, self).__init__(value)
-        self.characters = [0, 0, 0, 0, 0]
+        self.characters = [0, 0, 0, 0]
         self.current_index = 0
+        super(NewScore, self).__init__(value)
 
     def move_right(self):
         self.current_index = (self.current_index + 1) % len(self.characters)
@@ -68,27 +78,30 @@ class NewScore(AbstractScore):
 class Scoreboard(object):
     def __init__(self, score_path):
         self.score_path = score_path
+        self.position = (config.screen_shape[0] / 2, 2 * config.GAP)
+        self.title = font.Notice("High Scores", self.position)
         try:
             with open(self.score_path) as f:
                 self.scores = list(map(lambda line: Score(*line.split(",")), f.read().split("\n")))[
                               :config.NUMBER_OF_SCORES]
+            self.set_positions()
         except IOError:
             self.scores = []
+
+    def set_positions(self):
+        for i, score in enumerate(self.scores):
+            score.position = self.position_for_index(i)
+
+    def position_for_index(self, score_index):
+        return self.position[0], self.position[1] + (2 + score_index) * config.GAP
 
     def save(self):
         with open(self.score_path, "w") as f:
             f.write("\n".join(map(lambda score: "{},{}".format(score.name, score.value), self.scores)))
 
-    def show(self):
-        position = (config.screen_shape[0] / 2, 2 * config.GAP)
-        visual.make_score_notice("High Scores", position, None, visual.Color.WHITE)
-        position = (position[0], position[1] + 2 * config.GAP)
-        for score in self.scores:
-            visual.make_score_notice(str(score), position, 5, visual.Color.WHITE)
-            position = (position[0], position[1] + config.GAP)
-
     def add_score(self, new_score):
         self.scores = list(sorted(self.scores + [new_score], reverse=True))
+        self.set_positions()
 
 
 scoreboard = Scoreboard("scores.txt")
@@ -141,7 +154,6 @@ def show_scoreboard(player_one_score=None, player_two_score=None):
         add_player(1, player_two_score)
 
     while True:
-        scoreboard.show()
         clock.tick(24)
 
         cycle += 1
