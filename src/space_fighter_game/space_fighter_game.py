@@ -21,10 +21,9 @@ class SpaceFighterGame(object):
     def __init__(self, track_name):
         self.note_queue = Queue()
         self.model = model_space_fighter.SpaceFighterModel()
-        self.players = [Player(n, self.model.new_player()) for n in range(2)]
-
         self.track = pl.Track("{}/../media/audio/{}".format(directory, track_name), is_looping=True,
                               message_read_listener=self.message_read_listener, play_notes=False)
+        self.players = [Player(n, self.model.new_player(), self.track) for n in range(2)]
 
     def message_read_listener(self, msg):
         if msg.type == "note_on" and msg.channel in self.track.current_channels:
@@ -103,7 +102,7 @@ class SpaceFighterGame(object):
 
 
 class Player(object):
-    def __init__(self, number, model_player):
+    def __init__(self, number, model_player, track):
         self.number = number
         self.controller = controller.ArcadeController(self.button_listener, number)
         self.model_player = model_player
@@ -123,6 +122,7 @@ class Player(object):
             self.lives_position,
             color.Color.RED
         )
+        self.track = track
 
     @property
     def is_started(self):
@@ -153,6 +153,8 @@ class Player(object):
                 self.model_player.velocity = (config.SPACE_FIGHTER_PLAYER_VELOCITY, 0)
             elif button in ("a", "b"):
                 self.model_player.fire()
+                self.track.sound_effects_channel.send_message(
+                    mido.Message("note_on", channel=config.SOUND_EFFECTS_CHANNEL, note=0, velocity=80))
         elif button != "centre":
             self.is_started = True
             self.cursor = visual.PlayerCursor()
