@@ -151,7 +151,7 @@ class Player(object):
                 self.model_player.velocity = (-config.SPACE_FIGHTER_PLAYER_VELOCITY, 0)
             elif button == "right":
                 self.model_player.velocity = (config.SPACE_FIGHTER_PLAYER_VELOCITY, 0)
-            elif button == "a":
+            elif button in ("a", "b"):
                 self.model_player.fire()
         elif button != "centre":
             self.is_started = True
