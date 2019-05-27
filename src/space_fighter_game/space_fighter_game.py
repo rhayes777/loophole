@@ -147,6 +147,13 @@ class Player(object):
         elif self.is_started:
             self.cursor.draw(self.model_player.position)
             for shot in self.model_player.shots:
-                visual.Note(visual.bullet_sprite_sheet.image_for_angle(shot.angle), shot.position, colour=self.color)
+                visual.Note(
+                    visual.bullet_sprite_sheet.image_for_angle(shot.angle),
+                    (
+                        shot.position[0] - visual.bullet_sprite_sheet.shape[0] / 2,
+                        shot.position[1] - visual.bullet_sprite_sheet.shape[1] / 2
+                    ),
+                    colour=self.color
+                )
             self.score_notice.text = str(self.model_player.score)
             self.lives_notice.text = str(self.model_player.lives)
