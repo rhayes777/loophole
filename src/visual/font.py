@@ -126,7 +126,7 @@ class TransientNotice(Notice):
             text_width, text_height = self.this_font.size(self.text)  # get size of text
             start_x = text_width / 2  # get x-offset (coordinate to start drawing Letters from)
 
-            char_img = self.char_list[i].char_render.copy()
+            char_img = self.char_list[i].char_render
 
             char_img.fill(self.color + (alpha,), None, pygame.BLEND_RGBA_MULT)
 
