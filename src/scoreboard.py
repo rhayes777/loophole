@@ -25,7 +25,7 @@ directory = path.dirname(path.realpath(__file__))
 class AbstractScore(object):
     def __init__(self, value):
         self.value = int(value)
-        self.title = font.HighScoreNotice(str(self), (0, 0))
+        self.title = font.HighScoreNotice(str(self), (-1000, -1000))
 
     @property
     def position(self):
