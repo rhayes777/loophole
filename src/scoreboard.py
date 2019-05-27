@@ -20,7 +20,7 @@ letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
 class AbstractScore(object):
     def __init__(self, value):
         self.value = int(value)
-        self.title = font.HighScoreNotice(str(self), 0)
+        self.title = font.HighScoreNotice(str(self), (0, 0))
 
     @property
     def position(self):
