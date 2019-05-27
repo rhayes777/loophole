@@ -20,6 +20,7 @@ BOOST_SPEED = float(parser.get("physics", "BOOST_SPEED"))
 DAMPING_RATE = float(parser.get("physics", "DAMPING_RATE"))
 POINTS_PER_NOTE = int(parser.get("physics", "POINTS_PER_NOTE"))
 DECAY_RATE = int(parser.get("physics", "DECAY_RATE"))
+ROTATION_SPEED = int(parser.get("physics", "ROTATION_SPEED"))
 
 TRACK_NAME = parser.get("music", "TRACK_NAME")
 
