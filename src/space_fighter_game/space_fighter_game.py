@@ -5,6 +5,7 @@ import config
 import model_space_fighter
 from audio import audio as pl
 from control import controller
+from visual import font
 from visual import visual
 
 directory = path.dirname(path.realpath(__file__))
@@ -71,6 +72,13 @@ class Player(object):
         self.start_position = config.PLAYER_ONE_START if number == 0 else config.PLAYER_TWO_START
         self.model_player.position = self.start_position
         self.color = visual.Color.KEEN if number == 0 else visual.Color.FLIRT
+        self.start_notice = font.Notice(
+            "Player {} start".format(
+                self.number + 1
+            ),
+            self.start_position,
+            self.color
+        )
 
     @property
     def is_started(self):
@@ -111,10 +119,13 @@ class Player(object):
             visual.make_score_notice("DEAD", self.lives_position, 5, visual.Color.RED)
             self.cursor.remove()
         elif self.is_started:
+            self.start_notice.should_blit = False
             self.cursor.draw(self.model_player.position)
             for shot in self.model_player.shots:
                 visual.Note(visual.sprite_sheet.image_for_angle(shot.angle), shot.position, colour=self.color)
             visual.make_score_notice(self.model_player.score, self.start_position, 5, self.color)
             visual.make_score_notice(self.model_player.lives, self.lives_position, 5, visual.Color.RED)
-        # else:
-        #     visual.make_score_notice("Player {} start".format(self.number + 1), self.start_position, 5, self.color)
+        else:
+            self.start_notice.should_blit = True
+
+            # visual.make_score_notice("Player {} start".format(self.number + 1), self.start_position, 5, self.color)

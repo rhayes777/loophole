@@ -25,21 +25,47 @@ notices_list = []
 
 # notice class handles messages displayed to screen using fonts
 class Notice(object):
-    def __init__(self, words, position, color, size, this_font, life, rate=1):
+    def __init__(self, words, position, color=WHITE, size=40, this_font=font_arcade, should_blit=True):
         self.position = position
         self.words = words
-        self.char_list = []  # Character list - to store Letter instances
         self.color = color
         self.size = size  # size (Font size)
         self.this_font = this_font  # font
+        self.char_list = [Letter(word, self.color, self.size, self.this_font) for word in words]
+
+        self.alpha = 255
+
+        notices_list.append(self)
+
+        self.should_blit = should_blit
+
+    # draw text
+    def blit_text(self, this_surface):
+        # iterate through each Letter in char_list
+        for i in range(len(self.char_list)):
+            char_size_x, char_size_y = self.this_font.size("a")  # get size of characters in string
+
+            text_width, text_height = self.this_font.size(self.words)  # get size of text
+            start_x = text_width / 2  # get x-offset (coordinate to start drawing Letters from)
+
+            char_img = self.char_list[i].char_render.copy()
+
+            char_img.fill(self.color + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
+
+            this_surface.blit(char_img,
+                              (self.position[0] - start_x + (i * char_size_x),
+                               self.position[1]))
+
+
+# notice class handles messages displayed to screen using fonts
+class TransientNotice(Notice):
+    def __init__(self, words, position, color, size, this_font, life, rate=1):
+        super(TransientNotice, self).__init__(words, position, color, size, this_font)
+
         self.life = life
         self.timer = self.life
         self.rate = rate
         self.alpha = 255
-
-        # append each Letter instance to char_list
-        for i in range(len(self.words)):
-            self.char_list.append(Letter(self.words[i], self.color, self.size, self.this_font))
 
         notices_list.append(self)
 
@@ -80,12 +106,12 @@ class Letter(object):
 
 
 # Score class for whenever player gains some points
-class Score(Notice, object):
+class Score(TransientNotice):
     def __init__(self, words, position, color, size, this_font, life):
         super(Score, self).__init__(str(words), position, color, size, this_font, life)
 
 
-class Wave(Notice, object):
+class Wave(TransientNotice):
     def __init__(self, words, color, size, this_font, life, shrink=False):
         super(Wave, self).__init__(words, size, color, this_font, life)
         self.char_list = []
@@ -168,6 +194,7 @@ class FontFrame(object):
 
 def render_notices(surface):
     for notice in list(notices_list):
-        notice.blit_text(surface)
-        if notice.timer <= 0:
+        if notice.should_blit:
+            notice.blit_text(surface)
+        if hasattr(notice, "timer") and notice.timer <= 0:
             notices_list.remove(notice)
