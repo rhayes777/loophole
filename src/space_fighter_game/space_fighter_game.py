@@ -116,5 +116,5 @@ class Player(object):
                 visual.Note(visual.sprite_sheet.image_for_angle(shot.angle), shot.position, colour=self.color)
             visual.make_score_notice(self.model_player.score, self.start_position, 5, self.color)
             visual.make_score_notice(self.model_player.lives, self.lives_position, 5, visual.Color.RED)
-        else:
-            visual.make_score_notice("Player {} start".format(self.number + 1), self.start_position, 5, self.color)
+        # else:
+        #     visual.make_score_notice("Player {} start".format(self.number + 1), self.start_position, 5, self.color)
