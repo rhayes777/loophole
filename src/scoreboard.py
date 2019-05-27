@@ -139,6 +139,7 @@ class Player(object):
             elif button == "a":
                 if cycle > wait_cycles:
                     self.scoreboard.save()
+                    self.score.current_index = None
                     self.is_active = False
         elif button == "a":
             self.is_bored = True
