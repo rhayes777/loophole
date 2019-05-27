@@ -186,6 +186,7 @@ def show_scoreboard(player_one_score=None, player_two_score=None):
         visual.draw()
 
         if any(player.is_bored for player in players) and not any(player.is_active for player in players):
+            track.stop()
             break
 
 
