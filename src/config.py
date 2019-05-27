@@ -59,6 +59,7 @@ NUMBER_OF_SCORES = int(parser.get("scoreboard", "NUMBER_OF_SCORES"))
 
 TEMPO = list(map(float, parser.get("mode", "TEMPO").split(",")))
 PITCH = list(map(float, parser.get("mode", "PITCH").split(",")))
+LIMITS = list(map(int, parser.get("mode", "LIMITS").split(",")))
 
 
 class ChannelMapper(object):

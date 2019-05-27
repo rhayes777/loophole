@@ -71,7 +71,10 @@ class SpaceFighterGame(object):
 
     @property
     def mode(self):
-        return min(3, self.max_score / 100)
+        for i, limit in enumerate(config.LIMITS):
+            if self.max_score < limit:
+                return i
+        return len(config.LIMITS)
 
     @property
     def max_score(self):
