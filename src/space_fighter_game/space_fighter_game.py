@@ -8,10 +8,11 @@ from audio import audio as pl
 from control import controller
 from visual import font
 from visual import visual
+from visual import color
 
 directory = path.dirname(path.realpath(__file__))
 
-COLORS = [visual.color.Color.FLIRT, visual.color.Color.KEEN, visual.color.Color.LIGHTNING, visual.color.Color.SHAKA]
+COLORS = [color.Color.FLIRT, color.Color.KEEN, color.Color.LIGHTNING, color.Color.SHAKA]
 
 
 class SpaceFighterGame(object):
@@ -72,7 +73,7 @@ class Player(object):
         self.cursor = None
         self.start_position = config.PLAYER_ONE_START if number == 0 else config.PLAYER_TWO_START
         self.model_player.position = self.start_position
-        self.color = visual.color.Color.KEEN if number == 0 else visual.color.Color.FLIRT
+        self.color = color.Color.KEEN if number == 0 else color.Color.FLIRT
         self.score_notice = font.Notice(
             "Player {} start".format(
                 self.number + 1
@@ -83,7 +84,7 @@ class Player(object):
         self.lives_notice = font.Notice(
             "",
             self.lives_position,
-            visual.color.Color.RED
+            color.Color.RED
         )
 
     @property
@@ -123,7 +124,7 @@ class Player(object):
     def step(self):
         if self.is_dead:
             self.score_notice.text = "DEAD"
-            self.score_notice.color = visual.color.Color.RED
+            self.score_notice.color = color.Color.RED
             self.lives_notice.should_blit = False
             self.cursor.remove()
         elif self.is_started:
