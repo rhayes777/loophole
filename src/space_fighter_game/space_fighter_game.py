@@ -50,6 +50,23 @@ class SpaceFighterGame(object):
             visual.Note(visual.note_sprite_sheet.image_for_angle(alien.angle), alien.position,
                         colour=COLORS[self.track.output_channels.index(alien.note.channel)])
 
+        for mapper in self.track.channel_mappers:
+            mapper.mode = self.mode
+            self.track.tempo_shift = [1, 1.1, 1.5, 2][self.mode]
+            for channel in self.track.channels:
+                channel.pitch_bend = [1, 1.1, 1.3, 1.5]
+
+    @property
+    def mode(self):
+        return min(3, self.max_score / 100)
+
+    @property
+    def max_score(self):
+        try:
+            return max(player.model_player.score for player in self.started_players)
+        except ValueError:
+            return 0
+
     @property
     def started_players(self):
         return [player for player in self.players if player.is_started]
