@@ -63,6 +63,9 @@ LIMITS = list(map(int, parser.get("mode", "LIMITS").split(",")))
 
 SOUND_EFFECTS_CHANNEL = int(parser.get("sound_effects", "output_channel"))
 
+# noinspection PyProtectedMember
+banned_words = parser._sections['banned_words']
+
 
 class ChannelMapper(object):
     def __init__(self, name):
