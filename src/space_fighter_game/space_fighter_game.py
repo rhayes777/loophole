@@ -123,7 +123,7 @@ class Player(object):
             color.Color.RED
         )
         self.track = track
-        self.no_frames = no_frames
+        self.no_frames = int(no_frames * 1 / config.PLAYER_ANIMATION_SPEED)
         self.frame = 0
 
     @property
@@ -170,7 +170,7 @@ class Player(object):
             self.cursor.remove()
         elif self.is_started:
             self.frame = (self.frame + 1) % self.no_frames
-            self.cursor.image = visual.player_sprite_sheet.get_image(self.frame)
+            self.cursor.image = visual.player_sprite_sheet.get_image(int(self.frame * config.PLAYER_ANIMATION_SPEED))
             self.cursor.draw(self.model_player.position)
             for shot in self.model_player.shots:
                 visual.Note(
