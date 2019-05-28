@@ -102,7 +102,7 @@ class SpaceFighterGame(object):
 
 
 class Player(object):
-    def __init__(self, number, model_player, track):
+    def __init__(self, number, model_player, track, no_frames=visual.player_sprite_sheet.total_frames):
         self.number = number
         self.controller = controller.ArcadeController(self.button_listener, number)
         self.model_player = model_player
@@ -123,6 +123,8 @@ class Player(object):
             color.Color.RED
         )
         self.track = track
+        self.no_frames = no_frames
+        self.frame = 0
 
     @property
     def is_started(self):
@@ -167,6 +169,8 @@ class Player(object):
             self.lives_notice.should_blit = False
             self.cursor.remove()
         elif self.is_started:
+            self.frame = (self.frame + 1) % self.no_frames
+            self.cursor.image = visual.player_sprite_sheet.get_image(self.frame)
             self.cursor.draw(self.model_player.position)
             for shot in self.model_player.shots:
                 visual.Note(
