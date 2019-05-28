@@ -60,7 +60,7 @@ class NewScore(AbstractScore):
 
     @property
     def name(self):
-        return "".join([letters[character] for character in self.characters])
+        return map_name("".join([letters[character] for character in self.characters]))
 
     def __init__(self, value):
         self.characters = [0, 0, 0, 0]
@@ -117,6 +117,13 @@ class Scoreboard(object):
     def add_score(self, new_score):
         self.scores = list(sorted(self.scores + [new_score], reverse=True))
         self.set_positions()
+
+
+def map_name(name):
+    if name.lower() in config.banned_words:
+        return config.banned_words[name.lower()]
+    else:
+        return name
 
 
 class Player(object):
