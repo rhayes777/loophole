@@ -178,7 +178,7 @@ def show_scoreboard(player_one_score=None, player_two_score=None):
         add_player(1, player_two_score)
 
     while True:
-        clock.tick(24)
+        clock.tick(config.clockspeed_scoreboard)
 
         cycle += 1
 

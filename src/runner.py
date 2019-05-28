@@ -23,7 +23,7 @@ def run_game(game):
     game.start()
 
     while game.should_continue:
-        clock.tick(24)
+        clock.tick(config.clockspeed_runner)
         game.step_forward()
         # print_sprites()
         visual.draw()

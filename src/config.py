@@ -65,6 +65,8 @@ SOUND_EFFECTS_CHANNEL = int(parser.get("sound_effects", "output_channel"))
 
 # noinspection PyProtectedMember
 banned_words = parser._sections['banned_words']
+clockspeed_scoreboard = int(parser.get("clockspeed", "scoreboard"))
+clockspeed_runner = int(parser.get("clockspeed", "runner"))
 
 
 class ChannelMapper(object):
