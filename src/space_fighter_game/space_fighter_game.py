@@ -54,7 +54,7 @@ class SpaceFighterGame(object):
                     alien.position[0] - visual.note_sprite_sheet.shape[0] / 2,
                     alien.position[1] - visual.note_sprite_sheet.shape[1] / 2
                 ),
-                colour=COLORS[self.track.output_channels.index(alien.note.channel)]
+                colour=COLORS[self.track.output_channels.index(alien.note.channel) % len(COLORS)]
             )
         for alien in self.model.dead_aliens:
             self.track.sound_effects_channel.send_message(
