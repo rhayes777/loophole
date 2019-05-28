@@ -95,26 +95,65 @@ sprite_group_notes = pygame.sprite.Group()
 sprite_group_energy_glows = pygame.sprite.Group()
 
 
+class SpriteSheet(object):
+
+    def __init__(self, image, shape, total_frames, key=(255, 255, 255)):
+        self.image = image
+        self.shape = shape
+        self.total_frames = total_frames
+        self.key = key
+
+    def get_image(self, frame_number):
+        frame = frame_number % self.total_frames
+        surface = pygame.Surface(self.shape, depth=24)
+        surface.fill(self.key, surface.get_rect())
+        surface.set_colorkey(self.key)
+        surface.blit(self.image, (0, 0), (0, frame * self.shape[1], self.shape[0], self.shape[1]))
+        surface.set_alpha(255)
+
+        return surface
+
+    def frame_number_for_angle(self, angle):
+        return int((angle / (2 * math.pi)) * self.total_frames) % self.total_frames
+
+    def image_for_angle(self, angle):
+        return self.get_image(self.frame_number_for_angle(angle))
+
+
+note_sprite_sheet = SpriteSheet(image_crotchet_rotation, (65, 65), 15, Color.BLACK)
+bullet_sprite_sheet = SpriteSheet(image_bullet, (100, 100), 4, Color.BLACK)
+player_sprite_sheet = SpriteSheet(image_player, (100, 100), 6, Color.BLACK)
+
+
 class PlayerCursor(pygame.sprite.Sprite):
 
-    def __init__(self, image=image_player, position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), alpha=255,
+    def __init__(self, image=player_sprite_sheet.get_image(0),
+                 position=(SCREEN_SHAPE[0] / 2, SCREEN_SHAPE[1] / 2), alpha=255,
                  color=Color.WHITE):
         pygame.sprite.Sprite.__init__(self, sprite_group_player)
-
-        self.image = image.copy()
 
         self.rect = position
 
         self.alpha = alpha
         self.color = color
 
-        self.image.fill(self.color + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
+        self.__image = None
+        self.image = image
 
-        self.image.set_colorkey(Color.BLACK)
+    @property
+    def image(self):
+        return self.__image
+
+    @image.setter
+    def image(self, image):
+        image = image.copy()
+        image.fill(self.color + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
+        image.set_colorkey(Color.BLACK)
+        self.__image = image
 
     def draw(self, pos):
-        new_x = pos[0] - 25
-        new_y = pos[1] - 25
+        new_x = pos[0] - 50
+        new_y = pos[1] - 50
 
         self.rect = (new_x, new_y)
 
@@ -220,36 +259,6 @@ class Note(pygame.sprite.Sprite):
         self.image = image
 
         self.image.fill(colour + (self.alpha,), None, pygame.BLEND_RGBA_MULT)
-
-
-class SpriteSheet(object):
-
-    def __init__(self, image, shape, total_frames, key=(255, 255, 255)):
-        self.image = image
-        self.shape = shape
-        self.total_frames = total_frames
-        self.key = key
-
-    def get_image(self, frame_number):
-        frame = frame_number % self.total_frames
-        surface = pygame.Surface(self.shape, depth=24)
-        surface.fill(self.key, surface.get_rect())
-        surface.set_colorkey(self.key)
-        surface.blit(self.image, (0, 0), (0, frame * self.shape[1], self.shape[0], self.shape[1]))
-        surface.set_alpha(255)
-
-        return surface
-
-    def frame_number_for_angle(self, angle):
-        return int((angle / (2 * math.pi)) * self.total_frames) % self.total_frames
-
-    def image_for_angle(self, angle):
-        return self.get_image(self.frame_number_for_angle(angle))
-
-
-note_sprite_sheet = SpriteSheet(image_crotchet_rotation, (65, 65), 15, Color.BLACK)
-
-bullet_sprite_sheet = SpriteSheet(image_bullet, (100, 100), 4, Color.BLACK)
 
 
 def make_score_notice(text, position, life, colour):

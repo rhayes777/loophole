@@ -1,11 +1,13 @@
+import logging
+
 import pygame
 
+import config
 import scoreboard
 from control import controller
 from space_fighter_game import space_fighter_game
 from visual import font
 from visual import visual
-import config
 
 pygame.init()
 pygame.display.init()
@@ -23,9 +25,11 @@ def run_game(game):
     game.start()
 
     while game.should_continue:
-        clock.tick(24)
-        game.step_forward()
-        # print_sprites()
+        clock.tick(config.clockspeed_runner)
+        try:
+            game.step_forward()
+        except Exception as e:
+            logging.exception(e)
         visual.draw()
         visual.sprite_group_notes.empty()
 
