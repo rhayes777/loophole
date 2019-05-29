@@ -57,8 +57,11 @@ class SpaceFighterGame(object):
                 colour=COLORS[self.track.output_channels.index(alien.note.channel) % len(COLORS)]
             )
         for alien in self.model.dead_aliens:
-            self.track.sound_effects_channel.send_message(
-                mido.Message("note_on", channel=config.SOUND_EFFECTS_CHANNEL, note=alien.note.note, velocity=80))
+            if alien.note.channel == 9:
+                self.track.channels[9].send_message(alien.note)
+            else:
+                self.track.sound_effects_channel.send_message(
+                    mido.Message("note_on", channel=config.SOUND_EFFECTS_CHANNEL, note=alien.note.note, velocity=80))
             visual.make_circle_explosion(
                 position=(
                     alien.position[0] - visual.note_sprite_sheet.shape[0] / 2,
