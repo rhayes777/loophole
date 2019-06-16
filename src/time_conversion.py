@@ -8,14 +8,17 @@ def set_time(new_time):
 
 
 class TimeMessage(object):
-    def __init__(self, mido_message, message_time):
+    def __init__(self, mido_message):
         self.mido_message = mido_message
-        self.time = message_time
+        self.creation_time = time.time()
 
+    @property
+    def play_time(self):
+        return self.creation_time + self.mido_message.time
 
-class Converter(object):
-    def mido_to_time(self, mido_message):
-        return TimeMessage(mido_message, mido_message.time + time.time())
+    @classmethod
+    def from_mido(cls, mido_message):
+        return cls(mido_message)
 
 
 class NoteQueue(object):
@@ -27,7 +30,7 @@ class NoteQueue(object):
 
     @property
     def late_notes(self):
-        return [note for note in self.queued_notes if note.time <= time.time()]
+        return [note for note in self.queued_notes if note.play_time <= time.time()]
 
     def pop_late_notes(self):
         late_notes = self.late_notes
@@ -42,29 +45,35 @@ class TestCase(object):
         set_time(1.0)
         mido_message = mido.Message(type="note_on", time=0.1)
         # noinspection PyTypeChecker
-        time_message = Converter().mido_to_time(mido_message)
-        assert time_message.time == 1.1
+        time_message = TimeMessage.from_mido(mido_message)
+        assert time_message.play_time == 1.1
+        assert time_message.creation_time == 1.0
 
     def test_note_queue(self):
         note_queue = NoteQueue()
-        message_0 = TimeMessage(None, message_time=0.0)
-        message_1 = TimeMessage(None, message_time=1.0)
-        message_15 = TimeMessage(None, message_time=1.5)
-
-        note_queue.append(message_0)
-        note_queue.append(message_1)
-        note_queue.append(message_15)
-
         set_time(0.0)
-        assert note_queue.late_notes == [message_0]
+
+        mido_0 = mido.Message(type="note_on", time=0.0)
+        mido_1 = mido.Message(type="note_on", time=1.0)
+        mido_15 = mido.Message(type="note_on", time=1.5)
+
+        time_0 = TimeMessage(mido_0)
+        time_1 = TimeMessage(mido_1)
+        time_15 = TimeMessage(mido_15)
+
+        note_queue.append(time_0)
+        note_queue.append(time_1)
+        note_queue.append(time_15)
+
+        assert note_queue.late_notes == [time_0]
         set_time(1.0)
-        assert note_queue.late_notes == [message_0, message_1]
+        assert note_queue.late_notes == [time_0, time_1]
 
         late_notices = note_queue.pop_late_notes()
-        assert late_notices == [message_0, message_1]
-        assert note_queue.queued_notes == [message_15]
+        assert late_notices == [time_0, time_1]
+        assert note_queue.queued_notes == [time_15]
 
         set_time(2.0)
         late_notices = note_queue.pop_late_notes()
-        assert late_notices == [message_15]
+        assert late_notices == [time_15]
         assert note_queue.queued_notes == []
