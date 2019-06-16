@@ -8,13 +8,14 @@ def set_time(new_time):
 
 
 class TimeMessage(object):
-    def __init__(self, mido_message):
+    def __init__(self, mido_message, lag=0.0):
         self.mido_message = mido_message
         self.creation_time = time.time()
+        self.lag = lag
 
     @property
     def play_time(self):
-        return self.creation_time + self.mido_message.time
+        return self.creation_time + self.mido_message.time + self.lag
 
     @classmethod
     def from_mido(cls, mido_message):
@@ -77,3 +78,12 @@ class TestCase(object):
         late_notices = note_queue.pop_late_notes()
         assert late_notices == [time_15]
         assert note_queue.queued_notes == []
+
+    def test_lag(self):
+        set_time(0.0)
+
+        mido_0 = mido.Message(type="note_on", time=0.0)
+
+        assert TimeMessage(mido_0).play_time == 0.0
+        assert TimeMessage(mido_0, lag=0.1).play_time == 0.1
+        assert TimeMessage(mido_0, lag=1.0).play_time == 1.0
