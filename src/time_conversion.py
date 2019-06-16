@@ -21,6 +21,11 @@ class TimeMessage(object):
     def from_mido(cls, mido_message):
         return cls(mido_message)
 
+    def as_instant_mido_message(self):
+        instant_message = self.mido_message.copy()
+        instant_message.time = 0.0
+        return instant_message
+
 
 class NoteQueue(object):
     def __init__(self):
@@ -87,3 +92,46 @@ class TestCase(object):
         assert TimeMessage(mido_0).play_time == 0.0
         assert TimeMessage(mido_0, lag=0.1).play_time == 0.1
         assert TimeMessage(mido_0, lag=1.0).play_time == 1.0
+
+    def test_as_instant_mido_message(self):
+        mido_message = mido.Message(type="note_on", time=0.1)
+        # noinspection PyTypeChecker
+        instant_message = TimeMessage.from_mido(mido_message).as_instant_mido_message()
+        assert instant_message is not mido_message
+        assert instant_message.type == "note_on"
+        assert instant_message.time == 0.0
+
+
+def main():
+    from audio import audio
+    from os import path
+    import pygame
+
+    clock = pygame.time.Clock()
+
+    directory = path.dirname(path.realpath(__file__))
+    note_queue = NoteQueue()
+
+    track = audio.Track(
+        "{}/media/audio/{}".format(
+            directory,
+            "Snakes.mid"
+        ),
+        is_looping=True,
+        message_read_listener=lambda midi_message: note_queue.append(
+            TimeMessage(midi_message)),
+        play_notes=False,
+        play_any=False
+    )
+
+    track.start()
+
+    while True:
+        for note in note_queue.pop_late_notes():
+            track.send_message(note.as_instant_mido_message())
+
+        clock.tick(24)
+
+
+if __name__ == "__main__":
+    main()

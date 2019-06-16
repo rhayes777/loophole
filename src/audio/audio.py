@@ -156,7 +156,8 @@ def play_note(note):
 
 
 def set_program(channel=0, program=0):
-    keys_port.send(mido.Message('program_change', program=program, time=0, channel=channel))
+    keys_port.send(
+        mido.Message('program_change', program=program, time=0, channel=channel))
 
 
 # print mido.get_output_names()
@@ -212,7 +213,8 @@ class Intervals:
 
     @property
     def note_offs(self):
-        return map(lambda note: mido.Message('note_off', note=note, velocity=0), self.playing_notes)
+        return map(lambda note: mido.Message('note_off', note=note, velocity=0),
+                   self.playing_notes)
 
 
 note_off = "note_off"
@@ -222,7 +224,8 @@ note_on = "note_on"
 class Channel(object):
     """Represents an individual midi channel through which messages are passed"""
 
-    def __init__(self, number, volume=VOLUME_DEFAULT, fade_rate=1, note_on_listener=None):
+    def __init__(self, number, volume=VOLUME_DEFAULT, fade_rate=1,
+                 note_on_listener=None):
         """
 
         :param number: The number of this channel (0-15)
@@ -268,7 +271,8 @@ class Channel(object):
     @modulation.setter
     def modulation(self, modulation):
         self.__modulation = modulation
-        self.port.send(mido.Message('control_change', channel=self.number, control=1, value=self.__modulation))
+        self.port.send(mido.Message('control_change', channel=self.number, control=1,
+                                    value=self.__modulation))
 
     @property
     def pan(self):
@@ -277,7 +281,8 @@ class Channel(object):
     @pan.setter
     def pan(self, pan):
         self.__pan = pan
-        self.port.send(mido.Message('control_change', channel=self.number, control=10, value=self.__modulation))
+        self.port.send(mido.Message('control_change', channel=self.number, control=10,
+                                    value=self.__modulation))
 
     @property
     def fade_start(self):
@@ -318,7 +323,8 @@ class Channel(object):
     @program.setter
     def program(self, program):
         self.__program = program
-        self.port.send(mido.Message('program_change', program=self.__program, time=0, channel=self.number))
+        self.port.send(mido.Message('program_change', program=self.__program, time=0,
+                                    channel=self.number))
 
     @property
     def instrument_type(self):
@@ -347,7 +353,8 @@ class Channel(object):
         Send a pitch bend to this channel
         :param value: The value of the pitch bend
         """
-        self.port.send(mido.Message('pitchwheel', pitch=value, time=0, channel=self.number))
+        self.port.send(
+            mido.Message('pitchwheel', pitch=value, time=0, channel=self.number))
 
     def send_message(self, msg):
         """
@@ -413,7 +420,8 @@ class Channel(object):
 
     def stop_all_notes(self):
         for i in range(128):
-            self.port.send(mido.Message(type=note_off, velocity=0, channel=self.number, note=i))
+            self.port.send(
+                mido.Message(type=note_off, velocity=0, channel=self.number, note=i))
 
     @property
     def is_percussive(self):
@@ -423,11 +431,13 @@ class Channel(object):
 class Track(Thread):
     """Represents a midi song loaded from a file"""
 
-    def __init__(self, file_path="../media/channels_test.mid", is_looping=False, play_notes=True,
+    def __init__(self, file_path="../media/channels_test.mid", is_looping=False,
+                 play_notes=True, play_any=True,
                  message_read_listener=lambda x: x):
         super(Track, self).__init__()
         self.filename = file_path
         self.play_notes = play_notes
+        self.play_any = play_any
         self.is_stopping = False
         self.is_looping = is_looping
         self.mid = mido.MidiFile(file_path)
@@ -491,7 +501,10 @@ class Track(Thread):
         return channels
 
     def send_message(self, msg):
-        self.channels[msg.channel].send_message(msg)
+        try:
+            self.channels[msg.channel].send_message(msg)
+        except AttributeError:
+            pass
 
     def run(self):
         """Play the midi file (call start() to run on new thread)"""
@@ -511,7 +524,7 @@ class Track(Thread):
                     if isinstance(msg, mido.MetaMessage):
                         continue
                     # Send a message to its assigned channel
-                    if self.play_notes or msg.type != note_on:
+                    if (self.play_notes or msg.type != note_on) and self.play_any:
                         self.channels[msg.channel].send_message(msg)
                 except AttributeError as e:
                     logging.exception(e)
