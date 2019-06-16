@@ -45,6 +45,7 @@ class NoteQueue(object):
         return [note for note in self.queued_notes if note.play_time <= time.time()]
 
     def pop_late_notes(self):
+        # TODO: make NoteQueue operations more efficient
         late_notes = self.late_notes
         for note in late_notes:
             self.queued_notes.remove(note)
