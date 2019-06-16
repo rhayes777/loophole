@@ -1,25 +1,31 @@
 import time
 
 import mido
+import pytest
 
 
 def set_time(new_time):
     time.time = lambda: new_time
 
 
+@pytest.fixture(autouse=True)
+def reset_last_time():
+    TimeMessage.last_time = None
+
+
 class TimeMessage(object):
+    last_time = None
+
     def __init__(self, mido_message, lag=0.0):
+        if TimeMessage.last_time is None or mido_message.time > 0.0:
+            TimeMessage.last_time = time.time()
         self.mido_message = mido_message
-        self.creation_time = time.time()
+        self.creation_time = TimeMessage.last_time
         self.lag = lag
 
     @property
     def play_time(self):
         return self.creation_time + self.mido_message.time + self.lag
-
-    @classmethod
-    def from_mido(cls, mido_message):
-        return cls(mido_message)
 
     def as_instant_mido_message(self):
         instant_message = self.mido_message.copy()
@@ -45,13 +51,13 @@ class NoteQueue(object):
         return late_notes
 
 
+# noinspection PyTypeChecker
 class TestCase(object):
-
     def test_convert_to_time(self):
         set_time(1.0)
         mido_message = mido.Message(type="note_on", time=0.1)
         # noinspection PyTypeChecker
-        time_message = TimeMessage.from_mido(mido_message)
+        time_message = TimeMessage(mido_message)
         assert time_message.play_time == 1.1
         assert time_message.creation_time == 1.0
 
@@ -71,6 +77,7 @@ class TestCase(object):
         note_queue.append(time_1)
         note_queue.append(time_15)
 
+        assert time_0.play_time == 0.0
         assert note_queue.late_notes == [time_0]
         set_time(1.0)
         assert note_queue.late_notes == [time_0, time_1]
@@ -84,6 +91,7 @@ class TestCase(object):
         assert late_notices == [time_15]
         assert note_queue.queued_notes == []
 
+    # noinspection PyTypeChecker
     def test_lag(self):
         set_time(0.0)
 
@@ -96,10 +104,29 @@ class TestCase(object):
     def test_as_instant_mido_message(self):
         mido_message = mido.Message(type="note_on", time=0.1)
         # noinspection PyTypeChecker
-        instant_message = TimeMessage.from_mido(mido_message).as_instant_mido_message()
+        instant_message = TimeMessage(mido_message).as_instant_mido_message()
         assert instant_message is not mido_message
         assert instant_message.type == "note_on"
         assert instant_message.time == 0.0
+
+    # noinspection PyTypeChecker
+    def test_last_time(self):
+        set_time(0.0)
+        one = TimeMessage(
+            mido.Message(
+                type="note_on",
+                time=0.0
+            )
+        )
+        set_time(0.1)
+        two = TimeMessage(
+            mido.Message(
+                type="note_on",
+                time=0.0
+            )
+        )
+
+        assert one.play_time == two.play_time
 
 
 def main():
