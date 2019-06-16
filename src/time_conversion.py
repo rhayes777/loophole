@@ -140,14 +140,20 @@ def main():
     directory = path.dirname(path.realpath(__file__))
     note_queue = NoteQueue()
 
+    def note_listener(midi_message):
+        note_queue.append(TimeMessage(midi_message))
+        if midi_message.type == "note_on":
+            new_message = midi_message.copy()
+            new_message.velocity /= 2
+            note_queue.append(TimeMessage(midi_message, lag=0.1))
+
     track = audio.Track(
         "{}/media/audio/{}".format(
             directory,
             "bicycle-ride.mid"
         ),
         is_looping=True,
-        message_read_listener=lambda midi_message: note_queue.append(
-            TimeMessage(midi_message)),
+        message_read_listener=note_listener,
         play_notes=False,
         play_any=False
     )
