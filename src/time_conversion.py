@@ -115,7 +115,7 @@ def main():
     track = audio.Track(
         "{}/media/audio/{}".format(
             directory,
-            "Snakes.mid"
+            "bicycle-ride.mid"
         ),
         is_looping=True,
         message_read_listener=lambda midi_message: note_queue.append(
