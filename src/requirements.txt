@@ -6,7 +6,7 @@ httplib2==0.19.0
 mido==1.2.8
 numpy==1.21.0
 oauth2client==4.0.0
-protobuf==3.15.0
+protobuf==3.18.3
 pyasn1==0.1.9
 pyasn1-modules==0.0.8
 pygame==1.9.3
